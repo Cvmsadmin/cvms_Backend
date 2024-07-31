@@ -1,0 +1,84 @@
+package org.ss.vendorapi.util;
+
+
+public class Procedures {
+	
+	public static final String USP_LOGUSEREXISTS = "USP_LOGUSEREXISTS";
+	public static final String SCP_ASM_AuthenticateUser_Get = "SCP_ASM_AuthenticateUser_Get";
+	public static final String SCP_ASM_LOCKUSER = "SCP_ASM_LOCKUSER";
+	public static final String SCP_USP_NEWCONNGETACCOUNTIDS = "SCP_USP_NEWCONNGETACCOUNTIDS";
+	public static final String SCP_USP_GETROADCUTDETAILS = "SCP_USP_GETROADCUTDETAILS";
+	public static final String GETCUSTOMERACCOUNTID = "GETCUSTOMERACCOUNTID";
+	public static final String GETDISCOMIDOFUSER = "GETDISCOMIDOFUSER";
+	public static final String SCP_ASM_USERDETAILS_GET = "SCP_ASM_USERDETAILS_GET";
+	public static final String SCP_SETPASSWORD = "SCP_SETPASSWORD";
+	public static final String USP_GETKEYVALUE = "USP_GETKEYVALUE";
+	public static final String USP_SET_WSS_TRANSACTION_ID = "USP_SET_WSS_TRANSACTION_ID";
+	public static final String USP_SET_PAYMENT_TRANSACTION = "USP_SET_PAYMENT_TRANSACTION"; 
+	public static final String USP_SET_GATEWAY_TRANSACT = "USP_SET_GATEWAY_TRANSACT";
+	public static final String SCP_ASM_REGISTERUSER="SCP_ASM_REGISTERUSER";
+	public static final String UPDATEPROFILE = "SCP_ASM_UPDATEPROFILE";
+	
+	/**
+	 * ADDED BY ANUKRITI GUSAIN : 04-01-2023
+	 * FUNCTION :: Check User Existence
+	 */
+	public static final String USP_USERACCOUNTEXISTS = "USP_USERACCOUNTEXISTS";
+	public static final String USP_CCBWSSACDETAILS1="USP_CCBWSSACDETAILS1";
+	
+	/**
+	 * ADDED BY ANUKRITI GUSAIN : 10-01-2023
+	 * FUNCTION :: TO GET USER LAST TRANSACTION
+	 */
+	public static final String USP_GET_LASTTRAXSTATUSDETAILS="USP_GET_LASTTRAXSTATUSDETAILS";
+	
+	public static final String USP_GET_OPEN_FASTSRS = "USP_GET_OPEN_FASTSRS";
+	
+	public static final String USP_INSERT_SRLOG = "USP_INSERT_SRLOG";
+	
+	public static final String USP_MASTERDATA = "USP_MASTERDATA";
+	
+	public static final String USP_SAVESRLOG = "USP_SAVESRLOG";
+	
+	public static final String USP_SET_FASTSR_CHARGES = "USP_SET_FASTSR_CHARGES";
+	
+	public static final String USP_SET_FASTSR_DOCUMENTS = "USP_SET_FASTSR_DOCUMENTS";
+	
+	public static final String SCP_GET_FTSRDETAILSTRACK = "SCP_GET_FTSRDETAILSTRACK";
+	public static final String SCP_GET_FTSRCHARGESDETAILS = "SCP_GET_FTSRCHARGESDETAILS";
+	public static final String SCP_GET_FTSRTRANDETAILS = "SCP_GET_FTSRTRANDETAILS";
+	public static final String SCP_GET_FTSRDETAILSTRACK_SDO = "SCP_GET_FTSRDETAILSTRACK_SDO";
+	public static final String SCP_GET_FTSRTRACK_FRACTNO_SDO = "SCP_GET_FTSRTRACK_FRACTNO_SDO";
+	public static final String USP_GET_FASTSR_DOCUMENTS = "USP_GET_FASTSR_DOCUMENTS";
+	public static final String SCP_USP_GETFTSRENTITY = "SCP_USP_GETFTSRENTITY";
+	
+	public static final String SCP_GET_FTSRDETAILS = "SCP_GET_FTSRDETAILS";
+	public static final String USP_SET_COMPLIEDFTSR = "USP_SET_COMPLIEDFTSR";
+	public static final String USP_SET_FASTSR_DATES = "USP_SET_FASTSR_DATES";
+	public static final String USP_DELETE_FASTOTHERS_DOCUMENT = "USP_DELETE_FASTOTHERS_DOCUMENT";
+	public static final String USP_DELETE_FASTTRACK_DOCUMENT = "USP_DELETE_FASTTRACK_DOCUMENT";
+	public static final String USP_SET_FASTOTHERS_DOCUMENTS = "USP_SET_FASTOTHERS_DOCUMENTS";
+	public static final String USP_SET_FASTTRACK_DOCUMENTS = "USP_SET_FASTTRACK_DOCUMENTS";
+	public static final String USP_SET_OTHER_CONNECTION = "USP_SET_OTHER_CONNECTION";
+	public static final String USP_SET_FASTTRACK_CONNECTION = "USP_SET_FASTTRACK_CONNECTION";
+	
+	public static final String USP_SET_WSS_ACKNOWLEDGEMENT_ID = "USP_SET_WSS_ACKNOWLEDGEMENT_ID";
+	
+	public static final String USP_CHECKPAYMENTSTATUS = "USP_CHECKPAYMENTSTATUS";
+	public static final String USP_UPDATE_BANK_TRANSACTION = "USP_UPDATE_BANK_TRANSACTV001";
+	
+	public static final String USP_SET_NEWCONNREQUEST = "USP_SET_NEWCONNREQUEST";
+	
+	public static final String USP_GET_FASTOTHERDOCUMENTS = "USP_GET_FASTOTHERDOCUMENTS";
+	public static final String USP_GET_FASTTRACK_DOCUMENTS = "USP_GET_FASTTRACK_DOCUMENTS";
+	public static final String SCP_USP_GETOTHERENTITY = "SCP_USP_GETOTHERENTITY";
+	public static final String SCP_USP_GETFTNCENTITY = "SCP_USP_GETFTNCENTITY";
+	
+	public static final String SCP_ASM_RESETPASSWORD_MODIFY = "SCP_ASM_RESETPASSWORD_MODIFY";
+	
+	public static final String PROC_WSS_DASHBOARD_RPT = "PROC_WSS_DASHBOARD_RPT";
+	
+	
+	
+	
+}

@@ -1,0 +1,13 @@
+package org.ss.vendorapi.resources;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+import lombok.Data;
+
+@ConfigurationProperties(prefix="spring.ss")
+@Configuration
+@Data
+public class APIKeyProperties {
+	private String apiKey;
+}
