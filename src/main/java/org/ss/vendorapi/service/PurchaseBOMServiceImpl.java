@@ -17,13 +17,13 @@ public class PurchaseBOMServiceImpl implements PurchaseBOMService {
     @Override
     public PurchaseBOMMasterEntity save(PurchaseBOMMasterEntity purchaseBOMMasterEntity) {
         purchaseBOMMasterEntity.setActive(1);
-        purchaseBOMMasterEntity.setCreateDate(new Date());
+        purchaseBOMMasterEntity.setCreateDate(new java.sql.Date(new Date().getTime()));
         return purchaseBOMRepository.save(purchaseBOMMasterEntity);
     }
 
     @Override
     public PurchaseBOMMasterEntity update(PurchaseBOMMasterEntity purchaseBOMMasterEntity) {
-        purchaseBOMMasterEntity.setUpdateDate(new Date());
+        purchaseBOMMasterEntity.setUpdateDate(new java.sql.Date(new Date().getTime()));
         return purchaseBOMRepository.save(purchaseBOMMasterEntity);
     }
 

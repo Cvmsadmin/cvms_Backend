@@ -123,6 +123,7 @@ public class RefreshTokenService {
 		if(objUser==null) {
 			throw new UserNotFoundException("user not found");
 		}else {
+			refreshToken = refreshTokenRepository.findByUser(email).orElse(new RefreshToken());
 			refreshToken.setUser(objUser.getEmail());
 			refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs*1000));
 
@@ -134,8 +135,9 @@ public class RefreshTokenService {
 
 		}
 		return refreshToken;
-	}
+	
+	
+	}}
 
 	
 
-}

@@ -6,16 +6,21 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+//import org.ss.vendorapi.config.AESDecryption
 import org.ss.vendorapi.config.AESDecryptionService;
+//import org.ss.vendorapi.entity.LoginRequest;Service;
 import org.ss.vendorapi.config.EncryptSecurityUtil;
+import org.ss.vendorapi.entity.LoginRequest;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.RefreshToken;
 import org.ss.vendorapi.modal.response.JwtResponse;
@@ -72,13 +77,16 @@ public class LoginController{
 
 
 	@PostMapping("/userLogin")
-    public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password, HttpServletRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
 
         Map<String, Object> statusMap = new HashMap<>();
         String methodName = request.getRequestURI();
         // logger.logMethodStart(methodName);
         JwtResponse response = new JwtResponse();
         try {
+            String email = loginRequest.getEmail();
+            String password = loginRequest.getPassword();
+
             if (UtilValidate.isEmpty(email) || UtilValidate.isEmpty(password)) {
                 return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
             }
@@ -108,6 +116,9 @@ public class LoginController{
             return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+	
+	
+
 
 	@PostMapping("/adminLogin")
 	public ResponseEntity<?> loginAdmin(@RequestParam (required = false) String userId,

@@ -82,13 +82,40 @@ public class ClientInvoiceMasterController {
 					UtilValidate.isEmpty(clientInvoiceDTO.getGstAmount())||
 					UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceAmountExcluGst())||
 					UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceAmountIncluGst())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getStatus())
-					
+					UtilValidate.isEmpty(clientInvoiceDTO.getStatus())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceBaseValue())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getGstBaseValue())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceInclusiveOfGst())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getTdsBaseValue())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getCgstOnTds())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getSgstOnTds())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getTotalTdsDeducted())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getBalance())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getPenalty())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getPenaltyDeductionOnBase())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getGstOnPenalty())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getTotalPenaltyDeduction())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getTotalPenaltyReceived())||
+					UtilValidate.isEmpty(clientInvoiceDTO.getTdsDeductionIncluGst())
 					){
 				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
 			}	
 
-			
+			/** START ::: CHECK VALID MOBILE ::: THIS METHOD WILL CHECK VALID MOBILE NUMBER AND RETURN NULL IN CASE OF VALID MOBILE NUMBER  OTHERWISE RETURN MESSAGE ENTITY FOR INVALID MOBILE NUMBER*/
+
+			//			responseEntity=dataValidationService.checkValidMobileNumber(VendorInvoiceMEntity.getPhone(), methodName, UPPCLLogger.MODULE_REGISTRATION);
+			//			if(responseEntity!=null)
+			//				return responseEntity;
+
+			/** END ::: CHECK VALID MOBILE */
+
+			/** START ::: CHECK VALID EMAIL ::: THIS METHOD WILL CHECK VALID EMAIL AND RETURN NULL IN CASE OF VALID EMAIL ID  OTHERWISE RETURN MESSAGE ENTITY FOR INVALID EMAIL ID */
+
+			//			responseEntity=dataValidationService.checkValidEmailId(VendorInvoiceMEntity.getEmail(), methodName, UPPCLLogger.MODULE_REGISTRATION);
+			//			if(responseEntity!=null)
+			//				return responseEntity;
+
+			/** END ::: CHECK VALID EMAIl */
 
 			ClientInvoiceMasterEntity clientInvoice=new ClientInvoiceMasterEntity();
 			
@@ -105,28 +132,6 @@ public class ClientInvoiceMasterController {
 			clientInvoice.setInvoiceAmountExcluGst(clientInvoiceDTO.getInvoiceAmountExcluGst());
 			clientInvoice.setInvoiceAmountIncluGst(clientInvoiceDTO.getInvoiceAmountIncluGst());
 			clientInvoice.setStatus(clientInvoiceDTO.getStatus());
-			
-			if(clientInvoiceDTO.getStatus().equalsIgnoreCase("completed")) {
-				
-			if(	UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceBaseValue())||
-				UtilValidate.isEmpty(clientInvoiceDTO.getGstBaseValue())||
-				UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceInclusiveOfGst())||
-				UtilValidate.isEmpty(clientInvoiceDTO.getTdsBaseValue())||
-				UtilValidate.isEmpty(clientInvoiceDTO.getCgstOnTds())||
-				UtilValidate.isEmpty(clientInvoiceDTO.getSgstOnTds())||
-				UtilValidate.isEmpty(clientInvoiceDTO.getTotalTdsDeducted())||
-				UtilValidate.isEmpty(clientInvoiceDTO.getBalance())||
-				UtilValidate.isEmpty(clientInvoiceDTO.getPenalty())||
-				UtilValidate.isEmpty(clientInvoiceDTO.getPenaltyDeductionOnBase())||
-				UtilValidate.isEmpty(clientInvoiceDTO.getGstOnPenalty())||
-				UtilValidate.isEmpty(clientInvoiceDTO.getTotalPenaltyDeduction())||
-				UtilValidate.isEmpty(clientInvoiceDTO.getTotalPaymentReceived())||
-				UtilValidate.isEmpty(clientInvoiceDTO.getTdsDeductionIncluGst())) {
-				
-				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
-			}
-			}
-			
 			clientInvoice.setInvoiceBaseValue(clientInvoiceDTO.getInvoiceBaseValue());
 			clientInvoice.setGstBaseValue(clientInvoiceDTO.getGstBaseValue());
 			clientInvoice.setInvoiceInclusiveOfGst(clientInvoiceDTO.getInvoiceInclusiveOfGst());
@@ -139,11 +144,22 @@ public class ClientInvoiceMasterController {
 			clientInvoice.setPenaltyDctionOnBase(clientInvoiceDTO.getPenaltyDeductionOnBase());
 			clientInvoice.setGstOnPenalty(clientInvoiceDTO.getGstOnPenalty());
 			clientInvoice.setTotalPenaltyDeduction(clientInvoiceDTO.getTotalPenaltyDeduction());
-			clientInvoice.setTotalPaymentReceived(clientInvoiceDTO.getTotalPaymentReceived());
+			clientInvoice.setTotalPenaltyReceived(clientInvoiceDTO.getTotalPenaltyReceived());
 			clientInvoice.setTdsDeductionIncluGst(clientInvoiceDTO.getTdsDeductionIncluGst());
 
-			
+			//			********************************************************************************************************************************
+
+			// The following lines are commented out as the fields are commented out in the entity
+			// clientInvoiceCreationEntityObj.setInvoiceUpload(ClientInvoiceMEntity.getInvoiceUpload());
+			// clientInvoiceCreationEntityObj.setPo(ClientInvoiceMEntity.getPo());
+			// clientInvoiceCreationEntityObj.setDeliveryAcceptance(ClientInvoiceMEntity.getDeliveryAcceptance());
+			// clientInvoiceCreationEntityObj.setEWayBill(ClientInvoiceMEntity.getEWayBill());
+			// clientInvoiceCreationEntityObj.setMiscellaneous(ClientInvoiceMEntity.getMiscellaneous());
+
+			//			**********************************************************************************************************************************
+
 			try{
+				/* SAVE THE USER TO THE DB ENTITY */
 				clientInvoice=clientInvoiceService.save(clientInvoice);
 
 				if(clientInvoice!=null) {

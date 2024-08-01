@@ -1,8 +1,6 @@
 package org.ss.vendorapi.entity;
 
-
-
-import java.util.Date;
+import java.sql.Date;
 
 import jakarta.persistence.Column;
 import lombok.Data;
