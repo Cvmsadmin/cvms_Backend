@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.entity.PurchaseBOMMasterEntity;
 import org.ss.vendorapi.entity.PurchaseMasterEntity;
@@ -203,11 +204,11 @@ public class PurchaseMasterController {
 	}
 
 	@GetMapping("/getAllBOMDetails")
-	public ResponseEntity<?> getAllBOMPurchaseDetails(@RequestBody PurchaseBOMMasterDTO purchaseMasterDTO){
+	public ResponseEntity<?> getAllBOMPurchaseDetails(@RequestParam String purchaseId){
 		Map<String, Object> statusMap = new HashMap<>();
 		try {
 
-			List<PurchaseBOMMasterEntity> purchaseBOMMasterEntity=purchaseBOMService.findByPurchaseId(purchaseMasterDTO.getPurchaseId());
+			List<PurchaseBOMMasterEntity> purchaseBOMMasterEntity=purchaseBOMService.findByPurchaseId(purchaseId);
 
 
 			statusMap.put("PurchaseBOMMasterEntity",purchaseBOMMasterEntity);
