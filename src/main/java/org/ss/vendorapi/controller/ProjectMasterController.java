@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.entity.MilestoneMasterEntity;
 import org.ss.vendorapi.entity.ProjectMasterEntity;
-import org.ss.vendorapi.modal.ProjectMasterDTO;
+import org.ss.vendorapi.modal.ProjectMilestoneDTO;
 import org.ss.vendorapi.modal.ProjectRequestDTO;
+import org.ss.vendorapi.service.MilestoneMasterService;
 import org.ss.vendorapi.service.ProjectMasterService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
@@ -41,6 +44,10 @@ public class ProjectMasterController {
 	    @Autowired
 	    private ProjectMasterService projectMasterService;
 	    
+	    @Autowired
+	    private MilestoneMasterService milestoneMasterService;
+
+	    
 	    
 	    @PostMapping("/addProject")
 	    public ResponseEntity<?> addProject(@RequestBody ProjectRequestDTO projectRequestDTO, HttpServletRequest request) {
@@ -48,18 +55,12 @@ public class ProjectMasterController {
 //	        logger.logMethodStart(methodName);
 
 	        Map<String, Object> statusMap = new HashMap<>();
-	        List<ProjectMasterEntity> savedEntities = new ArrayList<>();
+	        List<MilestoneMasterEntity> savedEntities = new ArrayList<>();
 
 	        try {
-	        	for (ProjectMasterDTO projectMasterDTO : projectRequestDTO.getMilestone()) {
-	        	    if (UtilValidate.isEmpty(projectMasterDTO.getSrNo()) ||
-	        	        UtilValidate.isEmpty(projectMasterDTO.getDays()) ||
-	        	        UtilValidate.isEmpty(projectMasterDTO.getDeliverables()) ||
-	        	        UtilValidate.isEmpty(projectMasterDTO.getAmountExcluGst()) ||
-	        	        UtilValidate.isEmpty(projectMasterDTO.getGstPer()) ||
-	        	        UtilValidate.isEmpty(projectMasterDTO.getGstAmount()) ||
-	        	        UtilValidate.isEmpty(projectMasterDTO.getAmountIncluGst()) ||
-	        	        UtilValidate.isEmpty(projectRequestDTO.getClientName()) ||
+	        	
+	        	System.out.println(projectRequestDTO);
+	        	if(UtilValidate.isEmpty(projectRequestDTO.getClientName()) ||
 	        	        UtilValidate.isEmpty(projectRequestDTO.getProjectName()) ||
 	        	        UtilValidate.isEmpty(projectRequestDTO.getAddress()) ||
 	        	        UtilValidate.isEmpty(projectRequestDTO.getCity()) ||
@@ -74,7 +75,7 @@ public class ProjectMasterController {
 	        	        projectRequestDTO.getEndDate() == null ||
 	        	        UtilValidate.isEmpty(projectRequestDTO.getDuration()) ||
 	        	        projectRequestDTO.getDateOfLoi() == null ||
-	        	        projectRequestDTO.getT0Date() == null ||
+	        	        projectRequestDTO.getTDate() == null ||
 	        	        UtilValidate.isEmpty(projectRequestDTO.getLoiNo()) ||
 	        	        projectRequestDTO.getDateOfLoa() == null ||
 	        	        UtilValidate.isEmpty(projectRequestDTO.getAccountManager()) ||
@@ -85,55 +86,69 @@ public class ProjectMasterController {
 
 	        	        return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
 	        	    }
-	                ProjectMasterEntity projectCreationEntityObj = new ProjectMasterEntity();
+	                ProjectMasterEntity projectMasterEntity = new ProjectMasterEntity();
 
-	             // Master DTO fields
-	                projectCreationEntityObj.setSrNo(projectMasterDTO.getSrNo());
-	                projectCreationEntityObj.setDays(projectMasterDTO.getDays());
-	                projectCreationEntityObj.setDeliverables(projectMasterDTO.getDeliverables());
-	                projectCreationEntityObj.setAmountExcluGst(projectMasterDTO.getAmountExcluGst());
-	                projectCreationEntityObj.setGstPer(projectMasterDTO.getGstPer());
-	                projectCreationEntityObj.setGstAmount(projectMasterDTO.getGstAmount());
-	                projectCreationEntityObj.setAmountIncluGst(projectMasterDTO.getAmountIncluGst());
+	               
+	                projectMasterEntity.setClientName(projectRequestDTO.getClientName());
+	                projectMasterEntity.setProjectName(projectRequestDTO.getProjectName());
+	                projectMasterEntity.setAddress(projectRequestDTO.getAddress());
+	                projectMasterEntity.setCity(projectRequestDTO.getCity());
+	                projectMasterEntity.setState(projectRequestDTO.getState());
+	                projectMasterEntity.setPincode(projectRequestDTO.getPincode());
+	                projectMasterEntity.setDistrict(projectRequestDTO.getDistrict());
+	                projectMasterEntity.setContactPerson(projectRequestDTO.getContactPerson());
+	                projectMasterEntity.setContactNo(projectRequestDTO.getContactNo());
+	                projectMasterEntity.setEmail(projectRequestDTO.getEmail());
+	                projectMasterEntity.setGstNo(projectRequestDTO.getGstNo());
+	                projectMasterEntity.setStartDate(projectRequestDTO.getStartDate());
+	                projectMasterEntity.setEndDate(projectRequestDTO.getEndDate());
+	                projectMasterEntity.setDuration(projectRequestDTO.getDuration());
+	                projectMasterEntity.setDateOfLoi(projectRequestDTO.getDateOfLoi());
+	                projectMasterEntity.setTDate(projectRequestDTO.getTDate());
+	                projectMasterEntity.setLoiNo(projectRequestDTO.getLoiNo());
+	                projectMasterEntity.setDateOfLoa(projectRequestDTO.getDateOfLoa());
+	                projectMasterEntity.setAccountManager(projectRequestDTO.getAccountManager());
+	                projectMasterEntity.setProjectManager(projectRequestDTO.getProjectManager());
+	                projectMasterEntity.setContractDate(projectRequestDTO.getContractDate());
+	                projectMasterEntity.setSingOfDate(projectRequestDTO.getSingOfDate());
+	                projectMasterEntity.setContractPrice(projectRequestDTO.getContractPrice());
+	               
+	                projectMasterEntity = projectMasterService.save(projectMasterEntity);
+	                    
+	                for(MilestoneMasterEntity milestoneMasterDto:projectRequestDTO.getMoe()) {
+	                	
+	                	
+	                	if( UtilValidate.isEmpty(milestoneMasterDto.getSerialNumber())||
+	                	  milestoneMasterDto.getTDate()==null||
+	                	   UtilValidate.isEmpty(milestoneMasterDto.getDays())||
+	           			   UtilValidate.isEmpty(milestoneMasterDto.getDeliverables())||	  
+	  					   UtilValidate.isEmpty(milestoneMasterDto.getAmountExclGst())||
+	  				   	   UtilValidate.isEmpty(milestoneMasterDto.getAmountInclGst())||
+	  					   UtilValidate.isEmpty(milestoneMasterDto.getGst())) {
+	                	   return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);		
+	     	                }
+	                	
+	                	MilestoneMasterEntity milestoneMasterEntity=new MilestoneMasterEntity();
+	                	milestoneMasterEntity.setTDate(milestoneMasterDto.getTDate());
+	                	milestoneMasterEntity.setProjectId(projectMasterEntity.getId().toString());
+	                	milestoneMasterEntity.setSerialNumber(milestoneMasterDto.getSerialNumber());
+	                	milestoneMasterEntity.setDays(milestoneMasterDto.getDays());
+	                	milestoneMasterEntity.setDeliverables(milestoneMasterDto.getDeliverables());
+	                	milestoneMasterEntity.setAmountExclGst(milestoneMasterDto.getAmountExclGst());
+	                	milestoneMasterEntity.setAmountInclGst(milestoneMasterDto.getAmountInclGst());
+	                	milestoneMasterEntity.setGst(milestoneMasterDto.getGst());
+	                	
+	                	try {
+							
+	                		milestoneMasterEntity = milestoneMasterService.save(milestoneMasterEntity);
+	                		savedEntities.add(milestoneMasterEntity);
+	    				}catch(Exception ex) {
+	    					System.out.println(ex.getMessage());
+	    				}
+	    			}
 
-	                // Request DTO fields
-	                projectCreationEntityObj.setClientName(projectRequestDTO.getClientName());
-	                projectCreationEntityObj.setProjectName(projectRequestDTO.getProjectName());
-	                projectCreationEntityObj.setAddress(projectRequestDTO.getAddress());
-	                projectCreationEntityObj.setCity(projectRequestDTO.getCity());
-	                projectCreationEntityObj.setState(projectRequestDTO.getState());
-	                projectCreationEntityObj.setPincode(projectRequestDTO.getPincode());
-	                projectCreationEntityObj.setDistrict(projectRequestDTO.getDistrict());
-	                projectCreationEntityObj.setContactPerson(projectRequestDTO.getContactPerson());
-	                projectCreationEntityObj.setContactNo(projectRequestDTO.getContactNo());
-	                projectCreationEntityObj.setEmail(projectRequestDTO.getEmail());
-	                projectCreationEntityObj.setGstNo(projectRequestDTO.getGstNo());
-	                projectCreationEntityObj.setStartDate(projectRequestDTO.getStartDate());
-	                projectCreationEntityObj.setEndDate(projectRequestDTO.getEndDate());
-	                projectCreationEntityObj.setDuration(projectRequestDTO.getDuration());
-	                projectCreationEntityObj.setDateOfLoi(projectRequestDTO.getDateOfLoi());
-	                projectCreationEntityObj.setT0Date(projectRequestDTO.getT0Date());
-	                projectCreationEntityObj.setLoiNo(projectRequestDTO.getLoiNo());
-	                projectCreationEntityObj.setDateOfLoa(projectRequestDTO.getDateOfLoa());
-	                projectCreationEntityObj.setAccountManager(projectRequestDTO.getAccountManager());
-	                projectCreationEntityObj.setProjectManager(projectRequestDTO.getProjectManager());
-	                projectCreationEntityObj.setContractDate(projectRequestDTO.getContractDate());
-	                projectCreationEntityObj.setSingOfDate(projectRequestDTO.getSingOfDate());
-	                projectCreationEntityObj.setContractPrice(projectRequestDTO.getContractPrice());
-	                try {
-	                	projectCreationEntityObj = projectMasterService.save(projectCreationEntityObj);
-	                    savedEntities.add(projectCreationEntityObj);
 
-	                } catch (Exception ex) {
-//	                    logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ Failed to save user in DB: " + ex.getMessage());
-	                    statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
-	                    statusMap.put(Parameters.statusCode, Constants.SVD_USR);
-	                    statusMap.put(Parameters.status, Constants.FAIL);
-	                    return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-	                }
-	            }
-
-	            if (!savedEntities.isEmpty()) {
+	                if(projectMasterEntity!=null) {
 	                statusMap.put(Parameters.statusMsg, StatusMessageConstants.PROJECT_CREATED_SUCCESSFULLY);
 	                statusMap.put(Parameters.status, Constants.SUCCESS);
 	                statusMap.put(Parameters.statusCode, "RU_200");
@@ -157,11 +172,33 @@ public class ProjectMasterController {
 	
 	    @GetMapping("/getAllProject")	    
 	    public ResponseEntity<?> getAllProject() {
+	    	Map<String, Object> statusMap = new HashMap<>();
 		    try {
-		        List<ProjectMasterEntity> users = projectMasterService.getAllProject();
-		        return new ResponseEntity<>(users, HttpStatus.OK);
+		        List<ProjectMasterEntity> projectList = projectMasterService.getAllProject();
+		        statusMap.put("ProjectMasterEntity",projectList);
+				statusMap.put("Status","Success");
+				statusMap.put("Status_Code","RU_200");
+				return new ResponseEntity<>(statusMap,HttpStatus.OK);
 		    } catch (Exception ex) {
 		        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		    }
+	    }
+		    @GetMapping("/getMilestone")
+		    public ResponseEntity<?> getMilestoneDetails(@RequestParam String projectId) {
+		    	Map<String, Object> statusMap = new HashMap<>();
+		    try {
+		    	List<MilestoneMasterEntity> milestoneList=milestoneMasterService.findByProjectId(projectId);
+		    	
+		    	statusMap.put("MilestoneMasterEntity",milestoneList);
+				statusMap.put("Status","Success");
+				statusMap.put("Status_Code","RU_200");
+
+				return new ResponseEntity<>(statusMap,HttpStatus.OK);
+
+		    }catch(Exception ex) {
+		    	ex.printStackTrace();
+				return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			
 		    }
 		}
 

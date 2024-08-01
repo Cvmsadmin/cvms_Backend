@@ -2,6 +2,8 @@ package org.ss.vendorapi.modal;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 
 @Data
@@ -12,9 +14,11 @@ public class ClientInvoiceMasterDTO {
 	private String clientName;
 	private String projectName;
 	private String discom;
+	@JsonFormat(pattern="dd/MM/yyyy")
 	private Date invoiceDate;
 	private String invoiceNo;
 	private String invoiceDescription;
+	@JsonFormat(pattern="dd/MM/yyyy")
 	private Date invoiceDueDate;
 	private String gstPer;
 	private String gstAmount;
@@ -33,7 +37,7 @@ public class ClientInvoiceMasterDTO {
 	private String penaltyDeductionOnBase;
 	private String gstOnPenalty;
 	private String totalPenaltyDeduction;
-	private String totalPenaltyReceived;
+	private String totalPaymentReceived;
 	private String tdsDeductionIncluGst;
 //	private byte[] invoiceUpload;
 //	private byte[] po;
