@@ -20,6 +20,7 @@ import org.ss.vendorapi.entity.RoleMasterEntity;
 import org.ss.vendorapi.service.RoleMasterService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
+import org.ss.vendorapi.util.Parameters;
 import org.ss.vendorapi.util.UtilValidate;
 
 @CrossOrigin(origins="*")
@@ -38,9 +39,9 @@ public class RoleMasterController {
 			List<RoleMasterEntity> roleList=roleMasterService.findAll();
 
 			statusMap.put("RoleMasterList",roleList);
-			statusMap.put("Status", "Success");
-			statusMap.put("StatusCode", "RME_200");
-			statusMap.put("StatusMessage","SuccessFully Found");
+			statusMap.put(Parameters.status, "Success");
+			statusMap.put(Parameters.statusCode, "RME_200");
+			statusMap.put(Parameters.statusMsg,"SuccessFully Found");
 
 			return new ResponseEntity<>(statusMap,HttpStatus.OK);
 
