@@ -1,5 +1,6 @@
 package org.ss.vendorapi.controller;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,6 +53,9 @@ public class UserMasterController{
 
 	@Autowired
 	private DataValidationService dataValidationService;
+	
+	 @Autowired
+	    private PasswordEncoder passwordEncoder;
 
 
 	public CustomerDetailsModel customerDetailsDTO = new CustomerDetailsModel();
@@ -285,15 +290,12 @@ public class UserMasterController{
 			if(responseEntity!=null)
 				return responseEntity;
 
-			/** END ::: CHECK VALID MOBILE */
+			// Generate a random password
+            String generatedPassword = generateRandomPassword();
 
-			/** START ::: CHECK VALID EMAIL ::: THIS METHOD WILL CHECK VALID EMAIL AND RETURN NULL IN CASE OF VALID EMAIL ID  OTHERWISE RETURN MESSAGE ENTITY FOR INVALID EMAIL ID */
+            // Encode the password
+            String encodedPassword = passwordEncoder.encode(generatedPassword);
 
-//			responseEntity=dataValidationService.checkValidEmailId(UserMasterMEntity.getEmail(), methodName, UPPCLLogger.MODULE_REGISTRATION);
-			if(responseEntity!=null)
-				return responseEntity;
-
-			/** END ::: CHECK VALID EMAIl */
 
 
 			registerUserCreationEntityObj=new UserMasterEntity();
@@ -306,6 +308,7 @@ public class UserMasterController{
 			registerUserCreationEntityObj.setPhone(UserMasterMEntity.getPhone());
 			registerUserCreationEntityObj.setPhysicalLocation(UserMasterMEntity.getPhysicalLocation());
 			registerUserCreationEntityObj.setRole(UserMasterMEntity.getRole());
+			registerUserCreationEntityObj.setPassword(encodedPassword);
 			try
 			{
 				/* SAVE THE USER TO THE DB ENTITY */
@@ -316,6 +319,9 @@ public class UserMasterController{
 					statusMap.put(Parameters.statusMsg, StatusMessageConstants.USER_REGISTERED_SUCCESSFULLY);
 					statusMap.put(Parameters.status, Constants.SUCCESS);
 					statusMap.put(Parameters.statusCode, "RU_200");
+					statusMap.put("generatedPassword", generatedPassword); // Include the generated password in the response
+                    statusMap.put("email", UserMasterMEntity.getEmail()); // Include the email in the response
+					
 					return new ResponseEntity<>(statusMap,HttpStatus.OK);
 				}else {
 					statusMap.put(Parameters.statusMsg, StatusMessageConstants.USER_NOT_REGISTERED);
@@ -340,8 +346,26 @@ public class UserMasterController{
 //				logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage() );
 //			}
 			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
+		}}
+		
+		 // Method to generate a random password
+	    private String generateRandomPassword() {
+	        int length = 12; // Password length
+	        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+	        SecureRandom random = new SecureRandom();
+	        StringBuilder sb = new StringBuilder(length);
+	        for (int i = 0; i < length; i++) {
+	            int index = random.nextInt(characters.length());
+	            sb.append(characters.charAt(index));
+	        }
+	        return sb.toString();
+	    }
+		
+	
+		
+		
+		
+	
 
 
 	// ******************************************************************************************************************************************************************************************************************	

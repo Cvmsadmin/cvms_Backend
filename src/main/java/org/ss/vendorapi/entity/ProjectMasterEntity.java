@@ -3,8 +3,6 @@ package org.ss.vendorapi.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +15,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "project_master")
-public class ProjectMasterEntity extends ParentEntity implements Serializable{
+public class ProjectMasterEntity implements Serializable{
 
 	@Id
 	@Column(name="id")
@@ -59,29 +57,24 @@ public class ProjectMasterEntity extends ParentEntity implements Serializable{
 	@Column(name = "gst_no")
 	private String gstNo;
 
-	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "start_date")
 	private Date startDate;
 
-	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "end_date")
 	private Date endDate;
 
 	@Column(name = "duration")
 	private String duration;
 
-	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "date_of_loi")
 	private Date dateOfLoi;
 
-	@JsonFormat(pattern="dd/MM/yyyy")
-	@Column(name = "t_date")
-	private Date tDate;
+	@Column(name = "t0_date")
+	private Date t0Date;
 
 	@Column(name = "loi_no")
 	private String loiNo;
 
-	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "date_of_loa")
 	private Date dateOfLoa;
 
@@ -91,18 +84,35 @@ public class ProjectMasterEntity extends ParentEntity implements Serializable{
 	@Column(name = "project_manager")
 	private String projectManager;
 
-	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "contract_date")
 	private Date contractDate;
 
-	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "sing_of_date")
 	private Date singOfDate;
 
 	@Column(name = "contract_price")
 	private String contractPrice;
 
+	@Column(name = "serial_no")
+	private String srNo;
 	
+	@Column(name = "days")
+	private String days;
+	
+	@Column(name = "deliverables")
+	private String deliverables;
+	
+	@Column(name = "amount_exclu_gst")
+	private String amountExcluGst;
+	
+	@Column(name = "gst_per")
+	private String gstPer;
+	
+	@Column(name = "gst_amount")
+	private String gstAmount;
+	
+	@Column(name = "amount_inclu_gst")
+	private String amountIncluGst;
 
 
 	    
