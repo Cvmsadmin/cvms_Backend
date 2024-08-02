@@ -3,6 +3,8 @@ package org.ss.vendorapi.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,6 +43,7 @@ public class PurchaseMasterEntity extends ParentEntity implements Serializable{
 	@Column(name = "purchase_register_no")
 	private String prNo;
 
+	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "purchase_register_date")
 	private Date prDate;
 
@@ -50,6 +53,7 @@ public class PurchaseMasterEntity extends ParentEntity implements Serializable{
 	@Column(name = "status")
 	private String status;
 
+	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "approve_date")
 	private Date approveDate;
 

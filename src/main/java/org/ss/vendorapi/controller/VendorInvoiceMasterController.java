@@ -84,22 +84,6 @@ public class VendorInvoiceMasterController {
 				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
 			}	
 
-			/** START ::: CHECK VALID MOBILE ::: THIS METHOD WILL CHECK VALID MOBILE NUMBER AND RETURN NULL IN CASE OF VALID MOBILE NUMBER  OTHERWISE RETURN MESSAGE ENTITY FOR INVALID MOBILE NUMBER*/
-
-			//			responseEntity=dataValidationService.checkValidMobileNumber(VendorInvoiceMEntity.getPhone(), methodName, UPPCLLogger.MODULE_REGISTRATION);
-			//			if(responseEntity!=null)
-			//				return responseEntity;
-
-			/** END ::: CHECK VALID MOBILE */
-
-			/** START ::: CHECK VALID EMAIL ::: THIS METHOD WILL CHECK VALID EMAIL AND RETURN NULL IN CASE OF VALID EMAIL ID  OTHERWISE RETURN MESSAGE ENTITY FOR INVALID EMAIL ID */
-
-			//			responseEntity=dataValidationService.checkValidEmailId(VendorInvoiceMEntity.getEmail(), methodName, UPPCLLogger.MODULE_REGISTRATION);
-			//			if(responseEntity!=null)
-			//				return responseEntity;
-
-			/** END ::: CHECK VALID EMAIl */
-
 
 			vendorInvoiceCreationEntityObj=new VendorInvoiceMasterEntity();
 			vendorInvoiceCreationEntityObj.setVendorId(VendorInvoiceMEntity.getVendorId());

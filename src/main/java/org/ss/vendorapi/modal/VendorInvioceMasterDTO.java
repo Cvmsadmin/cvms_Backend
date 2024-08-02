@@ -2,6 +2,8 @@ package org.ss.vendorapi.modal;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 
 @Data
@@ -11,15 +13,18 @@ public class VendorInvioceMasterDTO {
 	private String vendorName;
 	private String clientName;
 	private String projectName;
+	@JsonFormat(pattern="dd/MM/yyyy")
 	private Date invoiceDate;
 	private String invoiceNo;
 	private String poNo;
+	@JsonFormat(pattern="dd/MM/yyyy")
 	private Date invoiceDueDate;
 	private String invoiceDescription;
 	private String gstPer;
 	private String invoiceAmountExcluGst;
 	private String invoiceAmountIncluGst;
 	private String status;
+	@JsonFormat(pattern="dd/MM/yyyy")
 	private Date date;
 	private String tdsDeducted;
 	private String amount;

@@ -1,5 +1,6 @@
 package org.ss.vendorapi.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ public class ProjectMasterServiceImpl implements ProjectMasterService{
 	@Autowired 
 	private ProjectMasterRepository projectMasterRepository;
 
-	
+
 	@Override
 	public List<ProjectMasterEntity> getAllProject(){
 		return projectMasterRepository.findAll();
@@ -23,7 +24,25 @@ public class ProjectMasterServiceImpl implements ProjectMasterService{
 
 	@Override
 	public ProjectMasterEntity save(ProjectMasterEntity projectMasterEntity) {
+		projectMasterEntity.setActive(1);
+		projectMasterEntity.setCreateDate(new Date());
 		return projectMasterRepository.save(projectMasterEntity);
 	}
+
+
+
+	@Override
+	public ProjectMasterEntity update(ProjectMasterEntity projectMasterEntity) {
+		projectMasterEntity.setUpdateDate(new Date());
+		return projectMasterRepository.save(projectMasterEntity);
+	}
+
+
+
+	@Override
+	public ProjectMasterEntity findById(Long id) {
+		return projectMasterRepository.findById(id).orElse(null);
+	}
+
 
 }
