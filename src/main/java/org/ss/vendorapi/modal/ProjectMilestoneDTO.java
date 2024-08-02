@@ -18,6 +18,7 @@ public class ProjectMilestoneDTO {
     private String deliverables;
     private String amountExcluGst;
     
-    private String gst;
+    private String gstRate;
+    private String gstAmount;
     private String amountIncluGst;
 }

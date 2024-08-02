@@ -33,7 +33,7 @@ public class ClientInvoiceMasterDTO {
 	private String penaltyDeductionOnBase;
 	private String gstOnPenalty;
 	private String totalPenaltyDeduction;
-	private String totalPenaltyReceived;
+	private String totalPaymentReceived;
 	private String tdsDeductionIncluGst;
 //	private byte[] invoiceUpload;
 //	private byte[] po;

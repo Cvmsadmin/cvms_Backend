@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.entity.PurchaseBOMMasterEntity;
 import org.ss.vendorapi.entity.PurchaseMasterEntity;
@@ -153,39 +154,7 @@ public class PurchaseMasterController {
 
 
 
-	//	    ***********************************************************************************************************************************************************************
-	//	    ******************************************************************************get api *********************************************************************************
-
-
-	//	@GetMapping("/getPurchase")
-	//	public ResponseEntity<?> getAllPurchase(@RequestBody PurchaseMasterDTO purchaseMasterDTO) {
-	//		Map<String, Object> statusMap = new HashMap<>();
-	//		try {
-	//
-	//			if(purchaseMasterDTO !=null && purchaseMasterDTO.getId()!=null ) {
-	//				PurchaseMasterEntity purchaseMasterEntity=purchaseMasterService.findById(purchaseMasterDTO.getId());
-	//
-	//
-	//				if(purchaseMasterEntity!=null) {
-	//					return new ResponseEntity<>(purchaseMasterEntity, HttpStatus.OK);
-	//
-	//				}else {
-	//
-	//					statusMap.put("Status", "FAIL");
-	//					statusMap.put("StatusCode", "RU_301");
-	//					statusMap.put("StatusMessage", "NOT FOUND");
-	//					return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
-	//				}
-	//			}else {
-	//				List<PurchaseMasterEntity> purchaseMasterEntityList = purchaseMasterService.findAll();
-	//				return new ResponseEntity<>(purchaseMasterEntityList, HttpStatus.OK);
-	//			}
-	//
-	//		} catch (Exception ex) {
-	//			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-	//		}
-	//
-	//	}
+	
 	@GetMapping("/getAllPurchase")
 	public ResponseEntity<?> getAllPurchase() {
 		Map<String, Object> statusMap = new HashMap<>();
@@ -202,12 +171,15 @@ public class PurchaseMasterController {
 		}
 	}
 
+	
 	@GetMapping("/getAllBOMDetails")
-	public ResponseEntity<?> getAllBOMPurchaseDetails(@RequestBody PurchaseBOMMasterDTO purchaseMasterDTO){
+	public ResponseEntity<?> getAllBOMPurchaseDetails(@RequestParam String purchaseId){
 		Map<String, Object> statusMap = new HashMap<>();
 		try {
 
-			List<PurchaseBOMMasterEntity> purchaseBOMMasterEntity=purchaseBOMService.findByPurchaseId(purchaseMasterDTO.getPurchaseId());
+			List<PurchaseBOMMasterEntity> purchaseBOMMasterEntity=purchaseBOMService.findByPurchaseId(purchaseId);
+
+
 
 
 			statusMap.put("PurchaseBOMMasterEntity",purchaseBOMMasterEntity);

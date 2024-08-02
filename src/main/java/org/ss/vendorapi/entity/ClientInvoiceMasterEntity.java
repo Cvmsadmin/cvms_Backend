@@ -3,6 +3,8 @@ package org.ss.vendorapi.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,6 +37,7 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	@Column(name = "discom")
 	private String discom;
 
+	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "invoice_date")
 	private Date invoiceDate;
 
@@ -44,6 +47,7 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	@Column(name = "invoice_description")
 	private String invoiceDescription;
 
+	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "invoice_due_date")
 	private Date invoiceDueDate;
 
@@ -98,8 +102,8 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	@Column(name = "total_penalty_deduction")
 	private String totalPenaltyDeduction;
 
-	@Column(name = "total_penalty_received")
-	private String totalPenaltyReceived;
+	@Column(name = "total_payment_received")
+	private String totalPaymentReceived;
 
 	@Column(name = "tds_deduction_inclu_gst")
 	private String tdsDeductionIncluGst;

@@ -1,5 +1,6 @@
 package org.ss.vendorapi.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
 
 	@Override
 	public VendorInvoiceMasterEntity save(VendorInvoiceMasterEntity vendorInvoiceMasterEntity) {
+		vendorInvoiceMasterEntity.setActive(1);
+		vendorInvoiceMasterEntity.setCreateDate(new Date());
 		return vendorinviceMasterRepository.save(vendorInvoiceMasterEntity);
 	}
 

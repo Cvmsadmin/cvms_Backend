@@ -8,5 +8,8 @@ public interface ProjectMasterService {
 	
 	public ProjectMasterEntity save(ProjectMasterEntity projectMasterEntity);
 	public List<ProjectMasterEntity> getAllProject();
+	public ProjectMasterEntity update(ProjectMasterEntity projectMasterEntity);
+	public ProjectMasterEntity findById(Long id);
+
 
 }

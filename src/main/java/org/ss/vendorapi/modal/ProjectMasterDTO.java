@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ProjectMasterDTO {
 
-	private String srNo;
+	private String serialNumber;
     private String days;
     private String deliverables;
     private String amountExcluGst;
