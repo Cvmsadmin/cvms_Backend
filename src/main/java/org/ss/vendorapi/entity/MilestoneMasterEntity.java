@@ -30,7 +30,8 @@ public class MilestoneMasterEntity extends ParentEntity implements Serializable{
 	private String deliverables;
 
 	private String amountExclGst;
-	private String gst;
+	private String gstRate;
+	private String gstAmount;
 	private String amountInclGst;
 	
 }

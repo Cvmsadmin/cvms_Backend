@@ -55,7 +55,7 @@ public class ClientInvoiceMasterController {
 
 
 
-	//	*****************************************************************************************************************************************************************************
+	
 
 	@PostMapping("/addClientInvoices")
 	public ResponseEntity<?> addClientInvoices(@RequestBody ClientInvoiceMasterDTO clientInvoiceDTO,HttpServletRequest request){
@@ -67,131 +67,113 @@ public class ClientInvoiceMasterController {
 
 		Map<String,Object> statusMap= new HashMap<String,Object>();
 
-		 
-		try{
+		 try {
 
-			if(UtilValidate.isEmpty(clientInvoiceDTO.getClientId()) || 
-					UtilValidate.isEmpty(clientInvoiceDTO.getClientName()) || 
-					UtilValidate.isEmpty(clientInvoiceDTO.getProjectName()) || 
-					UtilValidate.isEmpty(clientInvoiceDTO.getDiscom()) || 
-					UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceDate()) || 
-					UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceNo()) || 
-					UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceDescription()) || 
-					UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceDueDate()) || 
-					UtilValidate.isEmpty(clientInvoiceDTO.getGstPer())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getGstAmount())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceAmountExcluGst())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceAmountIncluGst())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getStatus())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceBaseValue())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getGstBaseValue())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceInclusiveOfGst())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getTdsBaseValue())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getCgstOnTds())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getSgstOnTds())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getTotalTdsDeducted())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getBalance())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getPenalty())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getPenaltyDeductionOnBase())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getGstOnPenalty())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getTotalPenaltyDeduction())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getTotalPenaltyReceived())||
-					UtilValidate.isEmpty(clientInvoiceDTO.getTdsDeductionIncluGst())
-					){
-				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
-			}	
+		if(UtilValidate.isEmpty(clientInvoiceDTO.getClientId()) || 
+				UtilValidate.isEmpty(clientInvoiceDTO.getClientName()) || 
+				UtilValidate.isEmpty(clientInvoiceDTO.getProjectName()) || 
+				UtilValidate.isEmpty(clientInvoiceDTO.getDiscom()) || 
+				UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceDate()) || 
+				UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceNo()) || 
+				UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceDescription()) || 
+				UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceDueDate()) || 
+				UtilValidate.isEmpty(clientInvoiceDTO.getGstPer())||
+				UtilValidate.isEmpty(clientInvoiceDTO.getGstAmount())||
+				UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceAmountExcluGst())||
+				UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceAmountIncluGst())||
+				UtilValidate.isEmpty(clientInvoiceDTO.getStatus())
+				
+				){
+			return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+		}	
 
-			/** START ::: CHECK VALID MOBILE ::: THIS METHOD WILL CHECK VALID MOBILE NUMBER AND RETURN NULL IN CASE OF VALID MOBILE NUMBER  OTHERWISE RETURN MESSAGE ENTITY FOR INVALID MOBILE NUMBER*/
+		
 
-			//			responseEntity=dataValidationService.checkValidMobileNumber(VendorInvoiceMEntity.getPhone(), methodName, UPPCLLogger.MODULE_REGISTRATION);
-			//			if(responseEntity!=null)
-			//				return responseEntity;
-
-			/** END ::: CHECK VALID MOBILE */
-
-			/** START ::: CHECK VALID EMAIL ::: THIS METHOD WILL CHECK VALID EMAIL AND RETURN NULL IN CASE OF VALID EMAIL ID  OTHERWISE RETURN MESSAGE ENTITY FOR INVALID EMAIL ID */
-
-			//			responseEntity=dataValidationService.checkValidEmailId(VendorInvoiceMEntity.getEmail(), methodName, UPPCLLogger.MODULE_REGISTRATION);
-			//			if(responseEntity!=null)
-			//				return responseEntity;
-
-			/** END ::: CHECK VALID EMAIl */
-
-			ClientInvoiceMasterEntity clientInvoice=new ClientInvoiceMasterEntity();
+		ClientInvoiceMasterEntity clientInvoice=new ClientInvoiceMasterEntity();
+		
+		clientInvoice.setClientId(clientInvoiceDTO.getClientId());
+		clientInvoice.setClientName(clientInvoiceDTO.getClientName());
+		clientInvoice.setProjectName(clientInvoiceDTO.getProjectName());
+		clientInvoice.setDiscom(clientInvoiceDTO.getDiscom());
+		clientInvoice.setInvoiceDate(clientInvoiceDTO.getInvoiceDate());
+		clientInvoice.setInvoiceNo(clientInvoiceDTO.getInvoiceNo());
+		clientInvoice.setInvoiceDescription(clientInvoiceDTO.getInvoiceDescription());
+		clientInvoice.setInvoiceDueDate(clientInvoiceDTO.getInvoiceDueDate());
+		clientInvoice.setGstPer(clientInvoiceDTO.getGstPer());
+		clientInvoice.setGstAmount(clientInvoiceDTO.getGstAmount());
+		clientInvoice.setInvoiceAmountExcluGst(clientInvoiceDTO.getInvoiceAmountExcluGst());
+		clientInvoice.setInvoiceAmountIncluGst(clientInvoiceDTO.getInvoiceAmountIncluGst());
+		clientInvoice.setStatus(clientInvoiceDTO.getStatus());
+		
+		if(clientInvoiceDTO.getStatus().equalsIgnoreCase("completed")) {
 			
-			clientInvoice.setClientId(clientInvoiceDTO.getClientId());
-			clientInvoice.setClientName(clientInvoiceDTO.getClientName());
-			clientInvoice.setProjectName(clientInvoiceDTO.getProjectName());
-			clientInvoice.setDiscom(clientInvoiceDTO.getDiscom());
-			clientInvoice.setInvoiceDate(clientInvoiceDTO.getInvoiceDate());
-			clientInvoice.setInvoiceNo(clientInvoiceDTO.getInvoiceNo());
-			clientInvoice.setInvoiceDescription(clientInvoiceDTO.getInvoiceDescription());
-			clientInvoice.setInvoiceDueDate(clientInvoiceDTO.getInvoiceDueDate());
-			clientInvoice.setGstPer(clientInvoiceDTO.getGstPer());
-			clientInvoice.setGstAmount(clientInvoiceDTO.getGstAmount());
-			clientInvoice.setInvoiceAmountExcluGst(clientInvoiceDTO.getInvoiceAmountExcluGst());
-			clientInvoice.setInvoiceAmountIncluGst(clientInvoiceDTO.getInvoiceAmountIncluGst());
-			clientInvoice.setStatus(clientInvoiceDTO.getStatus());
-			clientInvoice.setInvoiceBaseValue(clientInvoiceDTO.getInvoiceBaseValue());
-			clientInvoice.setGstBaseValue(clientInvoiceDTO.getGstBaseValue());
-			clientInvoice.setInvoiceInclusiveOfGst(clientInvoiceDTO.getInvoiceInclusiveOfGst());
-			clientInvoice.setTdsBaseValue(clientInvoiceDTO.getTdsBaseValue());
-			clientInvoice.setCgstOnTds(clientInvoiceDTO.getCgstOnTds());
-			clientInvoice.setSgstOnTds(clientInvoiceDTO.getSgstOnTds());
-			clientInvoice.setTotalTdsDeducted(clientInvoiceDTO.getTotalTdsDeducted());
-			clientInvoice.setBalance(clientInvoiceDTO.getBalance());
-			clientInvoice.setPenalty(clientInvoiceDTO.getPenalty());
-			clientInvoice.setPenaltyDctionOnBase(clientInvoiceDTO.getPenaltyDeductionOnBase());
-			clientInvoice.setGstOnPenalty(clientInvoiceDTO.getGstOnPenalty());
-			clientInvoice.setTotalPenaltyDeduction(clientInvoiceDTO.getTotalPenaltyDeduction());
-			clientInvoice.setTotalPenaltyReceived(clientInvoiceDTO.getTotalPenaltyReceived());
-			clientInvoice.setTdsDeductionIncluGst(clientInvoiceDTO.getTdsDeductionIncluGst());
+		if(	UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceBaseValue())||
+			UtilValidate.isEmpty(clientInvoiceDTO.getGstBaseValue())||
+			UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceInclusiveOfGst())||
+			UtilValidate.isEmpty(clientInvoiceDTO.getTdsBaseValue())||
+			UtilValidate.isEmpty(clientInvoiceDTO.getCgstOnTds())||
+			UtilValidate.isEmpty(clientInvoiceDTO.getSgstOnTds())||
+			UtilValidate.isEmpty(clientInvoiceDTO.getTotalTdsDeducted())||
+			UtilValidate.isEmpty(clientInvoiceDTO.getBalance())||
+			UtilValidate.isEmpty(clientInvoiceDTO.getPenalty())||
+			UtilValidate.isEmpty(clientInvoiceDTO.getPenaltyDeductionOnBase())||
+			UtilValidate.isEmpty(clientInvoiceDTO.getGstOnPenalty())||
+			UtilValidate.isEmpty(clientInvoiceDTO.getTotalPenaltyDeduction())||
+			UtilValidate.isEmpty(clientInvoiceDTO.getTotalPaymentReceived())||
+			UtilValidate.isEmpty(clientInvoiceDTO.getTdsDeductionIncluGst())) {
+			
+			return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+		}
+		}
+		
+		clientInvoice.setInvoiceBaseValue(clientInvoiceDTO.getInvoiceBaseValue());
+		clientInvoice.setGstBaseValue(clientInvoiceDTO.getGstBaseValue());
+		clientInvoice.setInvoiceInclusiveOfGst(clientInvoiceDTO.getInvoiceInclusiveOfGst());
+		clientInvoice.setTdsBaseValue(clientInvoiceDTO.getTdsBaseValue());
+		clientInvoice.setCgstOnTds(clientInvoiceDTO.getCgstOnTds());
+		clientInvoice.setSgstOnTds(clientInvoiceDTO.getSgstOnTds());
+		clientInvoice.setTotalTdsDeducted(clientInvoiceDTO.getTotalTdsDeducted());
+		clientInvoice.setBalance(clientInvoiceDTO.getBalance());
+		clientInvoice.setPenalty(clientInvoiceDTO.getPenalty());
+		clientInvoice.setPenaltyDctionOnBase(clientInvoiceDTO.getPenaltyDeductionOnBase());
+		clientInvoice.setGstOnPenalty(clientInvoiceDTO.getGstOnPenalty());
+		clientInvoice.setTotalPenaltyDeduction(clientInvoiceDTO.getTotalPenaltyDeduction());
+		clientInvoice.setTotalPaymentReceived(clientInvoiceDTO.getTotalPaymentReceived());
+		clientInvoice.setTdsDeductionIncluGst(clientInvoiceDTO.getTdsDeductionIncluGst());
 
-			//			********************************************************************************************************************************
+		
+		try{
+			clientInvoice=clientInvoiceService.save(clientInvoice);
 
-			// The following lines are commented out as the fields are commented out in the entity
-			// clientInvoiceCreationEntityObj.setInvoiceUpload(ClientInvoiceMEntity.getInvoiceUpload());
-			// clientInvoiceCreationEntityObj.setPo(ClientInvoiceMEntity.getPo());
-			// clientInvoiceCreationEntityObj.setDeliveryAcceptance(ClientInvoiceMEntity.getDeliveryAcceptance());
-			// clientInvoiceCreationEntityObj.setEWayBill(ClientInvoiceMEntity.getEWayBill());
-			// clientInvoiceCreationEntityObj.setMiscellaneous(ClientInvoiceMEntity.getMiscellaneous());
-
-			//			**********************************************************************************************************************************
-
-			try{
-				/* SAVE THE USER TO THE DB ENTITY */
-				clientInvoice=clientInvoiceService.save(clientInvoice);
-
-				if(clientInvoice!=null) {
-					statusMap.put(Parameters.statusMsg,  StatusMessageConstants.CLIENT_INVOICE_GENERATED_SUCCESSFULLY);
-					statusMap.put(Parameters.status, Constants.SUCCESS);
-					statusMap.put(Parameters.statusCode, "RU_200");
-					return new ResponseEntity<>(statusMap,HttpStatus.OK);
-				}else {
-					statusMap.put(Parameters.statusMsg,  StatusMessageConstants.CLIENT_INVOICE_NOT_GENERATED);
-					statusMap.put(Parameters.status, Constants.FAIL);
-					statusMap.put(Parameters.statusCode, "RU_301");
-					return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
-				}
-			}
-			catch(Exception ex)
-			{
-//				logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 2. Failed to save user in DB response : "+ex.getMessage());
-				statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
-				statusMap.put(Parameters.statusCode, Constants.SVD_USR);
+			if(clientInvoice!=null) {
+				statusMap.put(Parameters.statusMsg,  StatusMessageConstants.CLIENT_INVOICE_GENERATED_SUCCESSFULLY);
+				statusMap.put(Parameters.status, Constants.SUCCESS);
+				statusMap.put(Parameters.statusCode, "RU_200");
+				return new ResponseEntity<>(statusMap,HttpStatus.OK);
+			}else {
+				statusMap.put(Parameters.statusMsg,  StatusMessageConstants.CLIENT_INVOICE_NOT_GENERATED);
 				statusMap.put(Parameters.status, Constants.FAIL);
-				return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
+				statusMap.put(Parameters.statusCode, "RU_301");
+				return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
 			}
 		}
 		catch(Exception ex)
 		{
-//			if (logger.isErrorLoggingEnabled()) {
-//				logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage() );
-//			}
-			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//			logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 2. Failed to save user in DB response : "+ex.getMessage());
+			statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
+			statusMap.put(Parameters.statusCode, Constants.SVD_USR);
+			statusMap.put(Parameters.status, Constants.FAIL);
+			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
 		}
 	}
-
+	catch(Exception ex)
+	{
+//		if (logger.isErrorLoggingEnabled()) {
+//			logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage() );
+//		}
+		return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	}
 
 	//	*************************************************************************************************************************************************************************************
 	//	*********************************************************************************get api****************************************************************************************************
@@ -200,8 +182,13 @@ public class ClientInvoiceMasterController {
 	@GetMapping("/getAllClientInvoice")
 	 public ResponseEntity<?> getAllClientInvoices() {
 		    try {
+		    	Map<String,Object> statusMap=new HashMap<>();
 		        List<ClientInvoiceMasterEntity> clientInvoiceList = clientInvoiceService.findAll();
-		        return new ResponseEntity<>(clientInvoiceList, HttpStatus.OK);
+		        statusMap.put("ClientInvoiceMasterEntity",clientInvoiceList);
+				statusMap.put("Status","Success");
+				statusMap.put("Status_Code","RU_200");
+				statusMap.put("StatusMessage","SuccessFully Found");
+				return new ResponseEntity<>(statusMap,HttpStatus.OK);
 		    } catch (Exception ex) {
 		        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		    }

@@ -3,6 +3,8 @@ package org.ss.vendorapi.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +16,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "vendor_invoice_master")
-public class VendorInvoiceMasterEntity implements Serializable{
+public class VendorInvoiceMasterEntity extends ParentEntity implements Serializable{
 	
 	private static final long serialVersionUID = 10L;
 	
@@ -22,9 +24,8 @@ public class VendorInvoiceMasterEntity implements Serializable{
 	@Column(name="id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
 
-    @Column(name = "vendor_id")
+	@Column(name = "vendor_id")
     private String vendorId;
 
     @Column(name = "vendor_name")
@@ -36,6 +37,7 @@ public class VendorInvoiceMasterEntity implements Serializable{
     @Column(name = "project_name")
     private String projectName;
 
+    @JsonFormat(pattern="dd/MM/yyyy")
     @Column(name = "invoice_date")
     private Date invoiceDate;
 
@@ -45,6 +47,7 @@ public class VendorInvoiceMasterEntity implements Serializable{
     @Column(name = "purchase_order_no")
     private String poNo;
 
+    @JsonFormat(pattern="dd/MM/yyyy")
     @Column(name = "invoice_due_date")
     private Date invoiceDueDate;
 
@@ -63,6 +66,7 @@ public class VendorInvoiceMasterEntity implements Serializable{
     @Column(name = "status")
     private String status;
 
+    @JsonFormat(pattern="dd/MM/yyyy")
     @Column(name = "date")
     private Date date;
 
@@ -80,6 +84,8 @@ public class VendorInvoiceMasterEntity implements Serializable{
 
     @Column(name = "total_amount")
     private String totalAmount;
+
+
 
 //    @Column(name = "invoice_upload")
 //    private byte[] invoiceUpload;
