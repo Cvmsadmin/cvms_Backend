@@ -44,7 +44,7 @@ public class UserMasterController{
 	@Autowired 
 	private Environment env;
 
-	@Autowired private UserMasterService userMasterService;
+	//@Autowired private UserMasterService userMasterService;
 	@Autowired private UserCreationService userCreationService;
 
 

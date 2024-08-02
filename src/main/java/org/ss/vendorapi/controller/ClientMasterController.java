@@ -81,16 +81,12 @@ public class ClientMasterController {
 			if(responseEntity!=null)
 				return responseEntity;
 
-			/** END ::: CHECK VALID MOBILE */
-
-			/** START ::: CHECK VALID EMAIL ::: THIS METHOD WILL CHECK VALID EMAIL AND RETURN NULL IN CASE OF VALID EMAIL ID  OTHERWISE RETURN MESSAGE ENTITY FOR INVALID EMAIL ID */
-
+			
 //			responseEntity=dataValidationService.checkValidEmailId(addClientMEntity.getEmail(), methodName, UPPCLLogger.MODULE_REGISTRATION);
 			if(responseEntity!=null)
 				return responseEntity;
 
-			/** END ::: CHECK VALID EMAIl */
-
+			
 
 			clientCreationEntityObj=new ClientMasterEntity();
 			clientCreationEntityObj.setClientName(addClientMEntity.getClientName());
