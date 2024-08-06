@@ -184,10 +184,11 @@ public class ClientInvoiceMasterController {
 		    try {
 		    	Map<String,Object> statusMap=new HashMap<>();
 		        List<ClientInvoiceMasterEntity> clientInvoiceList = clientInvoiceService.findAll();
+		        
 		        statusMap.put("ClientInvoiceMasterEntity",clientInvoiceList);
-				statusMap.put("Status","Success");
-				statusMap.put("Status_Code","RU_200");
-				statusMap.put("StatusMessage","SuccessFully Found");
+		        statusMap.put(Parameters.statusMsg,  StatusMessageConstants.CLIENT_INVOICE_GENERATED_SUCCESSFULLY);
+				statusMap.put(Parameters.status, Constants.SUCCESS);
+				statusMap.put(Parameters.statusCode, "RU_200");
 				return new ResponseEntity<>(statusMap,HttpStatus.OK);
 		    } catch (Exception ex) {
 		        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

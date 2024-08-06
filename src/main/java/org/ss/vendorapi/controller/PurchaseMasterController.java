@@ -27,6 +27,7 @@ import org.ss.vendorapi.service.PurchaseMasterService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
 import org.ss.vendorapi.util.Parameters;
+import org.ss.vendorapi.util.StatusMessageConstants;
 import org.ss.vendorapi.util.UtilValidate;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -131,12 +132,12 @@ public class PurchaseMasterController {
 				}
 			}
 			if(purchaseMaster!=null) {
-				statusMap.put("statusMsg", "Purchase Created" );
-				statusMap.put("status", Constants.SUCCESS);
-				statusMap.put("statusCode", "RU_200");
+				statusMap.put(Parameters.statusMsg, StatusMessageConstants.PURCHASE_CREATED_SUCCESSFULLY);
+                statusMap.put(Parameters.status, Constants.SUCCESS);
+                statusMap.put(Parameters.statusCode, "RU_200");
 				return new ResponseEntity<>(statusMap,HttpStatus.OK);
 			}else {
-				statusMap.put(Parameters.statusMsg,"purchase Not Created" );
+				statusMap.put(Parameters.statusMsg, StatusMessageConstants.PURCHASE_NOT_CREATED );
 				statusMap.put(Parameters.status, Constants.FAIL);
 				statusMap.put(Parameters.statusCode, "RU_301");
 				return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
