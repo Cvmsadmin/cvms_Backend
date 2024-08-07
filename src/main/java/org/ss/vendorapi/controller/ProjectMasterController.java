@@ -156,7 +156,7 @@ public class ProjectMasterController {
 	                statusMap.put(Parameters.statusCode, "RU_200");
 	                return new ResponseEntity<>(statusMap, HttpStatus.OK);
 	            } else {
-	                statusMap.put(Parameters.statusMsg, StatusMessageConstants.PURCHASE_NOT_CREATED);
+	                statusMap.put(Parameters.statusMsg, StatusMessageConstants.PROJECT_NOT_CREATED);
 	                statusMap.put(Parameters.status, Constants.FAIL);
 	                statusMap.put(Parameters.statusCode, "RU_301");
 	                return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
@@ -179,8 +179,9 @@ public class ProjectMasterController {
 		    try {
 		        List<ProjectMasterEntity> projectList = projectMasterService.getAllProject();
 		        statusMap.put("ProjectMasterEntity",projectList);
-				statusMap.put("Status","Success");
-				statusMap.put("Status_Code","RU_200");
+		        statusMap.put(Parameters.statusMsg,  StatusMessageConstants.PROJECT_FOUND_SUCCESSFULLY);
+				statusMap.put(Parameters.status, Constants.SUCCESS);
+				statusMap.put(Parameters.statusCode, "RU_200");
 				return new ResponseEntity<>(statusMap,HttpStatus.OK);
 		    } catch (Exception ex) {
 		        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -195,8 +196,9 @@ public class ProjectMasterController {
 	    	List<MilestoneMasterEntity> milestoneList=milestoneMasterService.findByProjectId(projectId);
 	    	
 	    	statusMap.put("MilestoneMasterEntity",milestoneList);
-			statusMap.put("Status","Success");
-			statusMap.put("Status_Code","RU_200");
+	    	statusMap.put(Parameters.statusMsg,  StatusMessageConstants.PROJECT_FOUND_SUCCESSFULLY);
+			statusMap.put(Parameters.status, Constants.SUCCESS);
+			statusMap.put(Parameters.statusCode, "RU_200");
 
 			return new ResponseEntity<>(statusMap,HttpStatus.OK);
 
