@@ -10,7 +10,7 @@ public class StatusMessageConstants {
 	
 	public static final String CLIENT_INVOICE_GENERATED_SUCCESSFULLY="Client Invoice generated successfully";
 	public static final String CLIENT_INVOICE_NOT_GENERATED = "Client Invoice not generated";
-	
+	public static final String CLIENT_FOUND_SUCCESSFULLY="Client found successfully";
 //	***********************************************client_master**************************************************************
 	
 	public static final String CLIENT_REGISTERED_SUCCESSFULLY="CLient registered successfully";
@@ -20,22 +20,22 @@ public class StatusMessageConstants {
 	
 	public static final String PROFIT_LOSS_GENERATED_SUCCESSFULLY="Profit loss generated successfully";
 	public static final String PROFIT_LOSS__NOT_GENERATED = "Profit Loss not generated";
-	
+	public static final String PROFIT_LOSS_FOUND_SUCCESSFULLY="Profit Loss found successfully";
 //	***********************************************project_master*************************************************************
 	
 	public static final String PROJECT_CREATED_SUCCESSFULLY="Project created successfully";
 	public static final String PROJECT_NOT_CREATED = "Project not created";
-	
+	public static final String PROJECT_FOUND_SUCCESSFULLY="Project found successfully";
 //	***********************************************purchase_master***********************************************************
 	
 	public static final String PURCHASE_CREATED_SUCCESSFULLY="Purchase created successfully";
 	public static final String PURCHASE_NOT_CREATED = "Purchase not created";
-	
+	public static final String PURCHASE_FOUND_SUCCESSFULLY="Purchase found successfully";
 //	***********************************************service_master*************************************************************
 	
 	public static final String SERVICE_CREATED_SUCCESSFULLY="Service created successfully";
 	public static final String SERVICE_NOT_CREATED = "Service not created";
-	
+	public static final String SERVICE_FOUND_SUCCESSFULLY="Service found successfully";
 //	***********************************************user_master*****************************************************************
 	
 	public static final String USER_REGISTERED_SUCCESSFULLY="User registered successfully";
@@ -51,7 +51,7 @@ public class StatusMessageConstants {
 	
 	public static final String VENDOR_INVOICE_GENERATED_SUCCESSFULLY="Vendor Invoice generated Successfully";
 	public static final String VENDOR_INVOICE_NOT_GENERATED = "Vendor Invoice not generated";
-	
+	public static final String VENDOR__FOUND_SUCCESSFULLY="Vendor found successfully";
 	
 	
 	
