@@ -22,6 +22,7 @@ import org.ss.vendorapi.config.AESDecryptionService;
 import org.ss.vendorapi.config.EncryptSecurityUtil;
 import org.ss.vendorapi.entity.LoginRequest;
 import org.ss.vendorapi.entity.RefreshToken;
+import org.ss.vendorapi.modal.ForgotPasswordRequest;
 import org.ss.vendorapi.modal.response.JwtResponse;
 import org.ss.vendorapi.security.JwtHelper;
 import org.ss.vendorapi.service.CustomUserDetailService;
@@ -36,19 +37,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/v2/api")
-public class LoginController{
+public class LoginController {
 
 	private static final Class<?> CLASS_NAME = LoginController.class;
 //	private static UPPCLLogger logger = UPPCLLogger.getInstance(UPPCLLogger.MODULE_BILLING,CLASS_NAME.toString());
 
-	@Autowired private Environment env;
-	
-	@Autowired private UserMasterService registerUserService;
-	
+	@Autowired
+	private Environment env;
+
+	@Autowired
+	private UserMasterService userMasterService;
+
 	@Autowired
 	private AESDecryptionService aesDecryptionService;
 
@@ -70,133 +72,166 @@ public class LoginController{
 	@Autowired
 	private ObjectMapper objMapper;
 
+	private String secret_key;
 
-	public static final String UTILITY_USER_ROLE="UtilityUser";
-	public static final String END_CONSUMER_ROLE="EndConsumer";
+	private String secret_iv;
 
+	public static final String UTILITY_USER_ROLE = "UtilityUser";
+	public static final String END_CONSUMER_ROLE = "EndConsumer";
 
 	@PostMapping("/userLogin")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
+	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
 
-        Map<String, Object> statusMap = new HashMap<>();
-        String methodName = request.getRequestURI();
-        // logger.logMethodStart(methodName);
-        JwtResponse response = new JwtResponse();
-        try {
-            String email = loginRequest.getEmail();
-            String password = loginRequest.getPassword();
+		Map<String, Object> statusMap = new HashMap<>();
+		String methodName = request.getRequestURI();
+		// logger.logMethodStart(methodName);
+		JwtResponse response = new JwtResponse();
+		try {
+			String email = loginRequest.getEmail();
+			String password = loginRequest.getPassword();
 
-            if (UtilValidate.isEmpty(email) || UtilValidate.isEmpty(password)) {
-                return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
-            }
+			if (UtilValidate.isEmpty(email) || UtilValidate.isEmpty(password)) {
+				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING,
+						HttpStatus.EXPECTATION_FAILED);
+			}
 
-            if (registerUserService.authenticateByEmail(email, encryptUtil.encode(password), END_CONSUMER_ROLE)) {
+			if (userMasterService.authenticateByEmail(email, encryptUtil.encode(password), END_CONSUMER_ROLE)) {
 
-                UserDetails userDetails = userDetailsService.loadUserByEmail(email);
-                String token = this.helper.generateToken(userDetails);
-                RefreshToken refreshToken = refreshTokenService.createRefreshTokenByEmail(userDetails.getUsername());
-                response = JwtResponse.builder().accessToken(token).refreshToken(refreshToken.getToken())
-                        .username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
-                statusMap.put(Parameters.status, Constants.SUCCESS);
-                statusMap.put(Parameters.statusCode, "LOGIN_200");
-                statusMap.put("response", response);
-                return new ResponseEntity<>(statusMap, HttpStatus.OK);
-            } else {
-                statusMap.put(Parameters.statusMsg, "Please enter a valid email or password.");
-                statusMap.put(Parameters.status, Constants.FAIL);
-                statusMap.put(Parameters.statusCode, "LOGIN_201");
-                return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
-            }
-        } catch (Exception ex) {
-            // if (logger.isErrorLoggingEnabled()) {
-            // logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName,
-            // "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage());
-            // }
-            return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-	
-	
-
+				UserDetails userDetails = userDetailsService.loadUserByEmail(email);
+				String token = this.helper.generateToken(userDetails);
+				RefreshToken refreshToken = refreshTokenService.createRefreshTokenByEmail(userDetails.getUsername());
+				response = JwtResponse.builder().accessToken(token).refreshToken(refreshToken.getToken())
+						.username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
+				statusMap.put(Parameters.status, Constants.SUCCESS);
+				statusMap.put(Parameters.statusCode, "LOGIN_200");
+				statusMap.put("response", response);
+				return new ResponseEntity<>(statusMap, HttpStatus.OK);
+			} else {
+				statusMap.put(Parameters.statusMsg, "Please enter a valid email or password.");
+				statusMap.put(Parameters.status, Constants.FAIL);
+				statusMap.put(Parameters.statusCode, "LOGIN_201");
+				return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			// if (logger.isErrorLoggingEnabled()) {
+			// logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName,
+			// "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage());
+			// }
+			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	@PostMapping("/adminLogin")
-	public ResponseEntity<?> loginAdmin(@RequestParam (required = false) String userId,
-			@RequestParam(required = false) String mobileNumber,@RequestParam String password , HttpServletRequest request)
-	{
-		Map<String,Object> statusMap= new HashMap<String,Object>();
+	public ResponseEntity<?> loginAdmin(@RequestParam(required = false) String userId,
+			@RequestParam(required = false) String mobileNumber, @RequestParam String password,
+			HttpServletRequest request) {
+		Map<String, Object> statusMap = new HashMap<String, Object>();
 		String methodName = request.getRequestURI();
 //		logger.logMethodStart(methodName);
 		JwtResponse response = new JwtResponse();
-		try
-		{
+		try {
 
-			//String decrypString = aesDecryptionService.decrypt(aesKey, jwtRequest.getLoginDetails());
-			//			logger.log(UPPCLLogger.LOGLEVEL_INFO, methodName, "decrypted loginDetails : {}" + decrypString);
-			//			//RegisterUserEntity objUser = objMapper.readValue(decrypString, RegisterUserEntity.class);
-			//			logger.log(UPPCLLogger.LOGLEVEL_INFO, methodName, "LoginDetails Object :" + objUser);
+			// String decrypString = aesDecryptionService.decrypt(aesKey,
+			// jwtRequest.getLoginDetails());
+			// logger.log(UPPCLLogger.LOGLEVEL_INFO, methodName, "decrypted loginDetails :
+			// {}" + decrypString);
+			// //RegisterUserEntity objUser = objMapper.readValue(decrypString,
+			// RegisterUserEntity.class);
+			// logger.log(UPPCLLogger.LOGLEVEL_INFO, methodName, "LoginDetails Object :" +
+			// objUser);
 
-			if(userId!=null) 
-			{
-				if(UtilValidate.isEmpty(userId)||  UtilValidate.isEmpty(password))
-				{
-					return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+			if (userId != null) {
+				if (UtilValidate.isEmpty(userId) || UtilValidate.isEmpty(password)) {
+					return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING,
+							HttpStatus.EXPECTATION_FAILED);
 				}
-				if(registerUserService.authenticateByUserId(userId, encryptUtil.encode(password), UTILITY_USER_ROLE)) 
-				{
+				if (userMasterService.authenticateByUserId(userId, encryptUtil.encode(password), UTILITY_USER_ROLE)) {
 
 					UserDetails userDetails = userDetailsService.loadUserByUserId(userId);
 					String token = this.helper.generateToken(userDetails);
-					RefreshToken refreshToken = refreshTokenService.createRefreshTokenByUserId(userDetails.getUsername());
-					response = JwtResponse.builder().accessToken(token).refreshToken(refreshToken.getToken()).username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
+					RefreshToken refreshToken = refreshTokenService
+							.createRefreshTokenByUserId(userDetails.getUsername());
+					response = JwtResponse.builder().accessToken(token).refreshToken(refreshToken.getToken())
+							.username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
 					statusMap.put(Parameters.status, Constants.SUCCESS);
 					statusMap.put(Parameters.statusCode, "LOGIN_200");
 					statusMap.put("response", response);
-					return new ResponseEntity<>(statusMap,HttpStatus.OK);
-				}
-				else 
-				{
+					return new ResponseEntity<>(statusMap, HttpStatus.OK);
+				} else {
 					statusMap.put(Parameters.statusMsg, "Please enter a valid login ID, mobile number, or password.");
 					statusMap.put(Parameters.status, Constants.FAIL);
 					statusMap.put(Parameters.statusCode, "LOGIN_201");
-					return new ResponseEntity<>(statusMap,HttpStatus.BAD_REQUEST); 
+					return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
 
 				}
-			}
-			else  
-			{
-				if(UtilValidate.isEmpty(mobileNumber)||  UtilValidate.isEmpty(password))
-				{
-					return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+			} else {
+				if (UtilValidate.isEmpty(mobileNumber) || UtilValidate.isEmpty(password)) {
+					return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING,
+							HttpStatus.EXPECTATION_FAILED);
 				}
-				if(registerUserService.authenticateByMobileNumber(mobileNumber, encryptUtil.encode(password), UTILITY_USER_ROLE )) 
-				{
+				if (userMasterService.authenticateByMobileNumber(mobileNumber, encryptUtil.encode(password),
+						UTILITY_USER_ROLE)) {
 
 					UserDetails userDetails = userDetailsService.loadUserByMobileNumber(mobileNumber);
 					String token = this.helper.generateToken(userDetails);
-					RefreshToken refreshToken = refreshTokenService.createRefreshTokenByMobileNumber(userDetails.getUsername());
-					response = JwtResponse.builder().accessToken(token).refreshToken(refreshToken.getToken()).username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
+					RefreshToken refreshToken = refreshTokenService
+							.createRefreshTokenByMobileNumber(userDetails.getUsername());
+					response = JwtResponse.builder().accessToken(token).refreshToken(refreshToken.getToken())
+							.username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
 					statusMap.put(Parameters.status, Constants.SUCCESS);
 					statusMap.put(Parameters.statusCode, "LOGIN_200");
 					statusMap.put("response", response);
-					return new ResponseEntity<>(statusMap,HttpStatus.OK);
-				}
-				else 
-				{
+					return new ResponseEntity<>(statusMap, HttpStatus.OK);
+				} else {
 					statusMap.put(Parameters.statusMsg, "Please enter a valid login ID, mobile number, or password.");
 					statusMap.put(Parameters.status, Constants.FAIL);
 					statusMap.put(Parameters.statusCode, "LOGIN_201");
-					return new ResponseEntity<>(statusMap,HttpStatus.BAD_REQUEST); 
+					return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
 				}
 			}
-		}
-		catch (Exception ex) 
-		{
+		} catch (Exception ex) {
 //			if (logger.isErrorLoggingEnabled()) {
 //				logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage() );
 //			}
 			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-
 	}
+		
+		
+		@PostMapping("/forgotPassword")
+		public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+		    Map<String, Object> statusMap = new HashMap<>();
+
+		    try {
+		        String email = forgotPasswordRequest.getEmail();
+		        String phone = forgotPasswordRequest.getPhone();
+		        String newPassword = forgotPasswordRequest.getNewPassword();
+		        String confirmPassword = forgotPasswordRequest.getConfirmPassword();
+
+		        if (UtilValidate.isEmpty(email) || UtilValidate.isEmpty(phone) || UtilValidate.isEmpty(newPassword) || UtilValidate.isEmpty(confirmPassword)) {
+		            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+		        }
+
+		        if (!newPassword.equals(confirmPassword)) {
+		            return CommonUtils.createResponse(Constants.FAIL, "Passwords do not match", HttpStatus.BAD_REQUEST);
+		        }
+
+		        boolean isUpdated = userMasterService.updatePasswordByEmailAndPhone(email, phone, newPassword);
+
+		        if (isUpdated) {
+		            statusMap.put(Parameters.status, Constants.SUCCESS);
+		            statusMap.put(Parameters.statusCode, "PASSWORD_RESET_200");
+		            statusMap.put(Parameters.statusMsg, "Your new password is: " + newPassword);
+		            return new ResponseEntity<>(statusMap, HttpStatus.OK);
+		        } else {
+		            statusMap.put(Parameters.statusMsg, "Invalid email or phone number");
+		            statusMap.put(Parameters.status, Constants.FAIL);
+		            statusMap.put(Parameters.statusCode, "PASSWORD_RESET_201");
+		            return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
+		        }
+		    } catch (Exception ex) {
+		        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		    }
+		}
+
 }

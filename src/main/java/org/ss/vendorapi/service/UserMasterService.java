@@ -18,5 +18,11 @@ public interface UserMasterService {
 	/* THIS METHOD IS TO GENERATE USER ID FOR END CONSUMER AT REGISTRATION TIME */
 	public String generateUserID(String mobileNumber, String methodName, String module);
 	boolean authenticateByEmail(String email, String encode, String endConsumerRole);
+	public boolean updatePasswordByEmailAndPhone(String email, String phone, String encodedPassword);
+	
+	
+	
+	
+	
 
 }

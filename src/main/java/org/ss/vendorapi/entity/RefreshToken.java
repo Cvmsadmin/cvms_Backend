@@ -1,4 +1,5 @@
 package org.ss.vendorapi.entity;
+
 import java.io.Serializable;
 import java.time.Instant;
 
@@ -23,7 +24,6 @@ public class RefreshToken implements Serializable{
 
 	@Id
 	  @GeneratedValue(strategy = GenerationType.IDENTITY)
-
 	  private int id;
 
 	  @Column(name = "user_id")

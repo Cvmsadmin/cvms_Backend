@@ -350,8 +350,8 @@ public class UserMasterController{
 		
 		 // Method to generate a random password
 	    private String generateRandomPassword() {
-	        int length = 12; // Password length
-	        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+	        int length = 8; // Password length
+	        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$&-";
 	        SecureRandom random = new SecureRandom();
 	        StringBuilder sb = new StringBuilder(length);
 	        for (int i = 0; i < length; i++) {

@@ -41,6 +41,8 @@ public class SecurityConfig {
         return new EncryptSecurityUtil();
     }
 	
+	
+	
 	@Bean
     JwtAuthenticationFilter privateApiJwtFilter() {
         return new JwtAuthenticationFilter();

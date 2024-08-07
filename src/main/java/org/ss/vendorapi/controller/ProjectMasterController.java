@@ -186,6 +186,8 @@ public class ProjectMasterController {
 		        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		    }
 	    }
+	    
+	    
 	    @GetMapping("/getMilestone")
 	    public ResponseEntity<?> getMilestoneDetails(@RequestParam String projectId) {
 	    	Map<String, Object> statusMap = new HashMap<>();

@@ -20,5 +20,8 @@ public interface UserMasterRepository extends JpaRepository<UserMasterEntity, Lo
 	final String WHERE_QUERY="select c from org.ss.vendorapi.entity.UserMasterEntity c where c.phone= :phone or c.email= :email ";
 	@Query(WHERE_QUERY)
 	UserMasterEntity findByMobileOrEmail(String phone, String email);
+	
+	UserMasterEntity findByEmailAndPhone(String email, String phone);
+	
 
 }
