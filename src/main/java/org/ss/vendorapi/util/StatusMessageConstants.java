@@ -53,10 +53,11 @@ public class StatusMessageConstants {
 	public static final String VENDOR_INVOICE_NOT_GENERATED = "Vendor Invoice not generated";
 	public static final String VENDOR__FOUND_SUCCESSFULLY="Vendor found successfully";
 	
+	public static final String STATE_CREATED_SUCCESSFULLY="State created successfully";
+	public static final String STATE_NOT_CREATED="State not created";
 	
-	
-	
-	
+	public static final String DISTRICT_CREATED_SUCCESSFULLY="District created successfully";
+	public static final String DISTRICT_NOT_CREATED="District not created";
 	
 	
 }
