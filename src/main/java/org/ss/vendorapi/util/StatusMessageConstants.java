@@ -58,6 +58,7 @@ public class StatusMessageConstants {
 	
 	public static final String DISTRICT_CREATED_SUCCESSFULLY="District created successfully";
 	public static final String DISTRICT_NOT_CREATED="District not created";
+	public static final Object USER_ALREADY_REGISTERED ="User already registered";
 	
-	
+
 }

@@ -105,8 +105,7 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	@Column(name = "total_payment_received")
 	private String totalPaymentReceived;
 
-	@Column(name = "tds_deduction_inclu_gst")
-	private String tdsDeductionIncluGst;
+	
 
 
 	    

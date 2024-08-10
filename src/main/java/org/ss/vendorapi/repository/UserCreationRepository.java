@@ -8,5 +8,11 @@ import org.ss.vendorapi.entity.UserMasterEntity;
 @Repository
 public interface UserCreationRepository extends JpaRepository<UserMasterEntity, Long>{
 
+	boolean existsByEmail(String email);
+//	public boolean existsByEmail(String email);
+
+
+	boolean existsByPhone(String phone);
+
 	
 }

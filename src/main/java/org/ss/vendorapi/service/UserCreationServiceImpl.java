@@ -29,5 +29,15 @@ public class UserCreationServiceImpl implements UserCreationService{
 		return creationUserRepository.save(userMasterEntity);
 	}
 	
+	@Override
+    public boolean existsByEmail(String email) {
+        return creationUserRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByPhone(String phone) {
+        return creationUserRepository.existsByPhone(phone);
+    }
+	
 
 }
