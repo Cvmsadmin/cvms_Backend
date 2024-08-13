@@ -161,20 +161,11 @@ public class UserMasterServiceImpl implements UserMasterService {
 	}
 
 	@Override
-	public boolean authenticateByEmail(String email, String encode, String endConsumerRole) {
+	public UserMasterEntity authenticateByEmail(String email, String encode) {
 		String methodName = "checkUserInPortal(RegisterUserEntity userSetUpEntity)";
-//		logger.logMethodStart(methodName);
 		String status = null;
-		UserMasterEntity chkUserInPortalByUserId = userMasterRepository.findByEmail(email);
-//		logger.log(UPPCLLogger.LOGLEVEL_INFO, methodName, "@@@@ 1. Check User in RegisterUser entity table existance by user id. : " + chkUserInPortalByUserId);
-
-//		System.out.println("password..." + encode);
-
-		if (null != chkUserInPortalByUserId && encode.equals(chkUserInPortalByUserId.getPassword())) {
-			return true;
-		} else {
-			return false;
-		}
+		UserMasterEntity userEntity = userMasterRepository.findByEmail(email);
+		return userEntity;
 	}
 
 	 public boolean updatePasswordByEmailAndPhone(String email, String phone, String newPassword) {

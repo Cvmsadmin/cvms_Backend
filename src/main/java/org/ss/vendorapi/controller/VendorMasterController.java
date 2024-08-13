@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import org.ss.vendorapi.entity.CityMasterEntity;
 import org.ss.vendorapi.entity.VendorMasterEntity;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.CustomerDetailsDTO;
+import org.ss.vendorapi.service.CityMasterService;
 import org.ss.vendorapi.service.DataValidationService;
 import org.ss.vendorapi.service.VendorMasterService;
 import org.ss.vendorapi.util.CommonUtils;
@@ -24,6 +27,7 @@ import org.ss.vendorapi.util.Constants;
 import org.ss.vendorapi.util.Parameters;
 import org.ss.vendorapi.util.StatusMessageConstants;
 import org.ss.vendorapi.util.UtilValidate;
+import org.ss.vendorapi.util.ValueConstants;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -45,6 +49,9 @@ public class VendorMasterController {
 	@Autowired
 	private DataValidationService dataValidationService;
 	
+	@Autowired
+	private CityMasterService cityMasterService;
+	
 	
 	@PostMapping("/addVendor")
 	public ResponseEntity<?> addVendor(@RequestBody CustomerDetailsDTO addVendorMEntity,HttpServletRequest request){
@@ -62,7 +69,7 @@ public class VendorMasterController {
 				    UtilValidate.isEmpty(addVendorMEntity.getAddress()) || 
 				    UtilValidate.isEmpty(addVendorMEntity.getCity()) || 
 				    UtilValidate.isEmpty(addVendorMEntity.getState()) || 
-//				    UtilValidate.isEmpty(addVendorMEntity.getPincode()) || 
+				    UtilValidate.isEmpty(addVendorMEntity.getPincode()) || 
 				    UtilValidate.isEmpty(addVendorMEntity.getDistrict()) || 
 				    UtilValidate.isEmpty(addVendorMEntity.getContactPerson()) || 
 				    UtilValidate.isEmpty(addVendorMEntity.getContactNo()) || 
@@ -73,26 +80,21 @@ public class VendorMasterController {
 				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
 			}	
 
-			/** START ::: CHECK VALID MOBILE ::: THIS METHOD WILL CHECK VALID MOBILE NUMBER AND RETURN NULL IN CASE OF VALID MOBILE NUMBER  OTHERWISE RETURN MESSAGE ENTITY FOR INVALID MOBILE NUMBER*/
-
-//			responseEntity=dataValidationService.checkValidMobileNumber(addVendorMEntity.getContactNo(), methodName, UPPCLLogger.MODULE_REGISTRATION);
-			if(responseEntity!=null)
-				return responseEntity;
-
-			/** END ::: CHECK VALID MOBILE */
-
-			/** START ::: CHECK VALID EMAIL ::: THIS METHOD WILL CHECK VALID EMAIL AND RETURN NULL IN CASE OF VALID EMAIL ID  OTHERWISE RETURN MESSAGE ENTITY FOR INVALID EMAIL ID */
-
-//			responseEntity=dataValidationService.checkValidEmailId(addVendorMEntity.getEmail(), methodName, UPPCLLogger.MODULE_REGISTRATION);
-			if(responseEntity!=null)
-				return responseEntity;
-
-			/** END ::: CHECK VALID EMAIl */
-
 
 			vendorCreationEntityObj=new VendorMasterEntity();
 			vendorCreationEntityObj.setVendorName(addVendorMEntity.getVendorName());
 			vendorCreationEntityObj.setAddress(addVendorMEntity.getAddress());
+			
+			/** @Author :: Lata Bisht */
+			/** START :::   IF THE CITY IS OTHET THEN CREATE THE RESPECTIVE CITY IN CITY MASTER AND SAVE TO THE VENDO R*/
+			if(addVendorMEntity.getCity()!=null && addVendorMEntity.getCity().equals(ValueConstants.OTHER_CITY)) {
+				
+				CityMasterEntity cityMasterEntity=cityMasterService.createNewCity(addVendorMEntity.getOtherCityName(), addVendorMEntity.getDistrict());
+				addVendorMEntity.setCity(cityMasterEntity.getId().toString());
+			}
+			/** END :::   IF THE CITY IS OTHET THEN CREATE THE RESPECTIVE CITY IN CITY MASTER AND SAVE TO THE VENDO R*/
+			
+			
 			vendorCreationEntityObj.setCity(addVendorMEntity.getCity());
 			vendorCreationEntityObj.setState(addVendorMEntity.getState());
 			vendorCreationEntityObj.setPinCode(addVendorMEntity.getPincode());
@@ -103,7 +105,6 @@ public class VendorMasterController {
 			vendorCreationEntityObj.setTypeOfService(addVendorMEntity.getTypeOfService());
 			vendorCreationEntityObj.setGst(addVendorMEntity.getGst());
 			vendorCreationEntityObj.setPanNo(addVendorMEntity.getPanNo());
-			
 			try
 			{
 				/* SAVE THE USER TO THE DB ENTITY */

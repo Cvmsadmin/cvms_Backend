@@ -1,12 +1,13 @@
-package org.ss.vendorapi.controller;
+ package org.ss.vendorapi.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,11 +23,14 @@ import org.ss.vendorapi.config.AESDecryptionService;
 import org.ss.vendorapi.config.EncryptSecurityUtil;
 import org.ss.vendorapi.entity.LoginRequest;
 import org.ss.vendorapi.entity.RefreshToken;
+import org.ss.vendorapi.entity.RoleResourceMasterEntity;
+import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.modal.ForgotPasswordRequest;
 import org.ss.vendorapi.modal.response.JwtResponse;
 import org.ss.vendorapi.security.JwtHelper;
 import org.ss.vendorapi.service.CustomUserDetailService;
 import org.ss.vendorapi.service.RefreshTokenService;
+import org.ss.vendorapi.service.RoleResourceMasterService;
 import org.ss.vendorapi.service.UserMasterService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
@@ -65,6 +69,9 @@ public class LoginController {
 
 	@Autowired
 	private CustomUserDetailService userDetailsService;
+	
+	@Autowired
+	private RoleResourceMasterService roleResourceMasterService;
 
 	@Value("${spring.security.aes.key}")
 	private String aesKey;
@@ -78,7 +85,6 @@ public class LoginController {
 
 	public static final String UTILITY_USER_ROLE = "UtilityUser";
 	public static final String END_CONSUMER_ROLE = "EndConsumer";
-
 	@PostMapping("/userLogin")
 	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
 
@@ -94,17 +100,31 @@ public class LoginController {
 				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING,
 						HttpStatus.EXPECTATION_FAILED);
 			}
-
-			if (userMasterService.authenticateByEmail(email, encryptUtil.encode(password), END_CONSUMER_ROLE)) {
-
+			
+			UserMasterEntity userMasterEntity= userMasterService.authenticateByEmail(email, encryptUtil.encode(password));
+			
+			if (userMasterEntity!=null && encryptUtil.encode(password).equals(userMasterEntity.getPassword())) {
+	
 				UserDetails userDetails = userDetailsService.loadUserByEmail(email);
 				String token = this.helper.generateToken(userDetails);
+				
 				RefreshToken refreshToken = refreshTokenService.createRefreshTokenByEmail(userDetails.getUsername());
-				response = JwtResponse.builder().accessToken(token).refreshToken(refreshToken.getToken())
+				
+				/** @Author Lata Bisht */
+				/** START ::: GET RESOURCES ::: 12, August 2024 */
+				List<RoleResourceMasterEntity> roleResourceMasterEntityList=roleResourceMasterService.findByRole(userMasterEntity.getRole());	
+				List<String> resourceUrls = roleResourceMasterEntityList.stream()
+					    .map(RoleResourceMasterEntity::getResourceUrl) // Extract resourceUrl from each entity
+					    .collect(Collectors.toList());
+				
+				response = JwtResponse.builder().urls(resourceUrls).accessToken(token).refreshToken(refreshToken.getToken())
 						.username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
+				/** END ::: GET RESOURCES ::: 12, August 2024 */
+				
 				statusMap.put(Parameters.status, Constants.SUCCESS);
 				statusMap.put(Parameters.statusCode, "LOGIN_200");
 				statusMap.put("response", response);
+				
 				return new ResponseEntity<>(statusMap, HttpStatus.OK);
 			} else {
 				statusMap.put(Parameters.statusMsg, "Please enter a valid email or password.");
