@@ -28,7 +28,7 @@ public class RoleResourceMasterEntity {
     private String resourceDescription;
     
     @Column(name = "ROLE_ID")
-    private Long roleId;
+    private String roleId;
     
     @Column(name = "CREATE_DATE")
     private Date createDate;
@@ -37,6 +37,6 @@ public class RoleResourceMasterEntity {
     private Date updateDate;
     
     @Column(name = "ACTIVE")
-    private Boolean active;
+    private Integer active;
     
 }
