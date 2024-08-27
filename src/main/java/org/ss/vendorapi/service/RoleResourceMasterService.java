@@ -9,7 +9,7 @@ public interface RoleResourceMasterService {
 	public RoleResourceMasterEntity saveResource(RoleResourceMasterEntity roleResourceMasterEntity);
 	public RoleResourceMasterEntity updateResource(RoleResourceMasterEntity roleResourceMasterEntity);
 	public Boolean deleteResourceById(Long id);
-	public List<RoleResourceMasterEntity> findByRole(String roleId);
+	public List<RoleResourceMasterEntity> findByRole(String string);
 
 
 }

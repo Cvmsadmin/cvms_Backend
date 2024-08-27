@@ -45,4 +45,25 @@ public class RoleMasterEntity implements Serializable{
 	
 	@Column(name="UPDATED_BY")
 	private String updatedBy;
+	
+	// Permissions
+    @Column(name = "USER_CREATION")
+    private Boolean userCreation = false;
+
+    @Column(name = "DISPLAY_PROJECT")
+    private Boolean displayProject = false;
+
+    @Column(name = "DISPLAY_CLIENT")
+    private Boolean displayClient = false;
+
+    @Column(name = "PROFIT_LOSS")
+    private Boolean profitLoss = false;
+
+    @Column(name = "PURCHASE_REQUESTS")
+    private Boolean purchaseRequests = false;
+
+    @Column(name = "CLIENT_VENDOR_INVOICES")
+    private Boolean clientVendorInvoices = false;	
+	
+	
 }

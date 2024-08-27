@@ -49,6 +49,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 
 		if (isPublicApi(request)) {
+			
+			String requestHeader = request.getHeader("Authorization");
 
 			String appServiceKey = request.getHeader("appServiceKey");
 

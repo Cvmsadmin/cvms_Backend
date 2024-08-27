@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class VendorInvioceMasterDTO {
 
-	private String vendorId;
+//	private String vendorId;
 	private String vendorName;
 	private String clientName;
 	private String projectName;

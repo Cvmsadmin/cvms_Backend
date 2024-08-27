@@ -37,6 +37,11 @@ public class RoleMasterServiceImpl implements RoleMasterService {
 	public RoleMasterEntity findById(Long id) {
 		return roleMasterRepository.findById(id).orElse(null);
 	}
+	
+	@Override
+    public List<RoleMasterEntity> getAllRoles() {
+        return roleMasterRepository.findAll();
+    }
 
 
 }

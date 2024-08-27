@@ -54,6 +54,7 @@ public class UserMasterEntity implements Serializable{
 	
 	@Column(name="role")
 	private String role;
+
 	
 	
 	

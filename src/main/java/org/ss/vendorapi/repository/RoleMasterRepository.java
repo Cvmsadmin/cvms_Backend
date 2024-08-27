@@ -6,5 +6,7 @@ import org.ss.vendorapi.entity.RoleMasterEntity;
 
 @Repository
 public interface RoleMasterRepository extends JpaRepository<RoleMasterEntity, Long> {
+	
+	
 
 }

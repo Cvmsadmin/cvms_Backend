@@ -51,9 +51,8 @@ public class ClientInvoiceMasterController {
 	@Autowired 
 	private ClientInvoiceMasterService clientInvoiceService;	
 
-
 	
-
+	
 	@PostMapping("/addClientInvoices")
 	public ResponseEntity<?> addClientInvoices(@RequestBody ClientInvoiceMasterDTO clientInvoiceDTO, HttpServletRequest request) {
 
@@ -61,12 +60,11 @@ public class ClientInvoiceMasterController {
 	    String methodName = request.getRequestURI();
 	    // logger.logMethodStart(methodName);
 
-	    Map<String, Object> statusMap = new HashMap<String, Object>();
+	    Map<String, Object> statusMap = new HashMap<>();
 
 	    try {
 
-	        if (UtilValidate.isEmpty(clientInvoiceDTO.getClientId()) ||
-	            UtilValidate.isEmpty(clientInvoiceDTO.getClientName()) ||
+	        if (UtilValidate.isEmpty(clientInvoiceDTO.getClientName()) ||
 	            UtilValidate.isEmpty(clientInvoiceDTO.getProjectName()) ||
 	            UtilValidate.isEmpty(clientInvoiceDTO.getDiscom()) ||
 	            UtilValidate.isEmpty(clientInvoiceDTO.getInvoiceDate()) ||
@@ -84,7 +82,7 @@ public class ClientInvoiceMasterController {
 
 	        ClientInvoiceMasterEntity clientInvoice = new ClientInvoiceMasterEntity();
 
-	        clientInvoice.setClientId(clientInvoiceDTO.getClientId());
+	        // Removed clientInvoice.setClientId(clientInvoiceDTO.getClientId());
 	        clientInvoice.setClientName(clientInvoiceDTO.getClientName());
 	        clientInvoice.setProjectName(clientInvoiceDTO.getProjectName());
 	        clientInvoice.setDiscom(clientInvoiceDTO.getDiscom());
@@ -160,6 +158,19 @@ public class ClientInvoiceMasterController {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	//	*************************************************************************************************************************************************************************************
 	//	*********************************************************************************get api****************************************************************************************************

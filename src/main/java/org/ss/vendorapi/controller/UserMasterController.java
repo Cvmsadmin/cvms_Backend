@@ -15,13 +15,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.config.EncryptSecurityUtil;
+import org.ss.vendorapi.entity.RoleMasterEntity;
 //import org.ss.vendorapi.entity.UserCreationEntity;
 import org.ss.vendorapi.entity.UserMasterEntity;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.CustomerDetailsDTO;
 import org.ss.vendorapi.modal.CustomerDetailsModel;
+import org.ss.vendorapi.repository.RoleMasterRepository;
 import org.ss.vendorapi.service.DataValidationService;
 import org.ss.vendorapi.service.UserCreationService;
 import org.ss.vendorapi.service.UserMasterService;
@@ -46,8 +49,10 @@ public class UserMasterController{
 
 	//@Autowired private UserMasterService userMasterService;
 	@Autowired private UserCreationService userCreationService;
-
-
+	
+	@Autowired 
+	private RoleMasterRepository roleMasterRepository;
+	
 	@Autowired
 	private EncryptSecurityUtil encryptUtil;
 
@@ -261,7 +266,7 @@ public class UserMasterController{
 	//	for user-creation
 
 	@PostMapping("/userCreation")
-	public ResponseEntity<?> userCreation(@RequestBody CustomerDetailsDTO UserMasterMEntity, HttpServletRequest request) {
+	public ResponseEntity<?> userCreation(@RequestBody CustomerDetailsDTO UserMasterMEntity, @RequestParam String id, HttpServletRequest request) {
 
 	    ResponseEntity<?> responseEntity = null;
 	    String methodName = request.getRequestURI();
@@ -269,14 +274,17 @@ public class UserMasterController{
 
 	    try {
 	        // Check if any required fields are empty
+	    	
+	    	
 	        if (UtilValidate.isEmpty(UserMasterMEntity.getEmail()) || 
 	            UtilValidate.isEmpty(UserMasterMEntity.getBaseLocation()) || 
 	            UtilValidate.isEmpty(UserMasterMEntity.getEmployeeId()) || 
 	            UtilValidate.isEmpty(UserMasterMEntity.getFirstName()) || 
 	            UtilValidate.isEmpty(UserMasterMEntity.getLastName()) ||  
 	            UtilValidate.isEmpty(UserMasterMEntity.getPhone()) || 
-	            UtilValidate.isEmpty(UserMasterMEntity.getPhysicalLocation()) || 
-	            UtilValidate.isEmpty(UserMasterMEntity.getRole())) {
+	            UtilValidate.isEmpty(UserMasterMEntity.getPhysicalLocation())) {
+//	            UtilValidate.isEmpty(UserMasterMEntity.getRole())) 
+	            
 	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
 	        }
 
@@ -305,7 +313,7 @@ public class UserMasterController{
 	        registerUserCreationEntityObj.setEmployeeId(UserMasterMEntity.getEmployeeId());
 	        registerUserCreationEntityObj.setPhone(UserMasterMEntity.getPhone());
 	        registerUserCreationEntityObj.setPhysicalLocation(UserMasterMEntity.getPhysicalLocation());
-	        registerUserCreationEntityObj.setRole(UserMasterMEntity.getRole());
+	        registerUserCreationEntityObj.setRole(id);
 	        registerUserCreationEntityObj.setPassword(encodedPassword);
 
 	        try {
