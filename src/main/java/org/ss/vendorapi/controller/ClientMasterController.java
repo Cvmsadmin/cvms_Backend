@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,7 +64,7 @@ public class ClientMasterController {
 				    UtilValidate.isEmpty(addClientMEntity.getAddress()) || 
 				    UtilValidate.isEmpty(addClientMEntity.getCity()) || 
 				    UtilValidate.isEmpty(addClientMEntity.getState()) || 
-				    UtilValidate.isEmpty(addClientMEntity.getPincode()) || 
+				    UtilValidate.isEmpty(addClientMEntity.getPinCode()) || 
 				    UtilValidate.isEmpty(addClientMEntity.getDistrict()) || 
 				    UtilValidate.isEmpty(addClientMEntity.getContactPerson()) || 
 				    UtilValidate.isEmpty(addClientMEntity.getContactNo()) || 
@@ -71,7 +72,7 @@ public class ClientMasterController {
 				    UtilValidate.isEmpty(addClientMEntity.getGst()) || 
 				    UtilValidate.isEmpty(addClientMEntity.getPan()) || 
 				    UtilValidate.isEmpty(addClientMEntity.getTypeOfService()) || 
-				    UtilValidate.isEmpty(addClientMEntity.getACcountManager())){
+				    UtilValidate.isEmpty(addClientMEntity.getAccountManager())){
 				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
 			}	
 
@@ -93,7 +94,7 @@ public class ClientMasterController {
 			clientCreationEntityObj.setAddress(addClientMEntity.getAddress());
 			clientCreationEntityObj.setCity(addClientMEntity.getCity());
 			clientCreationEntityObj.setState(addClientMEntity.getState());
-			clientCreationEntityObj.setPincode(addClientMEntity.getPincode());
+			clientCreationEntityObj.setPincode(addClientMEntity.getPinCode());
 			clientCreationEntityObj.setDistrict(addClientMEntity.getDistrict());
 			clientCreationEntityObj.setContactPerson(addClientMEntity.getContactPerson());
 			clientCreationEntityObj.setContactNo(addClientMEntity.getContactNo());
@@ -101,7 +102,7 @@ public class ClientMasterController {
 			clientCreationEntityObj.setGst(addClientMEntity.getGst());
 			clientCreationEntityObj.setPan(addClientMEntity.getPan());
 			clientCreationEntityObj.setTypeOfService(addClientMEntity.getTypeOfService());
-			clientCreationEntityObj.setAccountManager(addClientMEntity.getACcountManager());
+			clientCreationEntityObj.setAccountManager(addClientMEntity.getAccountManager());
 			try
 			{
 				/* SAVE THE USER TO THE DB ENTITY */
@@ -154,5 +155,42 @@ public class ClientMasterController {
 	    }
 	}
 	
+	@PutMapping("/updateClientMaster")
+	public ResponseEntity<?>updateClientMaster(@RequestBody CustomerDetailsDTO addClientMEntity ){
+
+		Map<String,Object> statusMap=new HashMap<String,Object>();
+		try {
+			ClientMasterEntity clientEntity=clientMasterService.findById(addClientMEntity.getId());
+
+				
+				clientEntity.setClientName(addClientMEntity.getClientName()!=null?addClientMEntity.getClientName():clientEntity.getClientName());
+				clientEntity.setAddress(addClientMEntity.getAddress()!=null?addClientMEntity.getAddress():clientEntity.getAddress());
+				clientEntity.setCity(addClientMEntity.getCity()!=null?addClientMEntity.getCity():clientEntity.getCity());
+				clientEntity.setState(addClientMEntity.getState()!=null?addClientMEntity.getState():clientEntity.getState());
+				clientEntity.setPincode(addClientMEntity.getPinCode()!=null?addClientMEntity.getPinCode():clientEntity.getPincode());
+				clientEntity.setDistrict(addClientMEntity.getDistrict()!=null?addClientMEntity.getDistrict():clientEntity.getDistrict());
+				clientEntity.setContactPerson(addClientMEntity.getContactPerson()!=null?addClientMEntity.getContactPerson():clientEntity.getContactPerson());
+				clientEntity.setContactNo(addClientMEntity.getContactNo()!=null?addClientMEntity.getContactNo():clientEntity.getContactNo());
+				clientEntity.setEmail(addClientMEntity.getEmail()!=null?addClientMEntity.getEmail():clientEntity.getEmail());
+				clientEntity.setGst(addClientMEntity.getGst()!=null?addClientMEntity.getGst():clientEntity.getGst());
+				clientEntity.setPan(addClientMEntity.getPan()!=null?addClientMEntity.getPan():clientEntity.getPan());
+				clientEntity.setTypeOfService(addClientMEntity.getTypeOfService()!=null?addClientMEntity.getTypeOfService():clientEntity.getTypeOfService());
+				clientEntity.setAccountManager(addClientMEntity.getAccountManager()!=null?addClientMEntity.getAccountManager():clientEntity.getAccountManager());
+				clientEntity.setClientName(addClientMEntity.getClientName()!=null?addClientMEntity.getClientName():clientEntity.getClientName());
+				
+				clientMasterService.update(clientEntity);
+							
+			statusMap.put("clientMasterEntity",clientEntity);
+			statusMap.put("status", "SUCCESS");
+			statusMap.put("statusCode", "RU_200");
+			statusMap.put("statusMessage", "SUCCESSFULLY UPDATED"); 
+
+			return new ResponseEntity<>(statusMap,HttpStatus.OK);
+		}catch(Exception e) {
+			e.printStackTrace();
+
+		}
+		return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 }
