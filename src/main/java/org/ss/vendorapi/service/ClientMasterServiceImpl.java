@@ -1,5 +1,6 @@
 package org.ss.vendorapi.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,25 @@ public class ClientMasterServiceImpl implements ClientMasterService{
 
 	@Override
 	public ClientMasterEntity save(ClientMasterEntity clientMasterEntity) {
+		clientMasterEntity.setActive(1);
+		clientMasterEntity.setCreateDate(new Date());
 		return clientMasterRepository.save(clientMasterEntity);
+	}
+
+
+
+	@Override
+	public ClientMasterEntity update(ClientMasterEntity clientMasterEntity) {
+		clientMasterEntity.setUpdateDate(new Date());
+		return clientMasterRepository.save(clientMasterEntity);
+	}
+
+
+
+	@Override
+	public ClientMasterEntity findById(Long id) {
+	
+		return clientMasterRepository.findById(id).orElse(null);
 	}
 
 }
