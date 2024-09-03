@@ -3,6 +3,8 @@ package org.ss.vendorapi.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.hibernate.annotations.Where;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
@@ -15,6 +17,7 @@ import lombok.Data;
 
 @Data
 @Entity
+@Where(clause="ACTIVE=1")
 @Table(name = "client_invoice_master")
 public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializable{
 	private static final long serialVersionUID=1L;
@@ -50,7 +53,7 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "invoice_due_date")
 	private Date invoiceDueDate;
-
+	
 	@Column(name = "gst_per")
 	private String gstPer;
 
@@ -94,7 +97,7 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	private String penalty;
 
 	@Column(name = "penalty_deduction_on_base")
-	private String penaltyDctionOnBase;
+	private String penaltyDeductionOnBase;
 
 	@Column(name = "gst_on_penalty")
 	private String gstOnPenalty;

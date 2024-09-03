@@ -10,15 +10,16 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.entity.MilestoneMasterEntity;
 import org.ss.vendorapi.entity.ProjectMasterEntity;
-import org.ss.vendorapi.modal.ProjectMasterDTO;
 import org.ss.vendorapi.modal.ProjectRequestDTO;
 import org.ss.vendorapi.service.MilestoneMasterService;
 import org.ss.vendorapi.service.ProjectMasterService;
@@ -209,7 +210,118 @@ public class ProjectMasterController {
 	    }
 	}
 
+	    @PutMapping("/updateProjectMaster")
+		public ResponseEntity<?>updateClientMaster(@RequestBody ProjectRequestDTO projectRequestDTO){
+	    	Map<String, Object> statusMap = new HashMap<>();
+	    	try {
+	    		 ProjectMasterEntity projectMasterEntity=projectMasterService.findById(projectRequestDTO.getId());
 
-		}
+					
+	    		 projectMasterEntity.setClientName(projectRequestDTO.getClientName()!=null?projectRequestDTO.getClientName():projectMasterEntity.getClientName());
+	    		 projectMasterEntity.setProjectName(projectRequestDTO.getProjectName()!=null?projectRequestDTO.getProjectName():projectMasterEntity.getProjectName());
+	    		 projectMasterEntity.setAddress(projectRequestDTO.getAddress()!=null?projectRequestDTO.getAddress():projectMasterEntity.getAddress());
+	    		 projectMasterEntity.setCity(projectRequestDTO.getCity() != null ? projectRequestDTO.getCity() : projectMasterEntity.getCity());
+	             projectMasterEntity.setState(projectRequestDTO.getState() != null ? projectRequestDTO.getState() : projectMasterEntity.getState());
+	             projectMasterEntity.setPincode(projectRequestDTO.getPincode() != null ? projectRequestDTO.getPincode() : projectMasterEntity.getPincode());
+	             projectMasterEntity.setDistrict(projectRequestDTO.getDistrict() != null ? projectRequestDTO.getDistrict() : projectMasterEntity.getDistrict());
+	             projectMasterEntity.setContactPerson(projectRequestDTO.getContactPerson() != null ? projectRequestDTO.getContactPerson() : projectMasterEntity.getContactPerson());
+	             projectMasterEntity.setContactNo(projectRequestDTO.getContactNo() != null ? projectRequestDTO.getContactNo() : projectMasterEntity.getContactNo());
+	             projectMasterEntity.setEmail(projectRequestDTO.getEmail() != null ? projectRequestDTO.getEmail() : projectMasterEntity.getEmail());
+	             projectMasterEntity.setGstNo(projectRequestDTO.getGstNo() != null ? projectRequestDTO.getGstNo() : projectMasterEntity.getGstNo());
+	             projectMasterEntity.setStartDate(projectRequestDTO.getStartDate() != null ? projectRequestDTO.getStartDate() : projectMasterEntity.getStartDate());
+	             projectMasterEntity.setEndDate(projectRequestDTO.getEndDate() != null ? projectRequestDTO.getEndDate() : projectMasterEntity.getEndDate());
+	             projectMasterEntity.setDuration(projectRequestDTO.getDuration() != null ? projectRequestDTO.getDuration() : projectMasterEntity.getDuration());
+	             projectMasterEntity.setDateOfLoi(projectRequestDTO.getDateOfLoi() != null ? projectRequestDTO.getDateOfLoi() : projectMasterEntity.getDateOfLoi());
+	             projectMasterEntity.setTDate(projectRequestDTO.getTDate() != null ? projectRequestDTO.getTDate() : projectMasterEntity.getTDate());
+	             projectMasterEntity.setLoiNo(projectRequestDTO.getLoiNo() != null ? projectRequestDTO.getLoiNo() : projectMasterEntity.getLoiNo());
+	             projectMasterEntity.setDateOfLoa(projectRequestDTO.getDateOfLoa() != null ? projectRequestDTO.getDateOfLoa() : projectMasterEntity.getDateOfLoa());
+	             projectMasterEntity.setAccountManager(projectRequestDTO.getAccountManager() != null ? projectRequestDTO.getAccountManager() : projectMasterEntity.getAccountManager());
+	             projectMasterEntity.setProjectManager(projectRequestDTO.getProjectManager() != null ? projectRequestDTO.getProjectManager() : projectMasterEntity.getProjectManager());
+	             projectMasterEntity.setContractDate(projectRequestDTO.getContractDate() != null ? projectRequestDTO.getContractDate() : projectMasterEntity.getContractDate());
+	             projectMasterEntity.setSingOfDate(projectRequestDTO.getSingOfDate() != null ? projectRequestDTO.getSingOfDate() : projectMasterEntity.getSingOfDate());
+	             projectMasterEntity.setContractPrice(projectRequestDTO.getContractPrice() != null ? projectRequestDTO.getContractPrice() : projectMasterEntity.getContractPrice());
 
+	             projectMasterService.update(projectMasterEntity);
+	             
+	             statusMap.put("projectMasterEntity",projectMasterEntity);
+	 			statusMap.put("status", "SUCCESS");
+	 			statusMap.put("statusCode", "RU_200");
+	 			statusMap.put("statusMessage", "SUCCESSFULLY UPDATED"); 
 
+	 			return new ResponseEntity<>(statusMap,HttpStatus.OK);
+	 		}catch(Exception ex) {
+	 			ex.printStackTrace();
+	 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	 		}
+
+	    }	
+	    @PutMapping("/updateMilestoneMaster")
+		public ResponseEntity<?>updateMilestoneMaster(@RequestBody ProjectRequestDTO projectRequestDTO){
+	    	Map<String,Object> statusMap=new HashMap<String,Object>();
+			try {
+				List<MilestoneMasterEntity> savedEntities = new ArrayList<>();
+
+				for(MilestoneMasterEntity projectMoe:projectRequestDTO.getMoe()) {
+
+					MilestoneMasterEntity milestoneMasterEntity=milestoneMasterService.findById(projectMoe.getId());
+				
+					milestoneMasterEntity.setTDate(projectMoe.getTDate()!=null ? projectMoe.getTDate():milestoneMasterEntity.getTDate());
+					 milestoneMasterEntity.setProjectId(projectMoe.getProjectId() != null ? projectMoe.getProjectId() : milestoneMasterEntity.getProjectId());
+			            milestoneMasterEntity.setSerialNumber(projectMoe.getSerialNumber() != null ? projectMoe.getSerialNumber() : milestoneMasterEntity.getSerialNumber());
+			            milestoneMasterEntity.setTDate(projectMoe.getTDate() != null ? projectMoe.getTDate() : milestoneMasterEntity.getTDate());
+			            milestoneMasterEntity.setDays(projectMoe.getDays() != null ? projectMoe.getDays() : milestoneMasterEntity.getDays());
+			            milestoneMasterEntity.setDeliverables(projectMoe.getDeliverables() != null ? projectMoe.getDeliverables() : milestoneMasterEntity.getDeliverables());
+			            milestoneMasterEntity.setAmountExclGst(projectMoe.getAmountExclGst() != null ? projectMoe.getAmountExclGst() : milestoneMasterEntity.getAmountExclGst());
+			            milestoneMasterEntity.setGstRate(projectMoe.getGstRate() != null ? projectMoe.getGstRate() : milestoneMasterEntity.getGstRate());
+			            milestoneMasterEntity.setGstAmount(projectMoe.getGstAmount() != null ? projectMoe.getGstAmount() : milestoneMasterEntity.getGstAmount());
+			            milestoneMasterEntity.setAmountInclGst(projectMoe.getAmountInclGst() != null ? projectMoe.getAmountInclGst() : milestoneMasterEntity.getAmountInclGst());
+			            
+			            milestoneMasterEntity= milestoneMasterService.update(milestoneMasterEntity);
+						savedEntities.add(milestoneMasterEntity);
+
+					}
+					statusMap.put("milestoneMasterEntity",savedEntities);
+					statusMap.put("status", "SUCCESS");
+					statusMap.put("statusCode", "RU_200");
+					statusMap.put("statusMessage", "SUCCESSFULLY UPDATED"); 
+
+					return new ResponseEntity<>(statusMap,HttpStatus.OK);
+				}catch(Exception e) {
+					e.printStackTrace();
+
+				}
+				return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		
+		
+	    @DeleteMapping("/deleteProject")
+		public ResponseEntity<?> deleteProjectMaster(@RequestParam Long id){
+			Map<String, Object> statusMap=new HashMap<String, Object>();
+
+			try {
+
+				ProjectMasterEntity projectMaster = projectMasterService.findById(id);
+				if(projectMaster!=null) {
+					projectMaster.setActive(0);
+					projectMasterService.update(projectMaster);
+
+					statusMap.put("status", "SUCCESS");
+					statusMap.put("statusCode", "RME_200");
+					statusMap.put("statusMessage", "SUCCESSFULLY DELETED"); 
+					return new ResponseEntity<>(statusMap,HttpStatus.OK);
+
+				}else {
+					statusMap.put("status", "FAIL");
+					statusMap.put("statusCode", "RME_404");
+					statusMap.put("statusMessage", "DATA NOT FOUND"); 
+					return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
+				}
+			}
+			catch(Exception ex) {
+				ex.printStackTrace();
+				return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
+     }
+}    
+	    

@@ -3,6 +3,8 @@ package org.ss.vendorapi.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.hibernate.annotations.Where;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
@@ -18,6 +20,7 @@ import lombok.Data;
 
 @Data
 @Entity
+@Where(clause="ACTIVE=1")
 @Table(name="purchase_bom_master")
 public class PurchaseBOMMasterEntity extends ParentEntity implements Serializable{
 	

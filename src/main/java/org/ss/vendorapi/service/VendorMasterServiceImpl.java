@@ -1,5 +1,6 @@
 package org.ss.vendorapi.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,24 @@ public class VendorMasterServiceImpl implements VendorMasterService{
 
 	@Override
 	public VendorMasterEntity save(VendorMasterEntity vendorMasterEntity) {
+		vendorMasterEntity.setActive(1);
+		vendorMasterEntity.setCreateDate(new Date());
 		return vendorMasterRepository.save(vendorMasterEntity);
+	}
+
+
+
+	@Override
+	public VendorMasterEntity update(VendorMasterEntity vendorMasterEntity) {
+		vendorMasterEntity.setUpdateDate(new Date());
+		return vendorMasterRepository.save(vendorMasterEntity);
+	}
+
+
+
+	@Override
+	public VendorMasterEntity findById(Long id) {
+		return vendorMasterRepository.findById(id).orElse(null);
 	}
 
 }

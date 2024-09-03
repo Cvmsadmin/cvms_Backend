@@ -10,6 +10,7 @@ import lombok.Data;
 public class VendorInvioceMasterDTO {
 
 //	private String vendorId;
+	private Long id;
 	private String vendorName;
 	private String clientName;
 	private String projectName;

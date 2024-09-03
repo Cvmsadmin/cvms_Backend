@@ -1,5 +1,7 @@
 package org.ss.vendorapi.entity;
 
+import org.hibernate.annotations.Where;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +12,7 @@ import lombok.Data;
 
 @Data
 @Entity
+@Where(clause="ACTIVE=1")
 @Table(name="profit_loss_master")
 public class ProfitLossMasterEntity {
 	

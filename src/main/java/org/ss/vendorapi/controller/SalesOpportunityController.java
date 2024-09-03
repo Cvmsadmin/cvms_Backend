@@ -9,11 +9,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.entity.SalesOpportunityMasterEntity;
 //import org.ss.vendorapi.logging.UPPCLLogger;
@@ -227,5 +229,33 @@ public class SalesOpportunityController {
 		}
 
 	}
+	@DeleteMapping("/deleteSalesOpportunity")
+	public ResponseEntity<?> deleteSalesOpportunityMaster(@RequestParam Long id){
+		Map<String, Object> statusMap=new HashMap<String, Object>();
 
+		try {
+
+			SalesOpportunityMasterEntity salesOpportunityMaster = salesOpportunityService.findById(id);
+			if(salesOpportunityMaster!=null) {
+				salesOpportunityMaster.setActive(0);
+				salesOpportunityService.update(salesOpportunityMaster);
+
+				statusMap.put("status", "SUCCESS");
+				statusMap.put("statusCode", "RME_200");
+				statusMap.put("statusMessage", "SUCCESSFULLY DELETED"); 
+				return new ResponseEntity<>(statusMap,HttpStatus.OK);
+
+			}else {
+				statusMap.put("status", "FAIL");
+				statusMap.put("statusCode", "RME_404");
+				statusMap.put("statusMessage", "DATA NOT FOUND"); 
+				return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
+			}
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
 }
