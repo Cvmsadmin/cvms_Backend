@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @CrossOrigin(origins="*")
 @RestController
 @RequestMapping("v2/api")
-public class BaseLocation {
+public class BaseLocationController {
 	
 	
 	 @Autowired
