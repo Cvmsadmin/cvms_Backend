@@ -5,8 +5,10 @@ package org.ss.vendorapi.entity;
 import java.util.Date;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 
+@MappedSuperclass
 @Data
 public class ParentEntity {
 	

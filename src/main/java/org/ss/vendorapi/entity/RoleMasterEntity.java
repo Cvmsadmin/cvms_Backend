@@ -2,6 +2,7 @@ package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.annotations.Where;
 
@@ -11,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Data
@@ -46,24 +48,7 @@ public class RoleMasterEntity implements Serializable{
 	@Column(name="UPDATED_BY")
 	private String updatedBy;
 	
-	// Permissions
-    @Column(name = "USER_CREATION")
-    private Boolean userCreation = false;
+	@Transient
+	private List<ResourceMasterEntity> resourceMasterEntities;
 
-    @Column(name = "DISPLAY_PROJECT")
-    private Boolean displayProject = false;
-
-    @Column(name = "DISPLAY_CLIENT")
-    private Boolean displayClient = false;
-
-    @Column(name = "PROFIT_LOSS")
-    private Boolean profitLoss = false;
-
-    @Column(name = "PURCHASE_REQUESTS")
-    private Boolean purchaseRequests = false;
-
-    @Column(name = "CLIENT_VENDOR_INVOICES")
-    private Boolean clientVendorInvoices = false;	
-	
-	
 }

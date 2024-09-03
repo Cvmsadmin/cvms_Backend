@@ -9,10 +9,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
 //import org.ss.vendorapi.logging.UPPCLLogger;
@@ -125,7 +128,7 @@ public class ClientInvoiceMasterController {
 	        clientInvoice.setTotalTdsDeducted(clientInvoiceDTO.getTotalTdsDeducted());
 	        clientInvoice.setBalance(clientInvoiceDTO.getBalance());
 	        clientInvoice.setPenalty(clientInvoiceDTO.getPenalty());
-	        clientInvoice.setPenaltyDctionOnBase(clientInvoiceDTO.getPenaltyDeductionOnBase());
+	        clientInvoice.setPenaltyDeductionOnBase(clientInvoiceDTO.getPenaltyDeductionOnBase());
 	        clientInvoice.setGstOnPenalty(clientInvoiceDTO.getGstOnPenalty());
 	        clientInvoice.setTotalPenaltyDeduction(clientInvoiceDTO.getTotalPenaltyDeduction());
 	        clientInvoice.setTotalPaymentReceived(clientInvoiceDTO.getTotalPaymentReceived());
@@ -159,16 +162,7 @@ public class ClientInvoiceMasterController {
 	    }
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
 	
 	
 
@@ -218,4 +212,84 @@ public class ClientInvoiceMasterController {
 		
 		
 	}
+	@PutMapping("/updateClientInvoiceMaster")
+	public ResponseEntity<?>updateClientMaster(@RequestBody ClientInvoiceMasterDTO clientInvoiceMasterDTO ){
+
+		Map<String,Object> statusMap=new HashMap<String,Object>();
+		try {
+			ClientInvoiceMasterEntity clientInvoiceEntity=clientInvoiceService.findById(clientInvoiceMasterDTO.getId());
+
+				
+			clientInvoiceEntity.setClientName(clientInvoiceMasterDTO.getClientName()!=null?clientInvoiceMasterDTO.getClientName():clientInvoiceEntity.getClientName());
+			clientInvoiceEntity.setProjectName(clientInvoiceMasterDTO.getProjectName()!=null?clientInvoiceMasterDTO.getProjectName():clientInvoiceEntity.getProjectName());
+			clientInvoiceEntity.setDiscom(clientInvoiceMasterDTO.getDiscom() != null ? clientInvoiceMasterDTO.getDiscom() : clientInvoiceEntity.getDiscom());
+		    clientInvoiceEntity.setInvoiceDate(clientInvoiceMasterDTO.getInvoiceDate() != null ? clientInvoiceMasterDTO.getInvoiceDate() : clientInvoiceEntity.getInvoiceDate());
+		    clientInvoiceEntity.setInvoiceNo(clientInvoiceMasterDTO.getInvoiceNo() != null ? clientInvoiceMasterDTO.getInvoiceNo() : clientInvoiceEntity.getInvoiceNo());
+		    clientInvoiceEntity.setInvoiceDescription(clientInvoiceMasterDTO.getInvoiceDescription() != null ? clientInvoiceMasterDTO.getInvoiceDescription() : clientInvoiceEntity.getInvoiceDescription());
+		    clientInvoiceEntity.setInvoiceDueDate(clientInvoiceMasterDTO.getInvoiceDueDate() != null ? clientInvoiceMasterDTO.getInvoiceDueDate() : clientInvoiceEntity.getInvoiceDueDate());
+		    clientInvoiceEntity.setGstPer(clientInvoiceMasterDTO.getGstPer() != null ? clientInvoiceMasterDTO.getGstPer() : clientInvoiceEntity.getGstPer());
+		    clientInvoiceEntity.setGstAmount(clientInvoiceMasterDTO.getGstAmount() != null ? clientInvoiceMasterDTO.getGstAmount() : clientInvoiceEntity.getGstAmount());
+		    clientInvoiceEntity.setInvoiceAmountExcluGst(clientInvoiceMasterDTO.getInvoiceAmountExcluGst() != null ? clientInvoiceMasterDTO.getInvoiceAmountExcluGst() : clientInvoiceEntity.getInvoiceAmountExcluGst());
+		    clientInvoiceEntity.setInvoiceAmountIncluGst(clientInvoiceMasterDTO.getInvoiceAmountIncluGst() != null ? clientInvoiceMasterDTO.getInvoiceAmountIncluGst() : clientInvoiceEntity.getInvoiceAmountIncluGst());
+		    clientInvoiceEntity.setStatus(clientInvoiceMasterDTO.getStatus() != null ? clientInvoiceMasterDTO.getStatus() : clientInvoiceEntity.getStatus());
+		    clientInvoiceEntity.setInvoiceBaseValue(clientInvoiceMasterDTO.getInvoiceBaseValue() != null ? clientInvoiceMasterDTO.getInvoiceBaseValue() : clientInvoiceEntity.getInvoiceBaseValue());
+		    clientInvoiceEntity.setGstBaseValue(clientInvoiceMasterDTO.getGstBaseValue() != null ? clientInvoiceMasterDTO.getGstBaseValue() : clientInvoiceEntity.getGstBaseValue());
+		    clientInvoiceEntity.setInvoiceInclusiveOfGst(clientInvoiceMasterDTO.getInvoiceInclusiveOfGst() != null ? clientInvoiceMasterDTO.getInvoiceInclusiveOfGst() : clientInvoiceEntity.getInvoiceInclusiveOfGst());
+		    clientInvoiceEntity.setTdsBaseValue(clientInvoiceMasterDTO.getTdsBaseValue() != null ? clientInvoiceMasterDTO.getTdsBaseValue() : clientInvoiceEntity.getTdsBaseValue());
+		    clientInvoiceEntity.setCgstOnTds(clientInvoiceMasterDTO.getCgstOnTds() != null ? clientInvoiceMasterDTO.getCgstOnTds() : clientInvoiceEntity.getCgstOnTds());
+		    clientInvoiceEntity.setSgstOnTds(clientInvoiceMasterDTO.getSgstOnTds() != null ? clientInvoiceMasterDTO.getSgstOnTds() : clientInvoiceEntity.getSgstOnTds());
+		    clientInvoiceEntity.setTotalTdsDeducted(clientInvoiceMasterDTO.getTotalTdsDeducted() != null ? clientInvoiceMasterDTO.getTotalTdsDeducted() : clientInvoiceEntity.getTotalTdsDeducted());
+		    clientInvoiceEntity.setBalance(clientInvoiceMasterDTO.getBalance() != null ? clientInvoiceMasterDTO.getBalance() : clientInvoiceEntity.getBalance());
+		    clientInvoiceEntity.setPenalty(clientInvoiceMasterDTO.getPenalty() != null ? clientInvoiceMasterDTO.getPenalty() : clientInvoiceEntity.getPenalty());
+		    clientInvoiceEntity.setPenaltyDeductionOnBase(clientInvoiceMasterDTO.getPenaltyDeductionOnBase() != null ? clientInvoiceMasterDTO.getPenaltyDeductionOnBase() : clientInvoiceEntity.getPenaltyDeductionOnBase());
+		    clientInvoiceEntity.setGstOnPenalty(clientInvoiceMasterDTO.getGstOnPenalty() != null ? clientInvoiceMasterDTO.getGstOnPenalty() : clientInvoiceEntity.getGstOnPenalty());
+		    clientInvoiceEntity.setTotalPenaltyDeduction(clientInvoiceMasterDTO.getTotalPenaltyDeduction() != null ? clientInvoiceMasterDTO.getTotalPenaltyDeduction() : clientInvoiceEntity.getTotalPenaltyDeduction());
+		    clientInvoiceEntity.setTotalPaymentReceived(clientInvoiceMasterDTO.getTotalPaymentReceived() != null ? clientInvoiceMasterDTO.getTotalPaymentReceived() : clientInvoiceEntity.getTotalPaymentReceived());
+		  
+
+			clientInvoiceService.update(clientInvoiceEntity);
+						
+		statusMap.put("clientInvoiceMasterEntity",clientInvoiceEntity);
+		statusMap.put("status", "SUCCESS");
+		statusMap.put("statusCode", "RU_200");
+		statusMap.put("statusMessage", "SUCCESSFULLY UPDATED"); 
+
+		return new ResponseEntity<>(statusMap,HttpStatus.OK);
+	}catch(Exception e) {
+		e.printStackTrace();
+
+	}
+	return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+}
+	
+	@DeleteMapping("/deleteClientInvoice")
+	public ResponseEntity<?> deleteClientInvoice(@RequestParam Long id){
+		Map<String, Object> statusMap=new HashMap<String, Object>();
+
+		try {
+
+			ClientInvoiceMasterEntity clientMaster = clientInvoiceService.findById(id);
+			if(clientMaster!=null) {
+				clientMaster.setActive(0);
+				clientInvoiceService.update(clientMaster);
+
+				statusMap.put("status", "SUCCESS");
+				statusMap.put("statusCode", "RME_200");
+				statusMap.put("statusMessage", "SUCCESSFULLY DELETED"); 
+				return new ResponseEntity<>(statusMap,HttpStatus.OK);
+
+			}else {
+				statusMap.put("status", "FAIL");
+				statusMap.put("statusCode", "RME_404");
+				statusMap.put("statusMessage", "DATA NOT FOUND"); 
+				return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
+			}
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+
 }

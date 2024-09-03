@@ -2,6 +2,8 @@
 
 import java.io.Serializable;
 
+import org.hibernate.annotations.Where;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +14,7 @@ import lombok.Data;
 
 @Data
 @Entity
+@Where(clause="ACTIVE=1")
 @Table(name="client_master")
 public class ClientMasterEntity extends ParentEntity implements Serializable{
 	private static final long serialVersionUID = 1L;

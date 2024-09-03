@@ -3,6 +3,8 @@ package org.ss.vendorapi.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.hibernate.annotations.Where;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +13,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Data
+@Where(clause="ACTIVE=1")
 @Table(name="sales_master")
 @Entity
 public class SalesOpportunityMasterEntity extends ParentEntity implements Serializable{

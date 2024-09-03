@@ -45,7 +45,6 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/v2/api")
 public class LoginController {
-
 	private static final Class<?> CLASS_NAME = LoginController.class;
 //	private static UPPCLLogger logger = UPPCLLogger.getInstance(UPPCLLogger.MODULE_BILLING,CLASS_NAME.toString());
 
@@ -89,110 +88,58 @@ public class LoginController {
 	@PostMapping("/userLogin")
 	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
 
-	    Map<String, Object> statusMap = new HashMap<>();
-	    String methodName = request.getRequestURI();
+		Map<String, Object> statusMap = new HashMap<>();
+		String methodName = request.getRequestURI();
+		// logger.logMethodStart(methodName);
+		JwtResponse response = new JwtResponse();
+		try {
+			String email = loginRequest.getEmail();
+			String password = loginRequest.getPassword();
 
-	    try {
-	        String email = loginRequest.getEmail();
-	        String password = loginRequest.getPassword();
-
-	        if (UtilValidate.isEmpty(email) || UtilValidate.isEmpty(password)) {
-	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
-	        }
-
-	        UserMasterEntity userMasterEntity = userMasterService.authenticateByEmail(email, encryptUtil.encode(password));
-
-	        if (userMasterEntity != null && encryptUtil.encode(password).equals(userMasterEntity.getPassword())) {
-
-	            UserDetails userDetails = userDetailsService.loadUserByEmail(email);
-	            String token = this.helper.generateToken(userDetails);
-
-	            RefreshToken refreshToken = refreshTokenService.createRefreshTokenByEmail(userDetails.getUsername());
-
-	            // Fetch role resources
-	            List<RoleResourceMasterEntity> roleResourceMasterEntityList = roleResourceMasterService.findByRole(userMasterEntity.getRole());
-	            List<String> resourceUrls = roleResourceMasterEntityList.stream()
-	                    .map(RoleResourceMasterEntity::getResourceUrl)
-	                    .collect(Collectors.toList());
-
-	            // Populate the statusMap with all necessary details
-	            statusMap.put("accessToken", token);
-	            statusMap.put("refreshToken", refreshToken.getToken());
-	            statusMap.put("username", userDetails.getUsername().split("_")[0]);
-	            statusMap.put("role", userMasterEntity.getRole()); // Add role to the response
-	            statusMap.put("urls", resourceUrls);
-	            statusMap.put("status", Constants.SUCCESS);
-	            statusMap.put("statusCode", "LOGIN_200");
-
-	            return new ResponseEntity<>(statusMap, HttpStatus.OK);
-	        } else {
-	            statusMap.put(Parameters.statusMsg, "Please enter a valid email or password.");
-	            statusMap.put(Parameters.status, Constants.FAIL);
-	            statusMap.put(Parameters.statusCode, "LOGIN_201");
-	            return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
-	        }
-	    } catch (Exception ex) {
-	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-	    }
-	}
-
-
+			if (UtilValidate.isEmpty(email) || UtilValidate.isEmpty(password)) {
+				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING,
+						HttpStatus.EXPECTATION_FAILED);
+			}
+			
+			UserMasterEntity userMasterEntity= userMasterService.authenticateByEmail(email, encryptUtil.encode(password));
+		
+			if (userMasterEntity!=null && encryptUtil.encode(password).equals(userMasterEntity.getPassword())) {
 	
-//	@PostMapping("/userLogin")
-//	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
-//
-//		Map<String, Object> statusMap = new HashMap<>();
-//		String methodName = request.getRequestURI();
-//		// logger.logMethodStart(methodName);
-//		JwtResponse response = new JwtResponse();
-//		try {
-//			String email = loginRequest.getEmail();
-//			String password = loginRequest.getPassword();
-//
-//			if (UtilValidate.isEmpty(email) || UtilValidate.isEmpty(password)) {
-//				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING,
-//						HttpStatus.EXPECTATION_FAILED);
-//			}
-//			
-//			UserMasterEntity userMasterEntity= userMasterService.authenticateByEmail(email, encryptUtil.encode(password));
-//			
-//			if (userMasterEntity!=null && encryptUtil.encode(password).equals(userMasterEntity.getPassword())) {
-//	
-//				UserDetails userDetails = userDetailsService.loadUserByEmail(email);
-//				String token = this.helper.generateToken(userDetails);
-//				
-//				RefreshToken refreshToken = refreshTokenService.createRefreshTokenByEmail(userDetails.getUsername());
-//				
-//				/** @Author Lata Bisht */
-//				/** START ::: GET RESOURCES ::: 12, August 2024 */
-//				List<RoleResourceMasterEntity> roleResourceMasterEntityList=roleResourceMasterService.findByRole(userMasterEntity.getRole());	
-//				List<String> resourceUrls = roleResourceMasterEntityList.stream()
-//					    .map(RoleResourceMasterEntity::getResourceUrl) // Extract resourceUrl from each entity
-//					    .collect(Collectors.toList());
-//				
-//				response = JwtResponse.builder().urls(resourceUrls).accessToken(token).refreshToken(refreshToken.getToken())
-//						.username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
-//				/** END ::: GET RESOURCES ::: 12, August 2024 */
-//				
-//				statusMap.put(Parameters.status, Constants.SUCCESS);
-//				statusMap.put(Parameters.statusCode, "LOGIN_200");
-//				statusMap.put("response", response);
-//				
-//				return new ResponseEntity<>(statusMap, HttpStatus.OK);
-//			} else {
-//				statusMap.put(Parameters.statusMsg, "Please enter a valid email or password.");
-//				statusMap.put(Parameters.status, Constants.FAIL);
-//				statusMap.put(Parameters.statusCode, "LOGIN_201");
-//				return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
-//			}
-//		} catch (Exception ex) {
-//			// if (logger.isErrorLoggingEnabled()) {
-//			// logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName,
-//			// "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage());
-//			// }
-//			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-//	}
+				UserDetails userDetails = userDetailsService.loadUserByEmail(email);
+				String token = this.helper.generateToken(userDetails);
+				
+				RefreshToken refreshToken = refreshTokenService.createRefreshTokenByEmail(userDetails.getUsername());
+				
+				/** @Author Lata Bisht */
+				/** START ::: GET RESOURCES ::: 12, August 2024 */
+				List<RoleResourceMasterEntity> roleResourceMasterEntityList=roleResourceMasterService.findByRole(userMasterEntity.getRole());	
+				List<String> resourceUrls = roleResourceMasterEntityList.stream()
+					    .map(RoleResourceMasterEntity::getResourceUrl) // Extract resourceUrl from each entity
+					    .collect(Collectors.toList());
+				
+				response = JwtResponse.builder().urls(resourceUrls).accessToken(token).refreshToken(refreshToken.getToken())
+						.username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
+				/** END ::: GET RESOURCES ::: 12, August 2024 */
+				
+				statusMap.put(Parameters.status, Constants.SUCCESS);
+				statusMap.put(Parameters.statusCode, "LOGIN_200");
+				statusMap.put("response", response);
+				
+				return new ResponseEntity<>(statusMap, HttpStatus.OK);
+			} else {
+				statusMap.put(Parameters.statusMsg, "Please enter a valid email or password.");
+				statusMap.put(Parameters.status, Constants.FAIL);
+				statusMap.put(Parameters.statusCode, "LOGIN_201");
+				return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			// if (logger.isErrorLoggingEnabled()) {
+			// logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName,
+			// "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage());
+			// }
+			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	@PostMapping("/adminLogin")
 	public ResponseEntity<?> loginAdmin(@RequestParam(required = false) String userId,
@@ -306,5 +253,4 @@ public class LoginController {
 		        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		    }
 		}
-
 }

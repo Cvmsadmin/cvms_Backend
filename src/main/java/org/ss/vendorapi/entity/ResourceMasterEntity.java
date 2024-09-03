@@ -1,6 +1,7 @@
 package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.hibernate.annotations.Where;
 
@@ -12,23 +13,32 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+
 @Data
-@Entity
 @Where(clause="ACTIVE=1")
-@Table(name="service_master")
-public class ServiceMasterEntity implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
+@Table(name="resource_master")
+@Entity
+public class ResourceMasterEntity  extends ParentEntity implements Serializable{
+
+
+	private static final long serialVersionUID=1L;
+
 	@Id
-	@Column(name="id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name="service_no")
-	private String SrNo;
+	private String resourceName;
+	private String resourceUrl;
+	private String resourceCode;
 	
-	@Column(name="Service_name")
-	private String serviceName;
+    private Integer active;
+    
+    @Column(name="create_date")
+	private Date createDate;
 	
+	@Column(name="update_date")
+	private Date updateDate;
+
+
 
 }

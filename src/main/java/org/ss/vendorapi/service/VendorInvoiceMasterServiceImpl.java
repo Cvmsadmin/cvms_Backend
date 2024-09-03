@@ -30,5 +30,18 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
 	}
 
 
+	@Override
+	public VendorInvoiceMasterEntity update(VendorInvoiceMasterEntity vendorInvoiceMasterEntity) {
+		vendorInvoiceMasterEntity.setUpdateDate(new Date());
+		return vendorinviceMasterRepository.save(vendorInvoiceMasterEntity);
+	}
+
+
+	@Override
+	public VendorInvoiceMasterEntity findById(Long id) {
+		return vendorinviceMasterRepository.findById(id).orElse(null);
+	}
+
+
 
 }

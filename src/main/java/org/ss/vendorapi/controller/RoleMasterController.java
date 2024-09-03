@@ -1,9 +1,9 @@
 package org.ss.vendorapi.controller;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.entity.RoleMasterEntity;
 import org.ss.vendorapi.service.RoleMasterService;
+import org.ss.vendorapi.service.RoleResourceMasterService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
+import org.ss.vendorapi.util.Parameters;
 import org.ss.vendorapi.util.UtilValidate;
 
 @CrossOrigin(origins="*")
@@ -30,124 +32,67 @@ public class RoleMasterController {
 
 	@Autowired
 	private RoleMasterService roleMasterService;
-
-//	@GetMapping("/getAllRoles")
-//	public ResponseEntity<?> getAllRoleDetails(){
-//		Map<String, Object> statusMap=new HashMap<String, Object>();
-//
-//		try {
-//			List<RoleMasterEntity> roleList=roleMasterService.findAll();
-//
-//			statusMap.put("RoleMasterList",roleList);
-//			statusMap.put(Parameters.status, "Success");
-//			statusMap.put(Parameters.statusCode, "RME_200");
-//			statusMap.put(Parameters.statusMsg,"SuccessFully Found");
-//
-//			return new ResponseEntity<>(statusMap,HttpStatus.OK);
-//
-//		}
-//		catch(Exception e) {
-//			e.printStackTrace();
-//		}
-//
-//		return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
-//	}
 	
-	@GetMapping("/role")
-	public List<Map<String, Object>> getAllRoles() {
-	    return roleMasterService.getAllRoles().stream()
-	        .map(role -> {
-	            Map<String, Object> roleMap = new HashMap<>();
-	            roleMap.put("id", role.getId());
-	            roleMap.put("roleName", role.getRoleName());
-	            return roleMap;
-	        })
-	        .collect(Collectors.toList());
+	@Autowired
+	private RoleResourceMasterService roleResourceMasterService;
+
+	@GetMapping("/getAllRoles")
+	public ResponseEntity<?> getAllRoleDetails(){
+		Map<String, Object> statusMap=new HashMap<String, Object>();
+
+		try {
+			List<RoleMasterEntity> roleList=roleMasterService.findAll();
+
+			statusMap.put("RoleMasterEntity",roleList);
+			statusMap.put(Parameters.status, "Success");
+			statusMap.put(Parameters.statusCode, "RME_200");
+			statusMap.put(Parameters.statusMsg,"SuccessFully Found");
+
+			return new ResponseEntity<>(statusMap,HttpStatus.OK);
+
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
 	}
 
+	@PostMapping("/createRole")
+	public ResponseEntity<?> roleCreated(@RequestBody RoleMasterEntity role){
+		Map<String, Object> statusMap=new HashMap<String, Object>();
+		try {
 		
-	
-	 @PostMapping("/createRole")
-	    public ResponseEntity<?> roleCreated(@RequestBody RoleMasterEntity role) {
-	        Map<String, Object> statusMap = new HashMap<>();
+			if(UtilValidate.isNotEmptyAndNotNull(role.getRoleName()) && UtilValidate.isNotEmptyAndNotNull(role.getRoleCode()) &&
+					UtilValidate.isNotEmptyAndNotNull(role.getCreatedBy())) {
+				
+				role.setUpdatedBy(role.getUpdatedBy()!=null?role.getUpdatedBy():role.getCreatedBy());
+				role=roleMasterService.save(role);
+				roleResourceMasterService.saveList(role.getResourceMasterEntities(), role.getId().toString());
+				
+				statusMap.put("RoleMaster",role);
+				statusMap.put("status", "SUCCESS");
+				statusMap.put("statusCode", "RME_200");
+				statusMap.put("statusMessage", "SUCCESSFULLY SAVED"); 
 
-	        try {
-	            // Validate required fields
-	            if (UtilValidate.isNotEmptyAndNotNull(role.getRoleName()) &&
-	                UtilValidate.isNotEmptyAndNotNull(role.getRoleCode()) &&
-	                UtilValidate.isNotEmptyAndNotNull(role.getCreatedBy())) {
+				return new ResponseEntity<>(statusMap,HttpStatus.OK);
+				
+			}else {
+				statusMap.put("status", "FAILED");
+				statusMap.put("statusCode", "RME_301");
+				statusMap.put("statusMessage", "Prameters Are Missing"); 
+				
+		     }
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		statusMap.put("status", "FAILED");
+		statusMap.put("statusCode", "RME_500");
+		statusMap.put("statusMessage", "NOT SAVED"); 
 
-	                // Set default values for optional fields if not provided
-	                role.setUpdatedBy(role.getUpdatedBy() != null ? role.getUpdatedBy() : role.getCreatedBy());
-
-	                // Save the role entity
-	                role = roleMasterService.save(role);
-
-	                statusMap.put("RoleMaster", role);
-	                statusMap.put("status", "SUCCESS");
-	                statusMap.put("statusCode", "RME_200");
-	                statusMap.put("statusMessage", "SUCCESSFULLY SAVED");
-
-	                return new ResponseEntity<>(statusMap, HttpStatus.OK);
-
-	            } else {
-	                statusMap.put("status", "FAILED");
-	                statusMap.put("statusCode", "RME_301");
-	                statusMap.put("statusMessage", "Parameters Are Missing");
-
-	                return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
-	            }
-
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            statusMap.put("status", "FAILED");
-	            statusMap.put("statusCode", "RME_500");
-	            statusMap.put("statusMessage", "NOT SAVED");
-
-	            return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
-	        }
-	    }
-	 
-	 
-	 
-		
-	
-
-//	@PostMapping("/createRole")
-//	public ResponseEntity<?> roleCreated(@RequestBody RoleMasterEntity role){
-//		Map<String, Object> statusMap=new HashMap<String, Object>();
-//		try {
-//		
-//
-//			if(UtilValidate.isNotEmptyAndNotNull(role.getRoleName()) && UtilValidate.isNotEmptyAndNotNull(role.getRoleCode()) &&
-//					UtilValidate.isNotEmptyAndNotNull(role.getCreatedBy())) {
-//
-//				role.setUpdatedBy(role.getUpdatedBy()!=null?role.getUpdatedBy():role.getCreatedBy());
-//				role=roleMasterService.save(role);
-//				
-//				statusMap.put("RoleMaster",role);
-//				statusMap.put("status", "SUCCESS");
-//				statusMap.put("statusCode", "RME_200");
-//				statusMap.put("statusMessage", "SUCCESSFULLY SAVED"); 
-//
-//				return new ResponseEntity<>(statusMap,HttpStatus.OK);
-//				
-//			}else {
-//				statusMap.put("status", "FAILED");
-//				statusMap.put("statusCode", "RME_301");
-//				statusMap.put("statusMessage", "Prameters Are Missing"); 
-//				
-//		     }
-//			
-//		}catch(Exception e) {
-//			e.printStackTrace();
-//		}
-//		statusMap.put("status", "FAILED");
-//		statusMap.put("statusCode", "RME_500");
-//		statusMap.put("statusMessage", "NOT SAVED"); 
-//
-//		return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
-//	}    
+		return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
+	}    
 
 
 	@PutMapping("/updateRole")

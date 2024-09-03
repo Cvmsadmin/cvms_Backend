@@ -10,6 +10,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.entity.PurchaseBOMMasterEntity;
 import org.ss.vendorapi.entity.PurchaseMasterEntity;
-//import org.ss.vendorapi.logging.UPPCLLogger;
-import org.ss.vendorapi.modal.PurchaseBOMMasterDTO;
 import org.ss.vendorapi.modal.PurchaseRequestDTO;
 import org.ss.vendorapi.service.PurchaseBOMService;
 import org.ss.vendorapi.service.PurchaseMasterService;
@@ -271,4 +270,36 @@ public class PurchaseMasterController {
 		}
 		return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-}
+	
+	
+	
+	 @DeleteMapping("/deletePurchase")
+		public ResponseEntity<?> deletePurchaseMaster(@RequestParam Long id){
+			Map<String, Object> statusMap=new HashMap<String, Object>();
+
+			try {
+
+				PurchaseMasterEntity purchaseMaster = purchaseMasterService.findById(id);
+				if(purchaseMaster!=null) {
+					purchaseMaster.setActive(0);
+					purchaseMasterService.update(purchaseMaster);
+
+					statusMap.put("status", "SUCCESS");
+					statusMap.put("statusCode", "RME_200");
+					statusMap.put("statusMessage", "SUCCESSFULLY DELETED"); 
+					return new ResponseEntity<>(statusMap,HttpStatus.OK);
+
+				}else {
+					statusMap.put("status", "FAIL");
+					statusMap.put("statusCode", "RME_404");
+					statusMap.put("statusMessage", "DATA NOT FOUND"); 
+					return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
+				}
+			}
+			catch(Exception ex) {
+				ex.printStackTrace();
+				return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
+  }
+}    
