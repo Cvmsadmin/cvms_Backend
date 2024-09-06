@@ -68,7 +68,7 @@ public class RoleMasterController {
 				
 				role.setUpdatedBy(role.getUpdatedBy()!=null?role.getUpdatedBy():role.getCreatedBy());
 				role=roleMasterService.save(role);
-				roleResourceMasterService.saveList(role.getResourceMasterEntities(), role.getId().toString());
+				//roleResourceMasterService.saveList(role.getResourceMasterEntities(), role.getId().toString());
 				
 				statusMap.put("RoleMaster",role);
 				statusMap.put("status", "SUCCESS");
