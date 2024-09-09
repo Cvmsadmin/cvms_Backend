@@ -10,5 +10,6 @@ public interface ResourceMasterService {
 	public ResourceMasterEntity update(ResourceMasterEntity resourceMasterEntity);
 	public List<ResourceMasterEntity> findAll();
 	public ResourceMasterEntity findById(Long id);
+	public List<ResourceMasterEntity> findByFeatureId(String featureId);
 
 }

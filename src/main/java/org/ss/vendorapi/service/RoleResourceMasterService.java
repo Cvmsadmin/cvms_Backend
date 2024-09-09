@@ -11,8 +11,7 @@ public interface RoleResourceMasterService {
 	public RoleResourceMasterEntity updateResource(RoleResourceMasterEntity roleResourceMasterEntity);
 	public Boolean deleteResourceById(Long id);
 	public List<RoleResourceMasterEntity> findByRole(String roleId);
-	public List<RoleResourceMasterEntity> saveList(List<ResourceMasterEntity>resourceMasterEntities , String roleId);
-
+	
 
 
 

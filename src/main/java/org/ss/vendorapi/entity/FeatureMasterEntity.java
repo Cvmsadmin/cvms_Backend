@@ -30,6 +30,8 @@ public class FeatureMasterEntity extends ParentEntity implements Serializable  {
 	private String featureName;
 	private String subMenu;
 	private Long parent;
+	private String url;
+	
 
 
 }

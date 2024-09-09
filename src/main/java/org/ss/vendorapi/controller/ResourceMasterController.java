@@ -33,13 +33,14 @@ public class ResourceMasterController {
 		Map<String, Object> statusMap=new HashMap<String, Object>();
 		try {
 		
+			if(UtilValidate.isNotEmptyAndNotNull(resourceMaster.getDescription()) &&
+					UtilValidate.isNotEmptyAndNotNull(resourceMaster.getUrl()) &&
+					UtilValidate.isNotEmptyAndNotNull(resourceMaster.getFeatureId())){
 
-			if(UtilValidate.isNotEmptyAndNotNull(resourceMaster.getResourceName()) &&
-					UtilValidate.isNotEmptyAndNotNull(resourceMaster.getResourceUrl())){
+				resourceMaster.setDescription(resourceMaster.getDescription());
+				resourceMaster.setUrl(resourceMaster.getUrl());
+				resourceMaster.setFeatureId(resourceMaster.getFeatureId());
 
-				resourceMaster.setResourceName(resourceMaster.getResourceName());
-				resourceMaster.setResourceUrl(resourceMaster.getResourceUrl());
-				
 				resourceMaster=resourceMasterService.save(resourceMaster);
 				
 				statusMap.put("RoleMaster",resourceMaster);

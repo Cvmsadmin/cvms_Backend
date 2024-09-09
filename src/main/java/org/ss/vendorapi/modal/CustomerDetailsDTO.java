@@ -21,7 +21,7 @@ public class CustomerDetailsDTO implements Serializable{
 	private String City;
 	private String State;
 	private String District;
-	private String Pincode;
+	private String pincode;
 	private String ContactPerson;
 	private String ContactNo;
 	private String Gst;

@@ -37,6 +37,10 @@ public class ResourceMasterServiceImpl implements ResourceMasterService{
 		return resourceMasterRepository.findById(id).orElse(null);
 	}
 
+	@Override
+	public List<ResourceMasterEntity> findByFeatureId(String featureId) {
+		return resourceMasterRepository.findByFeatureId(featureId);
+	}
 	
 
 }

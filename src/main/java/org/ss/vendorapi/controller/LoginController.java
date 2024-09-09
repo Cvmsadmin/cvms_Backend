@@ -26,10 +26,13 @@ import org.ss.vendorapi.entity.RefreshToken;
 import org.ss.vendorapi.entity.RoleResourceMasterEntity;
 import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.modal.ForgotPasswordRequest;
+import org.ss.vendorapi.modal.RoleResourceDTO;
 import org.ss.vendorapi.modal.response.JwtResponse;
 import org.ss.vendorapi.security.JwtHelper;
 import org.ss.vendorapi.service.CustomUserDetailService;
+import org.ss.vendorapi.service.FeatureMasterService;
 import org.ss.vendorapi.service.RefreshTokenService;
+import org.ss.vendorapi.service.ResourceMasterService;
 import org.ss.vendorapi.service.RoleResourceMasterService;
 import org.ss.vendorapi.service.UserMasterService;
 import org.ss.vendorapi.util.CommonUtils;
@@ -71,6 +74,12 @@ public class LoginController {
 	
 	@Autowired
 	private RoleResourceMasterService roleResourceMasterService;
+	
+	@Autowired
+	private FeatureMasterService featureMasterService;
+
+	@Autowired
+	private ResourceMasterService resourceMasterService;
 
 	@Value("${spring.security.aes.key}")
 	private String aesKey;
@@ -111,15 +120,17 @@ public class LoginController {
 				RefreshToken refreshToken = refreshTokenService.createRefreshTokenByEmail(userDetails.getUsername());
 				
 				/** @Author Lata Bisht */
-				/** START ::: GET RESOURCES ::: 12, August 2024 */
+				/** START ::: GET RESOURCES ::: 9, September August 2024 */
+				
 				List<RoleResourceMasterEntity> roleResourceMasterEntityList=roleResourceMasterService.findByRole(userMasterEntity.getRole());	
-				List<String> resourceUrls = roleResourceMasterEntityList.stream()
-					    .map(RoleResourceMasterEntity::getResourceUrl) // Extract resourceUrl from each entity
+				
+				List<RoleResourceDTO> resources = roleResourceMasterEntityList.stream()
+					    .map(roleResourceMasterEntity -> new ObjectMapper().convertValue(roleResourceMasterEntity, RoleResourceDTO.class))
 					    .collect(Collectors.toList());
 				
-				response = JwtResponse.builder().urls(resourceUrls).accessToken(token).refreshToken(refreshToken.getToken())
+				response = JwtResponse.builder().urls(resources).accessToken(token).refreshToken(refreshToken.getToken())
 						.username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
-				/** END ::: GET RESOURCES ::: 12, August 2024 */
+				/** END ::: GET RESOURCES ::: 9, September 2024 */
 				
 				statusMap.put(Parameters.status, Constants.SUCCESS);
 				statusMap.put(Parameters.statusCode, "LOGIN_200");

@@ -1,42 +1,30 @@
 package org.ss.vendorapi.entity;
 
-import java.util.Date;
+import java.io.Serializable;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
+@NoArgsConstructor @Setter @Getter @AllArgsConstructor
 @Entity
 @Table(name = "ROLE_RESOURCE_MASTER")
-public class RoleResourceMasterEntity {
+public class RoleResourceMasterEntity extends ParentEntity implements Serializable{
     
+	private static final long serialVersionUID=1L;
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "RESOURCE_URL")
-    private String resourceUrl;
-    
-    @Column(name = "RESOURCE_DESCRIPTION")
-    private String resourceDescription;
-    
-    @Column(name = "ROLE_ID")
+    private String featureId;
+
     private String roleId;
-    
-    @Column(name = "CREATE_DATE")
-    private Date createDate;
-    
-    @Column(name = "UPDATE_DATE")
-    private Date updateDate;
-    
-    @Column(name = "ACTIVE")
-    private Integer active;
     
 }

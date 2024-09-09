@@ -19,7 +19,7 @@ import lombok.Data;
 @Table(name="Role_Master")
 @Where(clause="ACTIVE=1")
 @Entity
-public class RoleMasterEntity implements Serializable{
+public class RoleMasterEntity  extends ParentEntity implements Serializable{
 	
 	private static final long serialVersionUID=1L;
 
@@ -30,25 +30,5 @@ public class RoleMasterEntity implements Serializable{
 	@Column(name="ROLE_NAME")
 	private String roleName;
 	
-	@Column(name="ROLE_CODE")
-	private String roleCode;
 	
-	@Column(name="ACTIVE")
-	private Integer active;
-	
-	@Column(name="CREATE_DATE")
-	private Date 	createDate;
-	
-	@Column(name="UPDATE_DATE")
-	private Date updateDate;
-	
-	@Column(name="CREATED_BY")
-	private String createdBy;
-	
-	@Column(name="UPDATED_BY")
-	private String updatedBy;
-	
-	@Transient
-	private List<ResourceMasterEntity> resourceMasterEntities;
-
 }

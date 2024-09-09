@@ -63,10 +63,8 @@ public class RoleMasterController {
 		Map<String, Object> statusMap=new HashMap<String, Object>();
 		try {
 		
-			if(UtilValidate.isNotEmptyAndNotNull(role.getRoleName()) && UtilValidate.isNotEmptyAndNotNull(role.getRoleCode()) &&
-					UtilValidate.isNotEmptyAndNotNull(role.getCreatedBy())) {
+			if(UtilValidate.isNotEmptyAndNotNull(role.getRoleName())) {
 				
-				role.setUpdatedBy(role.getUpdatedBy()!=null?role.getUpdatedBy():role.getCreatedBy());
 				role=roleMasterService.save(role);
 				//roleResourceMasterService.saveList(role.getResourceMasterEntities(), role.getId().toString());
 				
@@ -102,7 +100,6 @@ public class RoleMasterController {
 
 			RoleMasterEntity roleMaster=roleMasterService.findById(role.getId());
 			roleMaster.setRoleName(role.getRoleName()!=null?role.getRoleName():roleMaster.getRoleName());
-			roleMaster.setRoleCode(role.getRoleCode()!=null?role.getRoleCode():roleMaster.getRoleCode());
 			roleMaster.setUpdatedBy(role.getUpdatedBy()!=null?role.getUpdatedBy():roleMaster.getUpdatedBy());
 			roleMaster.setCreatedBy(role.getCreatedBy()!=null?role.getCreatedBy():roleMaster.getCreatedBy());
 

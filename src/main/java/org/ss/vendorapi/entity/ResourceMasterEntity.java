@@ -27,18 +27,9 @@ public class ResourceMasterEntity  extends ParentEntity implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private String resourceName;
-	private String resourceUrl;
-	private String resourceCode;
+	private String description;
+	private String url;
+	private String featureId;
 	
-    private Integer active;
-    
-    @Column(name="create_date")
-	private Date createDate;
-	
-	@Column(name="update_date")
-	private Date updateDate;
-
-
 
 }

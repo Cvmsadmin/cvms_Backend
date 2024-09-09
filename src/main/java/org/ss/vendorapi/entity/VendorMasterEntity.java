@@ -59,5 +59,6 @@ public class VendorMasterEntity extends ParentEntity implements Serializable  {
 	
 	@Column(name="pan_no")
 	private String panNo;
+	
 
 }
