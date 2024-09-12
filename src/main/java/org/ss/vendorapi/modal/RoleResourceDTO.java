@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class RoleResourceDTO {
 
-	private String featureName;
-	private String url;
-	private Long id;
+	private List<String> features;
+	private String roleId;
 }
