@@ -1,8 +1,9 @@
- package org.ss.vendorapi.controller;
+package org.ss.vendorapi.controller;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.config.AESDecryptionService;
 //import org.ss.vendorapi.entity.LoginRequest;Service;
 import org.ss.vendorapi.config.EncryptSecurityUtil;
+import org.ss.vendorapi.entity.FeatureMasterEntity;
 import org.ss.vendorapi.entity.LoginRequest;
 import org.ss.vendorapi.entity.RefreshToken;
 import org.ss.vendorapi.entity.RoleResourceMasterEntity;
 import org.ss.vendorapi.entity.UserMasterEntity;
+import org.ss.vendorapi.modal.FeatureDTO;
 import org.ss.vendorapi.modal.ForgotPasswordRequest;
-import org.ss.vendorapi.modal.RoleResourceDTO;
 import org.ss.vendorapi.modal.response.JwtResponse;
 import org.ss.vendorapi.security.JwtHelper;
 import org.ss.vendorapi.service.CustomUserDetailService;
@@ -40,6 +42,7 @@ import org.ss.vendorapi.util.Constants;
 import org.ss.vendorapi.util.Parameters;
 import org.ss.vendorapi.util.UtilValidate;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,7 +52,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("/v2/api")
 public class LoginController {
 	private static final Class<?> CLASS_NAME = LoginController.class;
-//	private static UPPCLLogger logger = UPPCLLogger.getInstance(UPPCLLogger.MODULE_BILLING,CLASS_NAME.toString());
+	//	private static UPPCLLogger logger = UPPCLLogger.getInstance(UPPCLLogger.MODULE_BILLING,CLASS_NAME.toString());
 
 	@Autowired
 	private Environment env;
@@ -71,10 +74,10 @@ public class LoginController {
 
 	@Autowired
 	private CustomUserDetailService userDetailsService;
-	
+
 	@Autowired
 	private RoleResourceMasterService roleResourceMasterService;
-	
+
 	@Autowired
 	private FeatureMasterService featureMasterService;
 
@@ -93,7 +96,7 @@ public class LoginController {
 
 	public static final String UTILITY_USER_ROLE = "UtilityUser";
 	public static final String END_CONSUMER_ROLE = "EndConsumer";
-	
+
 	@PostMapping("/userLogin")
 	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
 
@@ -109,33 +112,53 @@ public class LoginController {
 				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING,
 						HttpStatus.EXPECTATION_FAILED);
 			}
-			
+
 			UserMasterEntity userMasterEntity= userMasterService.authenticateByEmail(email, encryptUtil.encode(password));
-		
+
 			if (userMasterEntity!=null && encryptUtil.encode(password).equals(userMasterEntity.getPassword())) {
-	
+
 				UserDetails userDetails = userDetailsService.loadUserByEmail(email);
 				String token = this.helper.generateToken(userDetails);
-				
+
 				RefreshToken refreshToken = refreshTokenService.createRefreshTokenByEmail(userDetails.getUsername());
-				
+
 				/** @Author Lata Bisht */
 				/** START ::: GET RESOURCES ::: 9, September August 2024 */
-				
+
 				List<RoleResourceMasterEntity> roleResourceMasterEntityList=roleResourceMasterService.findByRole(userMasterEntity.getRole());	
+
+				String featureIdsString = roleResourceMasterEntityList.stream()
+						.map(roleResourceMasterEntity -> "" + roleResourceMasterEntity.getFeatureId() + "")  // Enclose featureId in single quotes
+						.collect(Collectors.joining(",", "(", ")"));  // Add parentheses around the joined string
+
+				String where="o.id in "+featureIdsString;
+				List<FeatureMasterEntity> features=featureMasterService.findByWhere(where);
+
+				ObjectMapper objectMapper = new ObjectMapper();
+				objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+				List<FeatureDTO> featureDTOList = features.stream()
+				    .map(feature -> {
+				        try {
+				            // Convert FeatureMasterEntity to FeatureDTO
+				            return objectMapper.convertValue(feature, FeatureDTO.class);
+				        } catch (IllegalArgumentException e) {
+				            // Handle conversion failure (log the error, return null, or other handling logic)
+				            System.err.println("Failed to map entity to FeatureDTO: " + e.getMessage());
+				            return null; // Handle the error (e.g., skip the entity)
+				        }
+				    })
+				    .filter(Objects::nonNull) // Filter out any null values from failed conversions
+				    .collect(Collectors.toList());
 				
-				List<RoleResourceDTO> resources = roleResourceMasterEntityList.stream()
-					    .map(roleResourceMasterEntity -> new ObjectMapper().convertValue(roleResourceMasterEntity, RoleResourceDTO.class))
-					    .collect(Collectors.toList());
-				
-				response = JwtResponse.builder().urls(resources).accessToken(token).refreshToken(refreshToken.getToken())
+				response = JwtResponse.builder().urls(featureDTOList).accessToken(token).refreshToken(refreshToken.getToken())
 						.username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
 				/** END ::: GET RESOURCES ::: 9, September 2024 */
-				
+
 				statusMap.put(Parameters.status, Constants.SUCCESS);
 				statusMap.put(Parameters.statusCode, "LOGIN_200");
 				statusMap.put("response", response);
-				
+
 				return new ResponseEntity<>(statusMap, HttpStatus.OK);
 			} else {
 				statusMap.put(Parameters.statusMsg, "Please enter a valid email or password.");
@@ -158,7 +181,7 @@ public class LoginController {
 			HttpServletRequest request) {
 		Map<String, Object> statusMap = new HashMap<String, Object>();
 		String methodName = request.getRequestURI();
-//		logger.logMethodStart(methodName);
+		//		logger.logMethodStart(methodName);
 		JwtResponse response = new JwtResponse();
 		try {
 
@@ -221,47 +244,47 @@ public class LoginController {
 				}
 			}
 		} catch (Exception ex) {
-//			if (logger.isErrorLoggingEnabled()) {
-//				logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage() );
-//			}
+			//			if (logger.isErrorLoggingEnabled()) {
+			//				logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage() );
+			//			}
 			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-		
-		
-		@PostMapping("/forgotPassword")
-		public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
-		    Map<String, Object> statusMap = new HashMap<>();
 
-		    try {
-		        String email = forgotPasswordRequest.getEmail();
-		        String phone = forgotPasswordRequest.getPhone();
-		        String newPassword = forgotPasswordRequest.getNewPassword();
-		        String confirmPassword = forgotPasswordRequest.getConfirmPassword();
 
-		        if (UtilValidate.isEmpty(email) || UtilValidate.isEmpty(phone) || UtilValidate.isEmpty(newPassword) || UtilValidate.isEmpty(confirmPassword)) {
-		            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
-		        }
+	@PostMapping("/forgotPassword")
+	public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+		Map<String, Object> statusMap = new HashMap<>();
 
-		        if (!newPassword.equals(confirmPassword)) {
-		            return CommonUtils.createResponse(Constants.FAIL, "Passwords do not match", HttpStatus.BAD_REQUEST);
-		        }
+		try {
+			String email = forgotPasswordRequest.getEmail();
+			String phone = forgotPasswordRequest.getPhone();
+			String newPassword = forgotPasswordRequest.getNewPassword();
+			String confirmPassword = forgotPasswordRequest.getConfirmPassword();
 
-		        boolean isUpdated = userMasterService.updatePasswordByEmailAndPhone(email, phone, newPassword);
+			if (UtilValidate.isEmpty(email) || UtilValidate.isEmpty(phone) || UtilValidate.isEmpty(newPassword) || UtilValidate.isEmpty(confirmPassword)) {
+				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+			}
 
-		        if (isUpdated) {
-		            statusMap.put(Parameters.status, Constants.SUCCESS);
-		            statusMap.put(Parameters.statusCode, "PASSWORD_RESET_200");
-		            statusMap.put(Parameters.statusMsg, "Your new password is: " + newPassword);
-		            return new ResponseEntity<>(statusMap, HttpStatus.OK);
-		        } else {
-		            statusMap.put(Parameters.statusMsg, "Invalid email or phone number");
-		            statusMap.put(Parameters.status, Constants.FAIL);
-		            statusMap.put(Parameters.statusCode, "PASSWORD_RESET_201");
-		            return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
-		        }
-		    } catch (Exception ex) {
-		        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		    }
+			if (!newPassword.equals(confirmPassword)) {
+				return CommonUtils.createResponse(Constants.FAIL, "Passwords do not match", HttpStatus.BAD_REQUEST);
+			}
+
+			boolean isUpdated = userMasterService.updatePasswordByEmailAndPhone(email, phone, newPassword);
+
+			if (isUpdated) {
+				statusMap.put(Parameters.status, Constants.SUCCESS);
+				statusMap.put(Parameters.statusCode, "PASSWORD_RESET_200");
+				statusMap.put(Parameters.statusMsg, "Your new password is: " + newPassword);
+				return new ResponseEntity<>(statusMap, HttpStatus.OK);
+			} else {
+				statusMap.put(Parameters.statusMsg, "Invalid email or phone number");
+				statusMap.put(Parameters.status, Constants.FAIL);
+				statusMap.put(Parameters.statusCode, "PASSWORD_RESET_201");
+				return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception ex) {
+			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
 }

@@ -57,7 +57,7 @@ public class FeatureMasterServiceImpl implements FeatureMasterService {
 		try{
 			Query query=null;
 			if(where!=null)
-				query=entityManager.createQuery("FROM RoleFeatureMasterEntity o WHERE "+where);
+				query=entityManager.createQuery("FROM FeatureMasterEntity o WHERE "+where);
 			list=query.getResultList();
 		}catch(Exception ex) {
 			ex.printStackTrace();
