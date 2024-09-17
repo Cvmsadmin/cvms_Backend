@@ -1,6 +1,11 @@
 package org.ss.vendorapi.util;
 
 import java.io.UnsupportedEncodingException;
+
+import java.util.HashSet;
+import java.util.Set;
+
+
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.math.BigInteger;
@@ -501,5 +506,21 @@ public class CommonUtils {
             return null;
         }
     }
+
+    private static final Set<String> ALLOWED_FILE_TYPES = new HashSet<>();
+
+    static {
+        // Initialize the set with allowed file types
+        ALLOWED_FILE_TYPES.add("application/pdf"); // PDF
+        ALLOWED_FILE_TYPES.add("image/jpeg");      // JPEG image
+        ALLOWED_FILE_TYPES.add("image/png");       // PNG image
+        ALLOWED_FILE_TYPES.add("image/gif");       // GIF image
+    }
+
+    public static boolean isValidFileType(String contentType) {
+        return ALLOWED_FILE_TYPES.contains(contentType);
+    }
+
+
     
 }
