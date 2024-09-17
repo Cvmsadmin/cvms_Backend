@@ -2,7 +2,7 @@ package org.ss.vendorapi.modal.response;
 
 import java.util.List;
 
-import org.ss.vendorapi.modal.RoleResourceDTO;
+import org.ss.vendorapi.modal.FeatureDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +20,7 @@ public class JwtResponse {
 	private String username;
 	private final String tokenType = "Bearer";
 	private String status;
-	private List<RoleResourceDTO> urls;
+	private List<FeatureDTO> urls;
 	
 	public JwtResponse(String accessToken, String refreshToken,String username) {
 		this.accessToken = accessToken;

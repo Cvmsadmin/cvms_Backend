@@ -10,7 +10,8 @@ public class CustomerDetailsDTO implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
-	// Added by Naman
+	
+	private Long id;
 	private String employeeId;
 	private String baseLocation;
 	private String MiddleName;
@@ -21,13 +22,13 @@ public class CustomerDetailsDTO implements Serializable{
 	private String City;
 	private String State;
 	private String District;
-	private String pincode;
+	private String pinCode;
 	private String ContactPerson;
 	private String ContactNo;
 	private String Gst;
 	private String Pan;
 	private String TypeOfService;
-	private String ACcountManager;
+	private String AccountManager;
 	private String VendorName;
 	private String PanNo;
 	private String srNo;
