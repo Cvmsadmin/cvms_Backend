@@ -1,5 +1,7 @@
 package org.ss.vendorapi.service;
 
+import java.util.List;
+
 import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.exceptions.RequestNotFoundException;
 
@@ -20,7 +22,7 @@ public interface UserMasterService {
 	public UserMasterEntity authenticateByEmail(String email, String encode);
 	public boolean updatePasswordByEmailAndPhone(String email, String phone, String encodedPassword);
 	
-	
+	public List<UserMasterEntity> findByRoleId(String roleId);
 	
 	
 	

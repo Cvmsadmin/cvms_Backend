@@ -1,5 +1,7 @@
 package org.ss.vendorapi.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -177,5 +179,10 @@ public class UserMasterServiceImpl implements UserMasterService {
 	        }
 	        return false;
 	    }
+
+	@Override
+	public List<UserMasterEntity> findByRoleId(String roleId) {
+		return userMasterRepository.findByRole(roleId);
+	}
 
 }

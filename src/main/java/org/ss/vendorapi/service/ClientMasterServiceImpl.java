@@ -47,4 +47,10 @@ public class ClientMasterServiceImpl implements ClientMasterService{
 		return clientMasterRepository.findById(id).orElse(null);
 	}
 
+
+	@Override
+	public List<ClientMasterEntity> findByAccountManager(String userId) {
+		return clientMasterRepository.findByAccountManager(userId);
+	}
+
 }
