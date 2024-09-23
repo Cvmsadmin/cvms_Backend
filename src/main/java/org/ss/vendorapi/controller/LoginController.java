@@ -152,7 +152,8 @@ public class LoginController {
 				    .collect(Collectors.toList());
 				
 				response = JwtResponse.builder().urls(featureDTOList).accessToken(token).refreshToken(refreshToken.getToken())
-						.username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
+						.id(userMasterEntity.getId().toString()).username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
+				
 				/** END ::: GET RESOURCES ::: 9, September 2024 */
 
 				statusMap.put(Parameters.status, Constants.SUCCESS);
