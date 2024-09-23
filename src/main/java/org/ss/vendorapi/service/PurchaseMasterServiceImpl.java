@@ -13,7 +13,7 @@ public class PurchaseMasterServiceImpl implements PurchaseMasterService{
 	@Autowired 
 	private PurchaseMasterRepository purchaseMasterRepository;
 
-	
+
 	@Override
 	public List<PurchaseMasterEntity> findAll(){
 		return purchaseMasterRepository.findAll();
@@ -40,4 +40,11 @@ public class PurchaseMasterServiceImpl implements PurchaseMasterService{
 		return purchaseMasterRepository.save(purchaseMasterEntity);
 	}
 
+
+
+	@Override
+	public void savePurchase(PurchaseMasterEntity purchaseMaster) {
+		purchaseMasterRepository.save(purchaseMaster);
+		
+	}
 }
