@@ -10,6 +10,7 @@ public interface ProjectMasterService {
 	public List<ProjectMasterEntity> getAllProject();
 	public ProjectMasterEntity update(ProjectMasterEntity projectMasterEntity);
 	public ProjectMasterEntity findById(Long id);
+	public List<ProjectMasterEntity> findByWhere(String where);
 
 
 }
