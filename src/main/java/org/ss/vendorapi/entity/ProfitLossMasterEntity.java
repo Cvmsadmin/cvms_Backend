@@ -1,5 +1,7 @@
 package org.ss.vendorapi.entity;
 
+import java.io.Serializable;
+
 import org.hibernate.annotations.Where;
 
 import jakarta.persistence.Column;
@@ -8,22 +10,25 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@NoArgsConstructor @Setter @Getter @AllArgsConstructor
 @Entity
 @Where(clause="ACTIVE=1")
 @Table(name="profit_loss_master")
-public class ProfitLossMasterEntity {
+public class ProfitLossMasterEntity extends ParentEntity implements Serializable{
 	
+	
+	private static final long serialVersionUID=1L;
 	
 	@Id
 	@Column(name="id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name="serial_no")
-	private String SrNo;
 	
 	@Column(name="client_name")
 	private String clientName;
@@ -31,35 +36,39 @@ public class ProfitLossMasterEntity {
 	@Column(name="project_name")
 	private String projectName;
 	
+	@Column(name="serial_no")
+	private String SrNo;
+	
+	
 	@Column(name="description")
 	private String description;
 	
 	@Column(name="gst_percent")
-	private Double gstPercent;
+	private String gstPercent;
 	
 	@Column(name="client_bill_include_gst")
-	private Double clientBillIncludeGst;
+	private String clientBillIncludeGst;
 	
 	@Column(name="client_gst_amount")
-	private Double clientGstAmount;
+	private String clientGstAmount;
 	
 	@Column(name="client_billing_exclude_gst")
-	private Double clientBillExcludeGst;
+	private String clientBillExcludeGst;
 	
 	@Column(name="vendor_bill_include_gst")
-	private Double vendorBillIncludeGst;
+	private String vendorBillIncludeGst;
 	
 	@Column(name="vendor_gst_amount")
-	private Double vendorGstAmount;
+	private String vendorGstAmount;
 	
 	@Column(name="vendor_bill_exclude_gst")
-	private Double vendorBillExcludeGst;
+	private String vendorBillExcludeGst;
 	
 	@Column(name="margin_percent")
-	private Double marginPercent;
+	private String marginPercent;
 	
 	@Column(name="margin")
-	private Double margin;
+	private String margin;
 	
 	
 

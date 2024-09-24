@@ -121,7 +121,7 @@ public class ProfiLossMasterController {
     @GetMapping("/getAllProfitLoss")    
     public ResponseEntity<?> getAllProfitLoss() {
 	    try {
-	        List<ProfitLossMasterEntity> users = profitLossMasterService.getAllProfitLoss();
+	        List<ProfitLossMasterEntity> users = profitLossMasterService.findAll();
 	        return new ResponseEntity<>(users, HttpStatus.OK);
 	    } catch (Exception ex) {
 	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

@@ -14,16 +14,31 @@ public class ProfitLossMasterServiceImpl implements ProfitLossMasterService{
 	private ProfitLossMasterRepository profitLossMasterRepository;
 
 	
+	
 	@Override
-	public List<ProfitLossMasterEntity> getAllProfitLoss(){
-		return profitLossMasterRepository.findAll();
+	public ProfitLossMasterEntity save(ProfitLossMasterEntity profitLossMasterEntity) {
+		return profitLossMasterRepository.save(profitLossMasterEntity);
 	}
 
 
 
 	@Override
-	public ProfitLossMasterEntity save(ProfitLossMasterEntity profitLossMasterEntity) {
+	public List<ProfitLossMasterEntity> findAll() {
+				return profitLossMasterRepository.findAll();
+	}
+
+
+
+	@Override
+	public ProfitLossMasterEntity update(ProfitLossMasterEntity profitLossMasterEntity) {
 		return profitLossMasterRepository.save(profitLossMasterEntity);
+	}
+
+
+
+	@Override
+	public ProfitLossMasterEntity findById(Long id) {
+		return profitLossMasterRepository.findById(id).orElse(null);
 	}
 
 }
