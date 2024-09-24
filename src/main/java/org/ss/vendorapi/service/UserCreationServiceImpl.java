@@ -1,6 +1,7 @@
 package org.ss.vendorapi.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,6 @@ import org.ss.vendorapi.repository.UserCreationRepository;
 
 @Service
 public class UserCreationServiceImpl implements UserCreationService{
-	
 	@Autowired 
 	private UserCreationRepository creationUserRepository;
 
@@ -37,7 +37,11 @@ public class UserCreationServiceImpl implements UserCreationService{
     @Override
     public boolean existsByPhone(String phone) {
         return creationUserRepository.existsByPhone(phone);
+    }    
+    
+ // Method to find a user by email
+    public Optional<UserMasterEntity> findByEmail(String email) {
+        return creationUserRepository.findByEmail(email);
     }
-	
 
 }

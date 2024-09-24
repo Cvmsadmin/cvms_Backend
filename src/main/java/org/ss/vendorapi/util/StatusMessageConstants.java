@@ -61,4 +61,8 @@ public class StatusMessageConstants {
 	public static final Object USER_ALREADY_REGISTERED ="User already registered";
 	
 
+	public static final Object PASSWORDS_DO_NOT_MATCH = "password do not match";
+	public static final Object INVALID_OLD_PASSWORD = "invalid old password";
+	public static final Object PASSWORD_RESET_SUCCESS = "password reset success";
+	public static final Object USER_NOT_FOUND = "user not found";
 }
