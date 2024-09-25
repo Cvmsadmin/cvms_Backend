@@ -45,7 +45,7 @@ public class ServiceMasterController {
 
 	
 	
-//	************************************************************************************************************************************************************************************************************************
+//	************************************************************************
 	
 	@PostMapping("/addService")
 	public ResponseEntity<?> addService(@RequestBody List<ServiceMasterDTO> serviceList, HttpServletRequest request) {
@@ -64,6 +64,7 @@ public class ServiceMasterController {
 	            ServiceMasterEntity serviceCreationEntityObj = new ServiceMasterEntity();
 	            serviceCreationEntityObj.setSrNo(serviceMasterDTO.getSrNo());
 	            serviceCreationEntityObj.setServiceName(serviceMasterDTO.getServiceName());
+	            serviceCreationEntityObj.setActive(true);
 
 	            try {
 	                serviceCreationEntityObj = serviceMasterService.save(serviceCreationEntityObj);
@@ -97,8 +98,8 @@ public class ServiceMasterController {
 	}
 
 	
-//	********************************************************************************************************************************************************************
-//	*******************************************************************get api *****************************************************************************************
+//	********************************************************
+//	**********************get api ******************************
 	
 	@GetMapping("/getAllService")	
 	public ResponseEntity<?> getAllService() {
@@ -109,5 +110,4 @@ public class ServiceMasterController {
 	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
-	
 }

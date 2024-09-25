@@ -14,7 +14,8 @@ import lombok.Data;
 
 @Data
 @Entity
-@Where(clause="ACTIVE=1")
+@Where(clause="ACTIVE = TRUE")
+
 @Table(name="service_master")
 public class ServiceMasterEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -30,5 +31,7 @@ public class ServiceMasterEntity implements Serializable {
 	@Column(name="Service_name")
 	private String serviceName;
 	
+	@Column(name="active")
+	private Boolean active;
 
 }
