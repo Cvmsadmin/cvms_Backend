@@ -24,7 +24,7 @@ public class ProjectMasterServiceImpl implements ProjectMasterService{
 
 
 	@Override
-	public List<ProjectMasterEntity> getAllProject(){
+	public List<ProjectMasterEntity> findAll(){
 		return projectMasterRepository.findAll();
 	}
 

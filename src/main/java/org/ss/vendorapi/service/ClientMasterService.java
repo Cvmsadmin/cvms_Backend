@@ -12,4 +12,5 @@ public interface ClientMasterService {
 	public ClientMasterEntity update(ClientMasterEntity clientMasterEntity);
 	public ClientMasterEntity findById(Long id);
 	public List<ClientMasterEntity> findByAccountManager(String userId);
+	//public List<ClientMasterEntity> findByProjectManager(String userId);
 }

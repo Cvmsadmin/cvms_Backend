@@ -21,14 +21,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.entity.MilestoneMasterEntity;
+import org.ss.vendorapi.entity.ProfitLossMasterEntity;
 import org.ss.vendorapi.entity.ProjectMasterEntity;
+import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.modal.ProjectRequestDTO;
 import org.ss.vendorapi.service.ClientMasterService;
 import org.ss.vendorapi.service.MilestoneMasterService;
 import org.ss.vendorapi.service.ProjectMasterService;
+import org.ss.vendorapi.service.UserMasterService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
 import org.ss.vendorapi.util.Parameters;
+import org.ss.vendorapi.util.RoleConstants;
 import org.ss.vendorapi.util.StatusMessageConstants;
 import org.ss.vendorapi.util.UtilValidate;
 
@@ -49,8 +53,12 @@ public class ProjectMasterController {
 	private ProjectMasterService projectMasterService;
 
 	@Autowired
+	private UserMasterService userMasterService;
+
+
+	@Autowired
 	private MilestoneMasterService milestoneMasterService;
-	
+
 	@Autowired
 	private ClientMasterService clientMasterService;
 
@@ -183,7 +191,7 @@ public class ProjectMasterController {
 	public ResponseEntity<?> getAllProject() {
 		Map<String, Object> statusMap = new HashMap<>();
 		try {
-			List<ProjectMasterEntity> projectList = projectMasterService.getAllProject();
+			List<ProjectMasterEntity> projectList = projectMasterService.findAll();
 			statusMap.put("ProjectMasterEntity",projectList);
 			statusMap.put(Parameters.statusMsg,  StatusMessageConstants.PROJECT_FOUND_SUCCESSFULLY);
 			statusMap.put(Parameters.status, Constants.SUCCESS);
@@ -195,19 +203,61 @@ public class ProjectMasterController {
 	}
 
 
+//	@GetMapping("/getAllProjectByManager")	    
+//	public ResponseEntity<?> getAllProjectByManager(@RequestParam("id") String userId) {
+//		Map<String, Object> statusMap = new HashMap<>();
+//		try {
+//
+//			List<ClientMasterEntity> clients=clientMasterService.findByAccountManager(userId);
+//
+//			String clientIds = "(" + clients.stream()
+//			.map(client -> "'" + client.getId() + "'") // Assuming 'getId()' gets the client ID
+//			.collect(Collectors.joining(",")) + ")";
+//
+//			String where="o.clientName in "+clientIds;
+//			List<ProjectMasterEntity> projectList=projectMasterService.findByWhere(where);
+//			statusMap.put("projectMasterEntities",projectList);
+//			statusMap.put(Parameters.statusMsg,  StatusMessageConstants.PROJECT_FOUND_SUCCESSFULLY);
+//			statusMap.put(Parameters.status, Constants.SUCCESS);
+//			statusMap.put(Parameters.statusCode, "RU_200");
+//			return new ResponseEntity<>(statusMap,HttpStatus.OK);
+//		} catch (Exception ex) {
+//			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//	}
+
 	@GetMapping("/getAllProjectByManager")	    
-	public ResponseEntity<?> getAllProjectByManager(@RequestParam("id") String userId) {
+	public ResponseEntity<?> getAllProjectByManager(@RequestParam("id") Long userId) {
 		Map<String, Object> statusMap = new HashMap<>();
 		try {
 			
-			List<ClientMasterEntity> clients=clientMasterService.findByAccountManager(userId);
 			
-			String clientIds = "(" + clients.stream()
-		    .map(client -> "'" + client.getId() + "'") // Assuming 'getId()' gets the client ID
-		    .collect(Collectors.joining(",")) + ")";
-			
-			String where="o.clientName in "+clientIds;
-			List<ProjectMasterEntity> projectList=projectMasterService.findByWhere(where);
+			UserMasterEntity userMasterEntity=userMasterService.findById(userId);
+			if(userMasterEntity==null) {
+				//return error
+			}
+			List<ProjectMasterEntity> projectList=null;
+			if(RoleConstants.ACCOUNT_MANAGER.equals(userMasterEntity.getRole())) {
+				List<ClientMasterEntity> clients=clientMasterService.findByAccountManager(userId.toString());
+
+				String clientIds = "(" + clients.stream()
+				.map(client -> "'" + client.getId() + "'") // Assuming 'getId()' gets the client ID
+				.collect(Collectors.joining(",")) + ")";
+
+				String where="o.clientName in "+clientIds;
+				 projectList=projectMasterService.findByWhere(where);
+
+			}else if(RoleConstants.PROJECT_MANAGER.equals(userMasterEntity.getRole())) {
+				String where="o.projectManager='"+userId+"'";
+				projectList=projectMasterService.findByWhere(where);
+
+			}else if(RoleConstants.ADMINISTRATION.equals(userMasterEntity.getRole())) {
+				projectList=projectMasterService.findAll();
+			}else {
+				statusMap.put(Parameters.status, Constants.FAIL);
+				statusMap.put(Parameters.statusCode, "RU_404");
+				return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
+			}
 			statusMap.put("projectMasterEntities",projectList);
 			statusMap.put(Parameters.statusMsg,  StatusMessageConstants.PROJECT_FOUND_SUCCESSFULLY);
 			statusMap.put(Parameters.status, Constants.SUCCESS);

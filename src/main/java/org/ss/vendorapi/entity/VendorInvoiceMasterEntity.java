@@ -32,9 +32,6 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "vendor_id")
-    private String vendorId;
-
     @Column(name = "vendor_name")
     private String vendorName;
 

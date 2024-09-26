@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -14,15 +15,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.entity.ProfitLossMasterEntity;
+import org.ss.vendorapi.entity.ProjectMasterEntity;
+import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.modal.ProfitLossMasterDTO;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.ProfitLossRequestDTO;
+import org.ss.vendorapi.service.ClientMasterService;
 import org.ss.vendorapi.service.ProfitLossMasterService;
+import org.ss.vendorapi.service.ProjectMasterService;
+import org.ss.vendorapi.service.UserMasterService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
 import org.ss.vendorapi.util.Parameters;
+import org.ss.vendorapi.util.RoleConstants;
 import org.ss.vendorapi.util.StatusMessageConstants;
 import org.ss.vendorapi.util.UtilValidate;
 
@@ -38,9 +47,19 @@ public class ProfiLossMasterController {
 
     @Autowired
     private Environment env;
+    
+    @Autowired
+	private ClientMasterService clientMasterService;
 
     @Autowired
     private ProfitLossMasterService profitLossMasterService;
+    
+    @Autowired
+    private UserMasterService userMasterService;
+    
+    @Autowired
+    private ProjectMasterService projectMasterService;
+    
 
     @PostMapping("/addProfitLoss")
     public ResponseEntity<?> addProfitLoss(@RequestBody ProfitLossRequestDTO profitLossRequestDTO, HttpServletRequest request) {
@@ -118,6 +137,55 @@ public class ProfiLossMasterController {
 //    *****************************************************get api ***********************************************************************************************************
  
     
+    @GetMapping("/getAllProfitLossByManager")    
+    public ResponseEntity<?> getAllProfitLossByManager(@RequestParam("id") Long userId) {
+    	Map<String, Object> statusMap = new HashMap<>();
+		try {
+			
+			UserMasterEntity userMasterEntity=userMasterService.findById(userId);
+			if(userMasterEntity==null) {
+				//return error
+			}
+			List<ProfitLossMasterEntity> profitList=null;
+			if(RoleConstants.ACCOUNT_MANAGER.equals(userMasterEntity.getRole())) {
+				List<ClientMasterEntity> clients=clientMasterService.findByAccountManager(userId.toString());
+				
+				String clientIds = "(" + clients.stream()
+			    .map(client -> "'" + client.getId() + "'") // Assuming 'getId()' gets the client ID
+			    .collect(Collectors.joining(",")) + ")";
+				
+				String where="o.clientName in "+clientIds;
+				
+				profitList=profitLossMasterService.findByWhere(where);
+				
+				
+			}else if(RoleConstants.PROJECT_MANAGER.equals(userMasterEntity.getRole())) {
+				
+				List<ProjectMasterEntity> projects=projectMasterService.findByWhere("o.projectManager='"+userId.toString()+"'");
+				String projectIds = "(" + projects.stream()
+			    .map(project -> "'" + project.getId() + "'") // Assuming 'getId()' gets the client ID
+			    .collect(Collectors.joining(",")) + ")";
+				
+				String where="o.projectName in "+projectIds;		
+				profitList=profitLossMasterService.findByWhere(where);
+				
+			}else if(RoleConstants.ADMINISTRATION.equals(userMasterEntity.getRole())) {
+				profitList=profitLossMasterService.findAll();
+			}else {
+				statusMap.put(Parameters.status, Constants.FAIL);
+				statusMap.put(Parameters.statusCode, "RU_404");
+				return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
+			}
+			statusMap.put("profitAndLossList",profitList);
+			statusMap.put(Parameters.statusMsg,  StatusMessageConstants.PROJECT_FOUND_SUCCESSFULLY);
+			statusMap.put(Parameters.status, Constants.SUCCESS);
+			statusMap.put(Parameters.statusCode, "RU_200");
+			return new ResponseEntity<>(statusMap,HttpStatus.OK);
+		} catch (Exception ex) {
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+    
     @GetMapping("/getAllProfitLoss")    
     public ResponseEntity<?> getAllProfitLoss() {
 	    try {
@@ -127,7 +195,6 @@ public class ProfiLossMasterController {
 	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
-    
     
     
 }

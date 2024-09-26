@@ -185,4 +185,14 @@ public class UserMasterServiceImpl implements UserMasterService {
 		return userMasterRepository.findByRole(roleId);
 	}
 
+	@Override
+	public List<UserMasterEntity> findAll() {
+		return userMasterRepository.findAll();
+	}
+
+	@Override
+	public UserMasterEntity findById(Long id) {
+		return userMasterRepository.findById(id).orElse(null);
+	}
+
 }

@@ -3,6 +3,7 @@ package org.ss.vendorapi.service;
 import java.util.List;
 
 import org.ss.vendorapi.entity.ProfitLossMasterEntity;
+import org.ss.vendorapi.entity.ProjectMasterEntity;
 import org.ss.vendorapi.entity.PurchaseMasterEntity;
 
 public interface ProfitLossMasterService {
@@ -11,4 +12,5 @@ public interface ProfitLossMasterService {
 	public List<ProfitLossMasterEntity> findAll();
 	public ProfitLossMasterEntity update(ProfitLossMasterEntity profitLossMasterEntity);
     public ProfitLossMasterEntity findById(Long id);
+    public List<ProfitLossMasterEntity> findByWhere(String where);
 }

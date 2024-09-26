@@ -4,6 +4,7 @@ package org.ss.vendorapi.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -19,11 +20,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.entity.ClientMasterEntity;
+import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.modal.CustomerDetailsDTO;
 // org.ss.vendorapi.entity.RoleMasterEntity; //import
 // org.ss.vendorapi.logging.UPPCLLogger; import
 import org.ss.vendorapi.service.ClientMasterService;
 import org.ss.vendorapi.service.DataValidationService;
+import org.ss.vendorapi.service.UserMasterService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
 import org.ss.vendorapi.util.Parameters;
@@ -37,18 +40,21 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("v2/api") 
 public class ClientMasterController {
 
-	//  private static final Class<?> CLASS_NAME = UserMasterController.class; //
-	//  private static UPPCLLogger logger =
-	//  UPPCLLogger.getInstance(UPPCLLogger.MODULE_REGISTRATION,CLASS_NAME.toString()
-	//  );
 
-	@Autowired private Environment env;
+	@Autowired 
+	private Environment env;
 
-	@Autowired private ClientMasterService clientMasterService;
+	@Autowired 
+	private ClientMasterService clientMasterService;
+	
+	
+	
+	@Autowired
+	private UserMasterService userMasterService;
 
 
-
-	@Autowired private DataValidationService dataValidationService;
+	@Autowired 
+	private DataValidationService dataValidationService;
 
 	@PostMapping("/addClient") 
 	public ResponseEntity<?> addClient(@RequestBody  CustomerDetailsDTO addClientMEntity,HttpServletRequest request){
@@ -141,13 +147,47 @@ public class ClientMasterController {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+ 
 	@GetMapping("/getAllClientByManager")
 	public ResponseEntity<?> getAllClientByManager(@RequestParam("id") String userId) { 
 		try {
 			Map<String,Object> statusMap=new HashMap<>();
+			
+			List<UserMasterEntity> userMasterList= userMasterService.findAll();
 			List<ClientMasterEntity> clientList = clientMasterService.findByAccountManager(userId);
-			statusMap.put("clientMasterEntities",clientList);
+			
+			
+			Map<Long, UserMasterEntity> userMasterMap = userMasterList.stream()
+			        .collect(Collectors.toMap(UserMasterEntity::getId, userMaster -> userMaster));
+
+			
+			// Assuming client.getAccountManager() returns a String, convert it to Long for comparison
+			clientList.stream()
+			    .filter(client -> client.getAccountManager() != null)  // Ensure accountManager is not null
+			    .forEach(client -> {
+			        // Convert client.getAccountManager() (String) to Long
+			        Long accountManagerId = Long.parseLong(client.getAccountManager());
+			        
+			        // Check if userMasterMap contains the corresponding account manager ID
+			        if (userMasterMap.containsKey(accountManagerId)) {
+			            // Set the account manager's name from the UserMasterEntity
+			        	String name="";
+			        	UserMasterEntity userMasterEntity=userMasterMap.get(accountManagerId);
+			        	if(userMasterEntity.getFirstName()!=null && !userMasterEntity.getFirstName().isEmpty())
+			        		name=userMasterEntity.getFirstName();
+			        	if(userMasterEntity.getMiddleName()!=null && !userMasterEntity.getMiddleName().isEmpty())
+			        		name+=" "+userMasterEntity.getMiddleName();
+			        	if(userMasterEntity.getLastName()!=null && !userMasterEntity.getLastName().isEmpty())
+			        		name+=" "+userMasterEntity.getLastName();
+			        	
+			            client.setAccountManager(name);
+			        }
+			    });
+
+			// After updating, put the updated clientList into statusMap
+			statusMap.put("clientMasterEntities", clientList);
+
+			
 			statusMap.put(Parameters.statusMsg,  StatusMessageConstants.CLIENT_FOUND_SUCCESSFULLY );
 			statusMap.put(Parameters.status, Constants.SUCCESS);
 			statusMap.put(Parameters.statusCode, "RU_200");
@@ -155,8 +195,22 @@ public class ClientMasterController {
 		} catch (Exception ex) {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}
-
+	} 
+//
+//	@GetMapping("/getAllClientByProjectManager")
+//	public ResponseEntity<?> getAllClientByProjectManager(@RequestParam("id") String userId) { 
+//		try {
+//			Map<String,Object> statusMap=new HashMap<>();
+//			List<ClientMasterEntity> clientList = clientMasterService.findByProjectManager(userId);
+//			statusMap.put("clientMasterEntities",clientList);
+//			statusMap.put(Parameters.statusMsg,  StatusMessageConstants.CLIENT_FOUND_SUCCESSFULLY );
+//			statusMap.put(Parameters.status, Constants.SUCCESS);
+//			statusMap.put(Parameters.statusCode, "RU_200");
+//			return new ResponseEntity<>(statusMap,HttpStatus.OK);
+//		} catch (Exception ex) {
+//			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//	}
 
 	@PutMapping("/updateClientMaster")
 	public  ResponseEntity<?>updateClientMaster(@RequestBody CustomerDetailsDTO addClientMEntity ){

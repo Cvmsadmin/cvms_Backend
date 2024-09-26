@@ -23,6 +23,8 @@ public interface UserMasterService {
 	public boolean updatePasswordByEmailAndPhone(String email, String phone, String encodedPassword);
 	
 	public List<UserMasterEntity> findByRoleId(String roleId);
+	public List<UserMasterEntity> findAll();
+	public UserMasterEntity findById(Long id);
 	
 	
 	
