@@ -1,9 +1,13 @@
 package org.ss.vendorapi.config;
 
+import java.util.Properties;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -31,6 +35,8 @@ public class SecurityConfig {
 	@Autowired
 	private UserDetailsService userDetailsService;
 	
+
+	
 	 @Autowired
 	 private CorsFilter corsFilter;
 	 
@@ -51,7 +57,7 @@ public class SecurityConfig {
 	
 	private static final String[] WHITE_LIST_URLS = {
 			"/v2/**",
-			"/*Payment/**",
+			"/Payment/*",
 			"/v2/api/**",
 			"/v3/**"
 			};
@@ -105,22 +111,22 @@ public class SecurityConfig {
 //    }
 	
 	
-	//@Bean
-//  public JavaMailSender getJavaMailSender() {
-//      JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-//      mailSender.setHost("smtp.office365.com");
-//      mailSender.setPort(587);
-//      mailSender.setUsername("CVMSADMIN@INFINITE.COM");
-//      mailSender.setPassword("Admin@cvms");
-//
-//      Properties props = mailSender.getJavaMailProperties();
-//      props.put("mail.transport.protocol", "smtp");
-//      props.put("mail.debug", "true");
-//      props.put("mail.smtp.auth", "true");
-//      props.put("mail.smtp.starttls.enable", "true"); // Ensure TLS is enabled
-//      props.put("mail.smtp.from", "CVMSADMIN@INFINITE.COM"); // Set the "from" address
-//
-//      return mailSender;
-//  }
+	@Bean
+  public JavaMailSender getJavaMailSender() {
+      JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+      mailSender.setHost("smtp.office365.com");
+      mailSender.setPort(587);
+      mailSender.setUsername("CVMSADMIN@INFINITE.COM");
+      mailSender.setPassword("Admin@cvms");
+
+      Properties props = mailSender.getJavaMailProperties();
+      props.put("mail.transport.protocol", "smtp");
+      props.put("mail.debug", "true");
+      props.put("mail.smtp.auth", "true");
+      props.put("mail.smtp.starttls.enable", "true"); // Ensure TLS is enabled
+      props.put("mail.smtp.from", "CVMSADMIN@INFINITE.COM"); // Set the "from" address
+
+      return mailSender;
+  }
 
 }
