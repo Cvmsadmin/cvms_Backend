@@ -1,8 +1,6 @@
 package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 import org.hibernate.annotations.Where;
 
@@ -12,10 +10,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@NoArgsConstructor @Setter @Getter @AllArgsConstructor
 @Table(name="Role_Master")
 @Where(clause="ACTIVE=1")
 @Entity

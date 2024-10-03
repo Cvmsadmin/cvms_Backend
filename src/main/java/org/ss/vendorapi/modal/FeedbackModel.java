@@ -1,19 +1,5 @@
 
-/**
- * Implemented CR No 13/Oct/2023 and Request Reference No C72.
- * 
- * This code contains proprietary information of R-APDRP project and has been developed by
- *  Technologies Ltd. for UP Power Corporation Limited (UPPCL) and its 4 Discoms viz. MVVNL, PVVNL, DVVNL and PuVVNL.
- * No part of this code may be reproduced, stored, copied, or transmitted in any form
- * or by means of electronic, mechanical, photocopying or otherwise, without the consent of Program Director, HCL
- * Technologies Ltd.
- * 
- * This code is intended only for internal circulation within  Technologies Ltd, UPPCL and 4 Discoms.
- * 
- *@author @author Sony
- * 
- * 
- */
+
 package org.ss.vendorapi.modal;
 
 import java.io.Serializable;

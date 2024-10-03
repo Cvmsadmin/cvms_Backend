@@ -20,16 +20,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.entity.ClientMasterEntity;
+import org.ss.vendorapi.entity.ProjectMasterEntity;
 import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.modal.CustomerDetailsDTO;
 // org.ss.vendorapi.entity.RoleMasterEntity; //import
 // org.ss.vendorapi.logging.UPPCLLogger; import
 import org.ss.vendorapi.service.ClientMasterService;
 import org.ss.vendorapi.service.DataValidationService;
+import org.ss.vendorapi.service.ProjectMasterService;
 import org.ss.vendorapi.service.UserMasterService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
 import org.ss.vendorapi.util.Parameters;
+import org.ss.vendorapi.util.RoleConstants;
 import org.ss.vendorapi.util.StatusMessageConstants;
 import org.ss.vendorapi.util.UtilValidate;
 
@@ -46,9 +49,13 @@ public class ClientMasterController {
 
 	@Autowired 
 	private ClientMasterService clientMasterService;
-	
-	
-	
+
+
+	@Autowired
+	private ProjectMasterService projectMasterService;
+
+
+
 	@Autowired
 	private UserMasterService userMasterService;
 
@@ -147,47 +154,97 @@ public class ClientMasterController {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
- 
+
+	
+	/**
+	 * @apiNote ::: 
+	 * @author Lata Bisht
+	 * @since 26 September, 2024
+	 * @param userId ::::: This is id of user from user_master
+	 * @return :: returning list of clients
+	 */
 	@GetMapping("/getAllClientByManager")
-	public ResponseEntity<?> getAllClientByManager(@RequestParam("id") String userId) { 
+	public ResponseEntity<?> getAllClientByManager(@RequestParam("id") Long userId) { 
+		Map<String,Object> statusMap=new HashMap<>();
+
 		try {
-			Map<String,Object> statusMap=new HashMap<>();
-			
+
+			UserMasterEntity userMasterEntity=userMasterService.findById(userId);
+			if(userMasterEntity==null) {
+				//return error
+			}
+
+			List<ClientMasterEntity> clientList=null;
+
+			/** START :::::  FETCH ALL THER REGISTERED USER FROM USER_MASTER TABLE */
 			List<UserMasterEntity> userMasterList= userMasterService.findAll();
-			List<ClientMasterEntity> clientList = clientMasterService.findByAccountManager(userId);
-			
-			
 			Map<Long, UserMasterEntity> userMasterMap = userMasterList.stream()
-			        .collect(Collectors.toMap(UserMasterEntity::getId, userMaster -> userMaster));
+					.collect(Collectors.toMap(UserMasterEntity::getId, userMaster -> userMaster));
+			/** END :::::  FETCH ALL THER REGISTERED USER FROM USER_MASTER TABLE */
 
-			
-			// Assuming client.getAccountManager() returns a String, convert it to Long for comparison
-			clientList.stream()
-			    .filter(client -> client.getAccountManager() != null)  // Ensure accountManager is not null
-			    .forEach(client -> {
-			        // Convert client.getAccountManager() (String) to Long
-			        Long accountManagerId = Long.parseLong(client.getAccountManager());
-			        
-			        // Check if userMasterMap contains the corresponding account manager ID
-			        if (userMasterMap.containsKey(accountManagerId)) {
-			            // Set the account manager's name from the UserMasterEntity
-			        	String name="";
-			        	UserMasterEntity userMasterEntity=userMasterMap.get(accountManagerId);
-			        	if(userMasterEntity.getFirstName()!=null && !userMasterEntity.getFirstName().isEmpty())
-			        		name=userMasterEntity.getFirstName();
-			        	if(userMasterEntity.getMiddleName()!=null && !userMasterEntity.getMiddleName().isEmpty())
-			        		name+=" "+userMasterEntity.getMiddleName();
-			        	if(userMasterEntity.getLastName()!=null && !userMasterEntity.getLastName().isEmpty())
-			        		name+=" "+userMasterEntity.getLastName();
-			        	
-			            client.setAccountManager(name);
-			        }
-			    });
 
+			/** FETCH CLIENTS FOR ACCOUNT MANAGER */
+			if(RoleConstants.ACCOUNT_MANAGER.equals(userMasterEntity.getRole())) {
+
+				clientList = clientMasterService.findByAccountManager(userId.toString());
+
+				// Assuming client.getAccountManager() returns a String, convert it to Long for comparison
+				clientList.stream()
+				.filter(client -> client.getAccountManager() != null)  // Ensure accountManager is not null
+				.forEach(client -> {
+					// Convert client.getAccountManager() (String) to Long
+					Long accountManagerId = Long.parseLong(client.getAccountManager());
+					// Check if userMasterMap contains the corresponding account manager ID
+					if (userMasterMap.containsKey(accountManagerId)) {
+						// Set the account manager's name from the UserMasterEntity
+						String name="";
+						UserMasterEntity userMasterEntity1=userMasterMap.get(accountManagerId);
+						if(userMasterEntity1.getFirstName()!=null && !userMasterEntity1.getFirstName().isEmpty())
+							name=userMasterEntity1.getFirstName();
+						if(userMasterEntity1.getMiddleName()!=null && !userMasterEntity1.getMiddleName().isEmpty())
+							name+=" "+userMasterEntity1.getMiddleName();
+						if(userMasterEntity1.getLastName()!=null && !userMasterEntity1.getLastName().isEmpty())
+							name+=" "+userMasterEntity1.getLastName();
+
+						client.setAccountManager(name);
+					}
+				});
+			}else if(RoleConstants.PROJECT_MANAGER.equals(userMasterEntity.getRole())) { 
+
+				List<ProjectMasterEntity> projects=projectMasterService.findByWhere("o.projectManager='"+userId+"'");
+
+				String clientIds = "(" + projects.stream()
+				.map(project ->  project.getClientName()) // Assuming 'getId()' gets the client ID
+				.collect(Collectors.joining(",")) + ")";
+
+				String where="o.id in "+clientIds;
+				clientList=clientMasterService.findByWhere(where);
+
+				clientList.stream()
+				.filter(client -> client.getAccountManager() != null)  // Ensure accountManager is not null
+				.forEach(client -> {
+					// Convert client.getAccountManager() (String) to Long
+					Long accountManagerId = Long.parseLong(client.getAccountManager());
+					// Check if userMasterMap contains the corresponding account manager ID
+					if (userMasterMap.containsKey(accountManagerId)) {
+						// Set the account manager's name from the UserMasterEntity
+						String name="";
+						UserMasterEntity userMasterEntity1=userMasterMap.get(accountManagerId);
+						if(userMasterEntity1.getFirstName()!=null && !userMasterEntity1.getFirstName().isEmpty())
+							name=userMasterEntity1.getFirstName();
+						if(userMasterEntity1.getMiddleName()!=null && !userMasterEntity1.getMiddleName().isEmpty())
+							name+=" "+userMasterEntity1.getMiddleName();
+						if(userMasterEntity1.getLastName()!=null && !userMasterEntity1.getLastName().isEmpty())
+							name+=" "+userMasterEntity1.getLastName();
+
+						client.setAccountManager(name);
+					}
+				});
+			}else {
+				//return error
+			}
 			// After updating, put the updated clientList into statusMap
 			statusMap.put("clientMasterEntities", clientList);
-
-			
 			statusMap.put(Parameters.statusMsg,  StatusMessageConstants.CLIENT_FOUND_SUCCESSFULLY );
 			statusMap.put(Parameters.status, Constants.SUCCESS);
 			statusMap.put(Parameters.statusCode, "RU_200");
@@ -196,21 +253,6 @@ public class ClientMasterController {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	} 
-//
-//	@GetMapping("/getAllClientByProjectManager")
-//	public ResponseEntity<?> getAllClientByProjectManager(@RequestParam("id") String userId) { 
-//		try {
-//			Map<String,Object> statusMap=new HashMap<>();
-//			List<ClientMasterEntity> clientList = clientMasterService.findByProjectManager(userId);
-//			statusMap.put("clientMasterEntities",clientList);
-//			statusMap.put(Parameters.statusMsg,  StatusMessageConstants.CLIENT_FOUND_SUCCESSFULLY );
-//			statusMap.put(Parameters.status, Constants.SUCCESS);
-//			statusMap.put(Parameters.statusCode, "RU_200");
-//			return new ResponseEntity<>(statusMap,HttpStatus.OK);
-//		} catch (Exception ex) {
-//			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-//	}
 
 	@PutMapping("/updateClientMaster")
 	public  ResponseEntity<?>updateClientMaster(@RequestBody CustomerDetailsDTO addClientMEntity ){
@@ -218,9 +260,7 @@ public class ClientMasterController {
 
 		Map<String,Object> statusMap=new HashMap<String,Object>(); 
 		try {
-
 			ClientMasterEntity clientEntity=clientMasterService.findById(addClientMEntity.getId());
-
 
 			clientEntity.setClientName(addClientMEntity.getClientName()!=null?addClientMEntity.getClientName():clientEntity.getClientName());
 			clientEntity.setAddress(addClientMEntity.getAddress()!=null?addClientMEntity. getAddress():clientEntity.getAddress());

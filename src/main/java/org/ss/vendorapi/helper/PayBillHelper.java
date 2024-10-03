@@ -1,56 +1,18 @@
-package org.ss.vendorapi.helper;
-
-import java.lang.System.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.ss.vendorapi.util.CommonUtils;
-
-
-
-//import org.uppcl.components.dto.BillDetailsDTO;
-//import org.uppcl.components.dto.CustomerDetailsDTO;
-//import org.uppcl.components.logging.UPPCLLogger;
-
-
-public class PayBillHelper {
-	private static final String CLASS_NAME = PayBillHelper.class.getName();
-	//private static final Logger log = System.getLogger("LoginController"); 
-	
-	//private static UPPCLLogger logger = UPPCLLogger.getInstance(UPPCLLogger.MODULE_BILLING, CLASS_NAME.toString());
-	private static final Logger logger = System.getLogger("PayBillHelper"); 
-
-	private static Pattern pattern;
-
-	/**
-	 * This method is used for store Bill Details from billDetailsResDTO into BillDetailsDTO.
-	 * 
-	 * @param billDetailsResDTO
-	 * @return BillDetailsDTO
-	 */
-
-	/*public BillDetailsDTO populateBillDetailsInDTO(BillDetailsResDTO billDetailsResDTO) {
-		final String METHOD_NAME = "populateBillDetailsInDTO(List<BillDetailsResDTO> billDetailsResDTO)";
-		CommonUtils.logProcStartTime(METHOD_NAME);
-
-		BillDetailsDTO billDetailsDTO = new BillDetailsDTO();
-
-		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		billDetailsDTO.setBillDueDate(formatter.format(billDetailsResDTO.getBillDueDate()).toString());
-		billDetailsDTO.setPaymentMade(billDetailsResDTO.getPaymentMade().toString());
-		billDetailsDTO.setPaymentDue(billDetailsResDTO.getPaymentDue().toString());
-		/*
-		 * if (logger.isDebugLoggingEnabled()) logger.log(UPPCLLogger.LOGLEVEL_DEBUG,
-		 * METHOD_NAME, "Bill Due Date : " + billDetailsDTO.getBillDueDate() + "" +
-		 * "Payment Made : " + billDetailsDTO.getPaymentMade() + "" + "Payment Due :" +
-		 * billDetailsDTO.getPaymentDue());
-		 */
-		/*CommonUtils.logProcEndTime(METHOD_NAME);
-		return billDetailsDTO;
-
-	}*/
-
-	/**
+/*
+ * package org.ss.vendorapi.helper;
+ * 
+ * import java.util.regex.Matcher; import java.util.regex.Pattern;
+ * 
+ * import org.ss.vendorapi.util.CommonUtils;
+ * 
+ * 
+ * 
+ * public class PayBillHelper {
+ * 
+ * private static Pattern pattern;
+ * 
+ * 
+ *//**
 	 * This method is used for validation of Form Data.
 	 * 
 	 * @param custDetailsDTO
@@ -59,61 +21,49 @@ public class PayBillHelper {
 	 * @param errors
 	 * @return
 	 */
-	public boolean validatePayBillForm(String totAmount, String amount, String payableAmount, String paymentMode) {
-		final String METHOD_NAME = "validateForm(CustomerDetailsDTO custDetailsDTO, String amount, String paymentMode)";
-		CommonUtils.logProcStartTime(METHOD_NAME);
-
-		String numericPattern = "^[0-9]+$";
-		/*
-		 * if (amount == null || "".equals(amount)) {
-		 * //errors.add("totalAmt", new ActionError("payBill.amount.numericAmount"));
-		 * return false;
-		 * }
-		 */
-		if (payableAmount != null && !"".equals(payableAmount)) {
-			pattern = Pattern.compile(numericPattern);
-			Matcher match = pattern.matcher(payableAmount);
-			boolean found = match.find();
-			if (!found) {
-				////errors.add("amt", new ActionError("payBill.payAmount.numericAmount"));
-				return false;
-			}
-		}
-
-		if (amount != null && !"".equals(amount)) {
-			pattern = Pattern.compile(numericPattern);
-			Matcher match = pattern.matcher(amount);
-			boolean found = match.find();
-			if (!found) {
-				////errors.add("amt", new ActionError("payBill.amount.numericAmount"));
-				return false;
-			}
-
-			/*
-			 * if (Integer.parseInt(amount) < Integer.parseInt(custDetailsDTO.getDueAmount())) {
-			 * //errors.add("totamount", new ActionError("payBill.amount.greaterAmount"));
-			 * return false;
-			 * }
-			 */
-		}
-
-		/*if (paymentMode == null && !"".equals(paymentMode)) {
-			////errors.add("paymentMode", new ActionError("payBill.paymentMode.required"));
-			return false;
-		}*/
-		if (Integer.parseInt(totAmount) <= 0) {
-
-			////errors.add("totAmt", new ActionError("payBill.totAmount.zeroAmount"));
-			return false;
-		}
-
-		CommonUtils.logProcEndTime(METHOD_NAME);
-		return true;
-
-	}
-
-
-	/**
+/*
+ * public boolean validatePayBillForm(String totAmount, String amount, String
+ * payableAmount, String paymentMode) { final String METHOD_NAME =
+ * "validateForm(CustomerDetailsDTO custDetailsDTO, String amount, String paymentMode)"
+ * ; CommonUtils.logProcStartTime(METHOD_NAME);
+ * 
+ * String numericPattern = "^[0-9]+$";
+ * 
+ * if (amount == null || "".equals(amount)) { //errors.add("totalAmt", new
+ * ActionError("payBill.amount.numericAmount")); return false; }
+ * 
+ * if (payableAmount != null && !"".equals(payableAmount)) { pattern =
+ * Pattern.compile(numericPattern); Matcher match =
+ * pattern.matcher(payableAmount); boolean found = match.find(); if (!found) {
+ * ////errors.add("amt", new ActionError("payBill.payAmount.numericAmount"));
+ * return false; } }
+ * 
+ * if (amount != null && !"".equals(amount)) { pattern =
+ * Pattern.compile(numericPattern); Matcher match = pattern.matcher(amount);
+ * boolean found = match.find(); if (!found) { ////errors.add("amt", new
+ * ActionError("payBill.amount.numericAmount")); return false; }
+ * 
+ * 
+ * if (Integer.parseInt(amount) <
+ * Integer.parseInt(custDetailsDTO.getDueAmount())) { //errors.add("totamount",
+ * new ActionError("payBill.amount.greaterAmount")); return false; }
+ * 
+ * }
+ * 
+ * if (paymentMode == null && !"".equals(paymentMode)) {
+ * ////errors.add("paymentMode", new
+ * ActionError("payBill.paymentMode.required")); return false; } if
+ * (Integer.parseInt(totAmount) <= 0) {
+ * 
+ * ////errors.add("totAmt", new ActionError("payBill.totAmount.zeroAmount"));
+ * return false; }
+ * 
+ * CommonUtils.logProcEndTime(METHOD_NAME); return true;
+ * 
+ * }
+ * 
+ * 
+ *//**
 	 * This method is used for validation of Kno.
 	 * 
 	 * @param custDetailsDTO
@@ -121,119 +71,69 @@ public class PayBillHelper {
 	 * @param paymentMode
 	 * @param errors
 	 * @return
-	 */
-	public boolean validateKno( String kno) {
-		final String METHOD_NAME = "validateForm(CustomerDetailsDTO custDetailsDTO, String kno,ActionMessages errors";
-		CommonUtils.logProcStartTime(METHOD_NAME);
-		if (kno == null || "".equals(kno)) {
-			return false;
-		}
-		Pattern pattern = Pattern.compile("\\d{10}");
-		Matcher matcher = pattern.matcher(kno);
-		if (!matcher.matches()) {
-			return false;
-		}
-		CommonUtils.logProcEndTime(METHOD_NAME);
-		return true;
-	}
-
-	/*
-	 * public boolean validateVerifyCode(String verifyCode, String captchatext) {
-	 * final String METHOD_NAME = "validateVerifyCode";
-	 * CommonUtils.logProcStartTime(METHOD_NAME);
-	 * 
-	 * if (GenericValidator.isBlankOrNull(verifyCode)) {
-	 * logger.log(UPPCLLogger.LOGLEVEL_ERROR, METHOD_NAME, "isBlankOrNull: " +
-	 * verifyCode);
-	 * 
-	 * //errors.add("verifyCode", new
-	 * ActionError("newConnection.verifyCode.required")); return false; } if
-	 * ("".equals(verifyCode)) { logger.log(UPPCLLogger.LOGLEVEL_ERROR, METHOD_NAME,
-	 * "isBlank   : " + verifyCode); //errors.add("verifyCode", new
-	 * ActionError("newConnection.verifyCode.required")); return false; }
-	 * 
-	 * if (verifyCode.equals(captchatext) != true) {
-	 * logger.log(UPPCLLogger.LOGLEVEL_ERROR, METHOD_NAME,
-	 * "checkMatchCase verifyCode   : " + verifyCode + "captchatext===" +
-	 * captchatext); //errors.add("verifyCode", new
-	 * ActionError("newConnection.verifyCode.match")); return false; }
-	 * 
-	 * CommonUtils.logProcEndTime(METHOD_NAME); return true;
-	 * 
-	 * }
-	 */
-
-
-
-
-
-	public boolean validateEmail(String email) {
-		final String METHOD_NAME = "validateForm(CustomerDetailsDTO custDetailsDTO, String kno,ActionMessages errors";
-		CommonUtils.logProcStartTime(METHOD_NAME);
-		if (email == null || "".equals(email)) {
-			//errors.add("email", new ActionError("paybill.email.required"));
-			return false;
-		}
-		String emailPattern = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})";
-		Pattern pattern = Pattern.compile(emailPattern);
-		Matcher matcher = pattern.matcher(email);
-		if (!matcher.matches()) {
-			//errors.add("email", new ActionError("paybill.email.invalid"));
-			return false;
-		}
-
-		CommonUtils.logProcEndTime(METHOD_NAME);
-		return true;
-	}
-
-
-	public boolean validateSMReconnForm(String totAmount,String paymentMode) {
-		final String METHOD_NAME = "validateForm(CustomerDetailsDTO custDetailsDTO, String amount, String paymentMode)";
-		CommonUtils.logProcStartTime(METHOD_NAME);
-
-		String numericPattern = "^[0-9]+$";
-
-		if (totAmount == null || "".equals(totAmount)) {
-			//errors.add("totalAmt", new ActionError("smReconn.amount.numericAmount"));
-			return false;
-		}
-
-		if (totAmount != null && !"".equals(totAmount)) {
-			pattern = Pattern.compile(numericPattern);
-			Matcher match = pattern.matcher(totAmount);
-			boolean found = match.find();
-			if (!found) {
-				//errors.add("totalAmt", new ActionError("smReconn.amount.numericAmount"));
-				return false;
-			}
-
-			/*
-			 * if (Integer.parseInt(amount) < Integer.parseInt(custDetailsDTO.getDueAmount())) {
-			 * //errors.add("totamount", new ActionError("payBill.amount.greaterAmount"));
-			 * return false;
-			 * }
-			 */
-		}
-
-		if (paymentMode == null && !"".equals(paymentMode)) {
-			//errors.add("paymentMode", new ActionError("payBill.paymentMode.required"));
-			return false;
-		}
-		if (Integer.parseInt(totAmount) <= 0) {
-
-			//errors.add("totAmt", new ActionError("smReconn.totAmount.zeroAmount"));
-			return false;
-		}
-
-		CommonUtils.logProcEndTime(METHOD_NAME);
-		return true;
-
-	}
-
-
-
-
-
-
-
-}
+	 *//*
+		 * public boolean validateKno( String kno) { final String METHOD_NAME =
+		 * "validateForm(CustomerDetailsDTO custDetailsDTO, String kno,ActionMessages errors"
+		 * ; CommonUtils.logProcStartTime(METHOD_NAME); if (kno == null ||
+		 * "".equals(kno)) { return false; } Pattern pattern =
+		 * Pattern.compile("\\d{10}"); Matcher matcher = pattern.matcher(kno); if
+		 * (!matcher.matches()) { return false; }
+		 * CommonUtils.logProcEndTime(METHOD_NAME); return true; }
+		 * 
+		 * 
+		 * 
+		 * 
+		 * public boolean validateEmail(String email) { final String METHOD_NAME =
+		 * "validateForm(CustomerDetailsDTO custDetailsDTO, String kno,ActionMessages errors"
+		 * ; CommonUtils.logProcStartTime(METHOD_NAME); if (email == null ||
+		 * "".equals(email)) { //errors.add("email", new
+		 * ActionError("paybill.email.required")); return false; } String emailPattern =
+		 * "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})";
+		 * Pattern pattern = Pattern.compile(emailPattern); Matcher matcher =
+		 * pattern.matcher(email); if (!matcher.matches()) { //errors.add("email", new
+		 * ActionError("paybill.email.invalid")); return false; }
+		 * 
+		 * CommonUtils.logProcEndTime(METHOD_NAME); return true; }
+		 * 
+		 * 
+		 * public boolean validateSMReconnForm(String totAmount,String paymentMode) {
+		 * final String METHOD_NAME =
+		 * "validateForm(CustomerDetailsDTO custDetailsDTO, String amount, String paymentMode)"
+		 * ; CommonUtils.logProcStartTime(METHOD_NAME);
+		 * 
+		 * String numericPattern = "^[0-9]+$";
+		 * 
+		 * if (totAmount == null || "".equals(totAmount)) { //errors.add("totalAmt", new
+		 * ActionError("smReconn.amount.numericAmount")); return false; }
+		 * 
+		 * if (totAmount != null && !"".equals(totAmount)) { pattern =
+		 * Pattern.compile(numericPattern); Matcher match = pattern.matcher(totAmount);
+		 * boolean found = match.find(); if (!found) { //errors.add("totalAmt", new
+		 * ActionError("smReconn.amount.numericAmount")); return false; }
+		 * 
+		 * 
+		 * if (Integer.parseInt(amount) <
+		 * Integer.parseInt(custDetailsDTO.getDueAmount())) { //errors.add("totamount",
+		 * new ActionError("payBill.amount.greaterAmount")); return false; }
+		 * 
+		 * }
+		 * 
+		 * if (paymentMode == null && !"".equals(paymentMode)) {
+		 * //errors.add("paymentMode", new ActionError("payBill.paymentMode.required"));
+		 * return false; } if (Integer.parseInt(totAmount) <= 0) {
+		 * 
+		 * //errors.add("totAmt", new ActionError("smReconn.totAmount.zeroAmount"));
+		 * return false; }
+		 * 
+		 * CommonUtils.logProcEndTime(METHOD_NAME); return true;
+		 * 
+		 * }
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * }
+		 */

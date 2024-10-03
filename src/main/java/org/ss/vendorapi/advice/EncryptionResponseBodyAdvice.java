@@ -1,7 +1,5 @@
 package org.ss.vendorapi.advice;
 
-import java.lang.System.Logger;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.MethodParameter;
@@ -19,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ControllerAdvice
 public class EncryptionResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
-	private static final Logger log = System.getLogger("EncryptionResponseBodyAdvice");
+	//private static final Logger log = System.getLogger("EncryptionResponseBodyAdvice");
 
 	@Autowired
 	private AESEncryptionService aesEncryptionService;

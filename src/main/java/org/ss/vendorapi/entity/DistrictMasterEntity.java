@@ -16,6 +16,8 @@ import lombok.Data;
 @Entity
 public class DistrictMasterEntity implements Serializable {
 
+	private static final long serialVersionUID=1L;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

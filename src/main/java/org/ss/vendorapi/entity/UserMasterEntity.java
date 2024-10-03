@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name="USER_MASTER")
-public class UserMasterEntity implements Serializable{
+public class UserMasterEntity extends ParentEntity implements Serializable{
 	
 	
 	private static final long serialVersionUID = 1L;

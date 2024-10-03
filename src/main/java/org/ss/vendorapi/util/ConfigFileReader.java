@@ -9,20 +9,19 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 public class ConfigFileReader {
-private static final Class CLASS_NAME = ConfigFileReader.class;
-	
+
 	/**
 	 * Reads the file from the specified file path and
 	 * 
 	 * @return
 	 */
 	public static String getConfigFile(String filePath)
-//			throws UPPCLSystemException
+	//			throws UPPCLSystemException
 	{
 		final String METHOD_NAME = "getConfigFile(String filePath)";
-//		logger.logMethodStart(METHOD_NAME);
-//		if (logger.isDebugLoggingEnabled())
-//            logger.log(UPPCLLogger.LOGLEVEL_DEBUG, METHOD_NAME,new StringBuilder("File path is :: ").append(filePath).toString());
+		//		logger.logMethodStart(METHOD_NAME);
+		//		if (logger.isDebugLoggingEnabled())
+		//            logger.log(UPPCLLogger.LOGLEVEL_DEBUG, METHOD_NAME,new StringBuilder("File path is :: ").append(filePath).toString());
 		Reader reader = null;
 		//BufferedReader bufferedReader = null;
 		Closeable resource = reader;
@@ -38,14 +37,14 @@ private static final Class CLASS_NAME = ConfigFileReader.class;
 				configFile += input + '\n';
 			}
 		} catch (FileNotFoundException ex) {
-//			if (logger.isErrorLoggingEnabled())
-//	            logger.log(UPPCLLogger.LOGLEVEL_ERROR, METHOD_NAME,new StringBuilder("Exception while reading the File from location: ").append(filePath).toString() , ex);
-//			throw new UPPCLSystemException(CLASS_NAME,"Exception while reading the File from location",ex);
-			
+			//			if (logger.isErrorLoggingEnabled())
+			//	            logger.log(UPPCLLogger.LOGLEVEL_ERROR, METHOD_NAME,new StringBuilder("Exception while reading the File from location: ").append(filePath).toString() , ex);
+			//			throw new UPPCLSystemException(CLASS_NAME,"Exception while reading the File from location",ex);
+
 		} catch (IOException ex) {
-//			if (logger.isErrorLoggingEnabled())
-//	            logger.log(UPPCLLogger.LOGLEVEL_ERROR, METHOD_NAME,new StringBuilder("Exception while retrieving the file: ").append(filePath).toString() , ex);
-//			throw new UPPCLSystemException(CLASS_NAME,"Exception while retrieving the file",ex);
+			//			if (logger.isErrorLoggingEnabled())
+			//	            logger.log(UPPCLLogger.LOGLEVEL_ERROR, METHOD_NAME,new StringBuilder("Exception while retrieving the file: ").append(filePath).toString() , ex);
+			//			throw new UPPCLSystemException(CLASS_NAME,"Exception while retrieving the file",ex);
 		} finally {
 			// Close the BufferedReader
 			try {
@@ -57,11 +56,11 @@ private static final Class CLASS_NAME = ConfigFileReader.class;
 				 * bufferedReader.close();
 				 */
 			} catch (IOException ex) {
-//				if (logger.isErrorLoggingEnabled())
-//		            logger.log(UPPCLLogger.LOGLEVEL_ERROR, METHOD_NAME,new StringBuilder("Exception in closing the resource : ").append(filePath).toString() , ex);
+				//				if (logger.isErrorLoggingEnabled())
+				//		            logger.log(UPPCLLogger.LOGLEVEL_ERROR, METHOD_NAME,new StringBuilder("Exception in closing the resource : ").append(filePath).toString() , ex);
 			}
 		}
-//		logger.logMethodEnd(METHOD_NAME);
+		//		logger.logMethodEnd(METHOD_NAME);
 		return configFile;
 	}
 }

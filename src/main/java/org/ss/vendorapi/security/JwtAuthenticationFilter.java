@@ -1,8 +1,6 @@
 package org.ss.vendorapi.security;
 
 import java.io.IOException;
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,8 +31,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	private Logger logger = System.getLogger("OncePerRequestFilter");
-
+	
 	@Autowired
 	private JwtHelper jwtHelper;
 
@@ -60,7 +57,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			
 			if(!request.getRequestURI().contains("/v3/")) {
 				if (responseEntity != null) {
-					logger.log(Level.INFO, "@@@@ PUBLIC : Invalid Header Value !! @@@@");
 					this.pubAPIExcepMsg(response, "Access Denied !!");
 					return;
 				}
@@ -68,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		} else {
 			String requestHeader = request.getHeader("Authorization");
 
-			logger.log(Level.INFO, " Header :  {}" + requestHeader);
+			System.out.println( " Header :  {}" + requestHeader);
 			String username = null, token = null;
 			if (requestHeader != null && requestHeader.startsWith("Bearer")) {
 				// looking good
@@ -78,28 +74,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					username = this.jwtHelper.getUsernameFromToken(token);
 
 				} catch (IllegalArgumentException e) {
-					logger.log(Level.INFO, "Illegal Argument while fetching the username !!");
+					System.out.println( "Illegal Argument while fetching the username !!");
 					e.printStackTrace();
 				} catch (ExpiredJwtException e) {
 
-					logger.log(Level.INFO, "Token is expired !!");
+					System.out.println( "Token is expired !!");
 					e.printStackTrace();
 //					this.privAPIExcepMsg(response, "Token is expired !!");
 //					return;
 				} catch (MalformedJwtException e) {
-					logger.log(Level.INFO, "Invalid Token !!");
+					System.out.println( "Invalid Token !!");
 					e.printStackTrace();
 //					this.privAPIExcepMsg(response, "Invalid Token !!");
 //					return;
 				} catch (Exception e) {
-					logger.log(Level.INFO, "Access Denied !!");
+					System.out.println( "Access Denied !!");
 					e.printStackTrace();
 //					this.privAPIExcepMsg(response, "Access Denied !!");
 //					return;
 				}
 
 			} else {
-				logger.log(Level.INFO, "@@@@ PRIVATE : Invalid Header Value !! @@@@");
+				System.out.println( "@@@@ PRIVATE : Invalid Header Value !! @@@@");
 //				this.privAPIExcepMsg(response, "Invalid Header Value !! ");
 //				return;
 			}
@@ -119,7 +115,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					SecurityContextHolder.getContext().setAuthentication(authentication);
 
 				} else {
-					logger.log(Level.INFO, "Validation fails !!");
+					System.out.println( "Validation fails !!");
 //					this.privAPIExcepMsg(response, "Access Denied !!");
 //					return;
 				}

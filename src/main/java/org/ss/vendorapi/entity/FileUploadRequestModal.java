@@ -1,8 +1,11 @@
 package org.ss.vendorapi.entity;
 
 import java.nio.file.Paths;
+import java.util.Date;
 
 import org.w3c.dom.DocumentType;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,9 +15,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@NoArgsConstructor @Setter @Getter @AllArgsConstructor
 @Entity
 @Table(name = "DocumentUpload")
 public class FileUploadRequestModal {

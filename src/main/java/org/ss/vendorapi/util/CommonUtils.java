@@ -1,13 +1,6 @@
 package org.ss.vendorapi.util;
 
 import java.io.UnsupportedEncodingException;
-
-import java.util.HashSet;
-import java.util.Set;
-
-
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -17,9 +10,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -32,7 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CommonUtils {
 	
-	private static final Logger logger = System.getLogger("CommonUtils"); 
 	
 	/*
 	 * This method is used to check whether an object (specifically String) is empty or not.
@@ -371,9 +365,10 @@ public class CommonUtils {
    			CommonUtils.logProcEndTime(METHOD_NAME);
    			return ls_sb.toString();
    		} catch (Exception e) {
-   			logger.log(Level.INFO, METHOD_NAME,
+   			System.out.println( METHOD_NAME+
    						"Exception while generating checksum"
-   								+ "for message : " + message, e);
+   								+ "for message : " + message);
+   			e.printStackTrace();
    			
    			return null;
    		}
@@ -469,27 +464,27 @@ public class CommonUtils {
        } // appendQueryFields()
 
     public static void logMethodStartTime(String className, String name) {
-    	logger.log(Level.INFO, "Inside " + className + " -> called method " + name + " -> Start DateTime - " + new Date());
+    	System.out.println("Inside " + className + " -> called method " + name + " -> Start DateTime - " + new Date());
     }
     
     public static void logMethodEndTime(String className, String name) {
-    	logger.log(Level.INFO, "Inside " + className + " -> called method " + name + " -> End DateTime - " + new Date());
+    	System.out.println("Inside " + className + " -> called method " + name + " -> End DateTime - " + new Date());
     }
     
     public static void logApiStartTime(String className, String name) {
-    	logger.log(Level.INFO, "Inside " + className + " -> called API " + name + " -> Start DateTime - " + new Date());
+    	System.out.println( "Inside " + className + " -> called API " + name + " -> Start DateTime - " + new Date());
     }
     
     public static void logApiEndTime(String className, String name) {
-    	logger.log(Level.INFO, "Inside " + className + " -> called API " + name + " -> End DateTime - " + new Date());
+    	System.out.println( "Inside " + className + " -> called API " + name + " -> End DateTime - " + new Date());
     }
     
     public static void logProcStartTime(String name) {
-    	logger.log(Level.INFO, "Called procedure " + name + " -> Start DateTime - " + new Date());
+    	System.out.println( "Called procedure " + name + " -> Start DateTime - " + new Date());
     }
     
     public static void logProcEndTime(String name) {
-    	logger.log(Level.INFO, "Called procedure " + name + " -> End DateTime - " + new Date());
+    	System.out.println("Called procedure " + name + " -> End DateTime - " + new Date());
     }
     
     public static boolean isDebugLoggingEnabled() {

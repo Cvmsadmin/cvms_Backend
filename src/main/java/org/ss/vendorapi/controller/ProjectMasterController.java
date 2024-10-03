@@ -335,42 +335,61 @@ public class ProjectMasterController {
 
 	}	
 	@PutMapping("/updateMilestoneMaster")
-	public ResponseEntity<?>updateMilestoneMaster(@RequestBody ProjectRequestDTO projectRequestDTO){
-		Map<String,Object> statusMap=new HashMap<String,Object>();
-		try {
-			List<MilestoneMasterEntity> savedEntities = new ArrayList<>();
+	public ResponseEntity<?> updateMilestoneMaster(@RequestBody ProjectRequestDTO projectRequestDTO) {
+	    Map<String, Object> statusMap = new HashMap<>();
+	    try {
+	        // Initialize the list that will hold updated entities
+	        List<MilestoneMasterEntity> savedEntities = new ArrayList<>();
 
-			for(MilestoneMasterEntity projectMoe:projectRequestDTO.getMoe()) {
+	        // Null check for projectRequestDTO.getMoe()
+	        if (projectRequestDTO.getMoe() != null && !projectRequestDTO.getMoe().isEmpty()) {
+	            // Iterate through the moe list
+	            for (MilestoneMasterEntity projectMoe : projectRequestDTO.getMoe()) {
 
-				MilestoneMasterEntity milestoneMasterEntity=milestoneMasterService.findById(projectMoe.getId());
+	                // Fetch the existing milestone entity
+	                MilestoneMasterEntity milestoneMasterEntity = milestoneMasterService.findById(projectMoe.getId());
 
-				milestoneMasterEntity.setTDate(projectMoe.getTDate()!=null ? projectMoe.getTDate():milestoneMasterEntity.getTDate());
-				milestoneMasterEntity.setProjectId(projectMoe.getProjectId() != null ? projectMoe.getProjectId() : milestoneMasterEntity.getProjectId());
-				milestoneMasterEntity.setSerialNumber(projectMoe.getSerialNumber() != null ? projectMoe.getSerialNumber() : milestoneMasterEntity.getSerialNumber());
-				milestoneMasterEntity.setTDate(projectMoe.getTDate() != null ? projectMoe.getTDate() : milestoneMasterEntity.getTDate());
-				milestoneMasterEntity.setDays(projectMoe.getDays() != null ? projectMoe.getDays() : milestoneMasterEntity.getDays());
-				milestoneMasterEntity.setDeliverables(projectMoe.getDeliverables() != null ? projectMoe.getDeliverables() : milestoneMasterEntity.getDeliverables());
-				milestoneMasterEntity.setAmountExclGst(projectMoe.getAmountExclGst() != null ? projectMoe.getAmountExclGst() : milestoneMasterEntity.getAmountExclGst());
-				milestoneMasterEntity.setGstRate(projectMoe.getGstRate() != null ? projectMoe.getGstRate() : milestoneMasterEntity.getGstRate());
-				milestoneMasterEntity.setGstAmount(projectMoe.getGstAmount() != null ? projectMoe.getGstAmount() : milestoneMasterEntity.getGstAmount());
-				milestoneMasterEntity.setAmountInclGst(projectMoe.getAmountInclGst() != null ? projectMoe.getAmountInclGst() : milestoneMasterEntity.getAmountInclGst());
+	                // Update fields only if the new values are not null
+	                milestoneMasterEntity.setTDate(projectMoe.getTDate() != null ? projectMoe.getTDate() : milestoneMasterEntity.getTDate());
+	                milestoneMasterEntity.setProjectId(projectMoe.getProjectId() != null ? projectMoe.getProjectId() : milestoneMasterEntity.getProjectId());
+	                milestoneMasterEntity.setSerialNumber(projectMoe.getSerialNumber() != null ? projectMoe.getSerialNumber() : milestoneMasterEntity.getSerialNumber());
+	                milestoneMasterEntity.setDays(projectMoe.getDays() != null ? projectMoe.getDays() : milestoneMasterEntity.getDays());
+	                milestoneMasterEntity.setDeliverables(projectMoe.getDeliverables() != null ? projectMoe.getDeliverables() : milestoneMasterEntity.getDeliverables());
+	                milestoneMasterEntity.setAmountExclGst(projectMoe.getAmountExclGst() != null ? projectMoe.getAmountExclGst() : milestoneMasterEntity.getAmountExclGst());
+	                milestoneMasterEntity.setGstRate(projectMoe.getGstRate() != null ? projectMoe.getGstRate() : milestoneMasterEntity.getGstRate());
+	                milestoneMasterEntity.setGstAmount(projectMoe.getGstAmount() != null ? projectMoe.getGstAmount() : milestoneMasterEntity.getGstAmount());
+	                milestoneMasterEntity.setAmountInclGst(projectMoe.getAmountInclGst() != null ? projectMoe.getAmountInclGst() : milestoneMasterEntity.getAmountInclGst());
 
-				milestoneMasterEntity= milestoneMasterService.update(milestoneMasterEntity);
-				savedEntities.add(milestoneMasterEntity);
+	                // Save the updated entity
+	                milestoneMasterEntity = milestoneMasterService.update(milestoneMasterEntity);
+	                savedEntities.add(milestoneMasterEntity);
+	            }
 
-			}
-			statusMap.put("milestoneMasterEntity",savedEntities);
-			statusMap.put("status", "SUCCESS");
-			statusMap.put("statusCode", "RU_200");
-			statusMap.put("statusMessage", "SUCCESSFULLY UPDATED"); 
+	            // If the update is successful, return the status map with updated entities
+	            statusMap.put("milestoneMasterEntity", savedEntities);
+	            statusMap.put("status", "SUCCESS");
+	            statusMap.put("statusCode", "RU_200");
+	            statusMap.put("statusMessage", "SUCCESSFULLY UPDATED");
 
-			return new ResponseEntity<>(statusMap,HttpStatus.OK);
-		}catch(Exception e) {
-			e.printStackTrace();
+	            return new ResponseEntity<>(statusMap, HttpStatus.OK);
+	        } else {
+	            // Handle the case where the list is null or empty
+	            statusMap.put("status", "FAILURE");
+	            statusMap.put("statusCode", "RU_400");
+	            statusMap.put("statusMessage", "No milestones to update.");
+	            return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
+	        }
 
-		}
-		return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        statusMap.put("status", "FAILURE");
+	        statusMap.put("statusCode", "RU_500");
+	        statusMap.put("statusMessage", "An error occurred while updating the milestones.");
+	    }
+
+	    return new ResponseEntity<>(statusMap, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
 
 
 	@DeleteMapping("/deleteProject")

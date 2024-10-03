@@ -16,32 +16,46 @@ public class UserCreationServiceImpl implements UserCreationService{
 	@Autowired 
 	private UserCreationRepository creationUserRepository;
 
-	
-	
-	public List<UserMasterEntity> getAllUsers(){
+
+	@Override
+	public UserMasterEntity save(UserMasterEntity userMasterEntity) {
+		return creationUserRepository.save(userMasterEntity);
+	}
+
+	@Override
+	public boolean existsByEmail(String email) {
+		return creationUserRepository.existsByEmail(email);
+	}
+
+	@Override
+	public boolean existsByPhone(String phone) {
+		return creationUserRepository.existsByPhone(phone);
+	}    
+
+	// Method to find a user by email
+	public Optional<UserMasterEntity> findByEmail(String email) {
+		return creationUserRepository.findByEmail(email);
+	}
+
+
+
+	@Override
+	public UserMasterEntity update(UserMasterEntity userMasterEntity) {
+		return creationUserRepository.save(userMasterEntity);
+	}
+
+
+
+	@Override
+	public List<UserMasterEntity> findAll() {
 		return creationUserRepository.findAll();
 	}
 
 
 
 	@Override
-	public UserMasterEntity save(UserMasterEntity userMasterEntity) {
-		return creationUserRepository.save(userMasterEntity);
+	public UserMasterEntity findById(Long id) {
+		return creationUserRepository.findById(id).orElse(null);
 	}
-	
-	@Override
-    public boolean existsByEmail(String email) {
-        return creationUserRepository.existsByEmail(email);
-    }
-
-    @Override
-    public boolean existsByPhone(String phone) {
-        return creationUserRepository.existsByPhone(phone);
-    }    
-    
- // Method to find a user by email
-    public Optional<UserMasterEntity> findByEmail(String email) {
-        return creationUserRepository.findByEmail(email);
-    }
 
 }

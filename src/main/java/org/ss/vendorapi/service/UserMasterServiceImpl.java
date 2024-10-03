@@ -7,7 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.exceptions.RequestNotFoundException;
-//import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.repository.UserMasterRepository;
 
 @Service
@@ -20,29 +19,21 @@ public class UserMasterServiceImpl implements UserMasterService {
 	UserMasterRepository userMasterRepository;
 
 	private static final Class<?> CLASS_NAME = UserMasterServiceImpl.class;
-//	private static UPPCLLogger logger = UPPCLLogger.getInstance(UPPCLLogger.MODULE_REGISTRATION,CLASS_NAME.toString());
 
 	@Override
 	public Boolean checkUserInPortal(UserMasterEntity userSetUpEntity) throws RequestNotFoundException {
 		String methodName = "checkUserInPortal(RegisterUserEntity userSetUpEntity)";
 		try {
-//			logger.logMethodStart(methodName);
 			UserMasterEntity registerUserEntity = userMasterRepository.findByMobileOrEmail(userSetUpEntity.getPhone(),
 					userSetUpEntity.getEmail());
 
-//			logger.log(UPPCLLogger.LOGLEVEL_INFO, methodName, "@@@@ 1. Check User in RegisterUser entity table existance by mobile number or email . : " + registerUserEntity);
-//			logger.log(UPPCLLogger.LOGLEVEL_INFO, methodName, " RegisterUserEntity MOBILE NUMBER ::: "+registerUserEntity.getPhone());
-//			logger.log(UPPCLLogger.LOGLEVEL_INFO, methodName, "RegisterUserEntity EMAIL ::: "+registerUserEntity.getEmail());
 
 			/* IF USER NOT NULL THEN USER ALREADY EXIST */
 			if (registerUserEntity != null) {
 				return true;
 			}
 		} catch (Exception ex) {
-//			logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "RegisterUserEntity ::: "+userSetUpEntity.getEmail());
-//			logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "RegisterUserEntity Exception  ::: "+ex.getMessage());
 		}
-//		logger.logMethodEnd(methodName);
 		return false;
 	}
 
