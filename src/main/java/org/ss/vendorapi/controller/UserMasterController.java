@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.config.EncryptSecurityUtil;
 //import org.ss.vendorapi.entity.UserCreationEntity;
 import org.ss.vendorapi.entity.UserMasterEntity;
-import org.ss.vendorapi.entity.VendorMasterEntity;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.CustomerDetailsDTO;
 import org.ss.vendorapi.modal.CustomerDetailsModel;
@@ -148,106 +147,109 @@ public class UserMasterController{
 
 	@PostMapping("/userCreation")
 	public ResponseEntity<?> userCreation(@RequestBody CustomerDetailsDTO userMasterMEntity, 
-			@RequestParam String id, 
-			HttpServletRequest request) {
-		ResponseEntity<?> responseEntity = null;
-		String methodName = request.getRequestURI();
-		Map<String, Object> statusMap = new HashMap<>();
+	        @RequestParam String id, 
+	        HttpServletRequest request) {
+	    ResponseEntity<?> responseEntity = null;
+	    String methodName = request.getRequestURI();
+	    Map<String, Object> statusMap = new HashMap<>();
 
-		try {
-			// Check if any required fields are empty
-			if (UtilValidate.isEmpty(userMasterMEntity.getEmail()) || 
-					UtilValidate.isEmpty(userMasterMEntity.getBaseLocation()) || 
-					UtilValidate.isEmpty(userMasterMEntity.getEmployeeId()) || 
-					UtilValidate.isEmpty(userMasterMEntity.getFirstName()) || 
-					UtilValidate.isEmpty(userMasterMEntity.getLastName()) ||  
-					UtilValidate.isEmpty(userMasterMEntity.getPhone()) || 
-					UtilValidate.isEmpty(userMasterMEntity.getPhysicalLocation())) {
+	    try {
+	        // Check if any required fields are empty
+	        if (UtilValidate.isEmpty(userMasterMEntity.getEmail()) || 
+	                UtilValidate.isEmpty(userMasterMEntity.getBaseLocation()) || 
+	                UtilValidate.isEmpty(userMasterMEntity.getEmployeeId()) || 
+	                UtilValidate.isEmpty(userMasterMEntity.getFirstName()) || 
+	                UtilValidate.isEmpty(userMasterMEntity.getLastName()) ||  
+	                UtilValidate.isEmpty(userMasterMEntity.getPhone()) || 
+	                UtilValidate.isEmpty(userMasterMEntity.getPhysicalLocation())) {
+	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+	        }
 
-				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
-			}
+	        // Check if user with the same email or phone already exists
+	        if (userCreationService.existsByEmail(userMasterMEntity.getEmail()) || 
+	                userCreationService.existsByPhone(userMasterMEntity.getPhone())) {
+	            statusMap.put(Parameters.statusMsg, StatusMessageConstants.USER_ALREADY_REGISTERED);
+	            statusMap.put(Parameters.status, Constants.FAIL);
+	            statusMap.put(Parameters.statusCode, "RU_302");
+	            return new ResponseEntity<>(statusMap, HttpStatus.CONFLICT);
+	        }
 
-			// Check if user with the same email or phone already exists
-			if (userCreationService.existsByEmail(userMasterMEntity.getEmail()) || 
-					userCreationService.existsByPhone(userMasterMEntity.getPhone())) {
-				statusMap.put(Parameters.statusMsg, StatusMessageConstants.USER_ALREADY_REGISTERED);
-				statusMap.put(Parameters.status, Constants.FAIL);
-				statusMap.put(Parameters.statusCode, "RU_302");
-				return new ResponseEntity<>(statusMap, HttpStatus.CONFLICT);
-			}
+	        // Generate a random password
+	        String generatedPassword = generateRandomPassword();
 
-			// Generate a random password
-			String generatedPassword = generateRandomPassword();
+	        // Encode the password
+	        String encodedPassword = passwordEncoder.encode(generatedPassword);
 
-			// Encode the password
-			String encodedPassword = passwordEncoder.encode(generatedPassword);
+	        // Create a new UserMasterEntity object
+	        UserMasterEntity registerUserCreationEntityObj = new UserMasterEntity();
+	        registerUserCreationEntityObj.setBaseLocation(userMasterMEntity.getBaseLocation());
+	        registerUserCreationEntityObj.setEmail(userMasterMEntity.getEmail());
+	        registerUserCreationEntityObj.setFirstName(userMasterMEntity.getFirstName());
+	        registerUserCreationEntityObj.setLastName(userMasterMEntity.getLastName());
+	        registerUserCreationEntityObj.setMiddleName(userMasterMEntity.getMiddleName());
+	        registerUserCreationEntityObj.setEmployeeId(userMasterMEntity.getEmployeeId());
+	        registerUserCreationEntityObj.setPhone(userMasterMEntity.getPhone());
+	        registerUserCreationEntityObj.setPhysicalLocation(userMasterMEntity.getPhysicalLocation());
+	        registerUserCreationEntityObj.setRole(id);
+	        registerUserCreationEntityObj.setPassword(encodedPassword);
 
-			// Create a new UserMasterEntity object
-			UserMasterEntity registerUserCreationEntityObj = new UserMasterEntity();
-			registerUserCreationEntityObj.setBaseLocation(userMasterMEntity.getBaseLocation());
-			registerUserCreationEntityObj.setEmail(userMasterMEntity.getEmail());
-			registerUserCreationEntityObj.setFirstName(userMasterMEntity.getFirstName());
-			registerUserCreationEntityObj.setLastName(userMasterMEntity.getLastName());
-			registerUserCreationEntityObj.setMiddleName(userMasterMEntity.getMiddleName());
-			registerUserCreationEntityObj.setEmployeeId(userMasterMEntity.getEmployeeId());
-			registerUserCreationEntityObj.setPhone(userMasterMEntity.getPhone());
-			registerUserCreationEntityObj.setPhysicalLocation(userMasterMEntity.getPhysicalLocation());
-			registerUserCreationEntityObj.setRole(id);
-			registerUserCreationEntityObj.setPassword(encodedPassword);
+	        try {
+	            // Save the user to the database
+	            registerUserCreationEntityObj = userCreationService.save(registerUserCreationEntityObj);
 
-			try {
-				// Save the user to the database
-				registerUserCreationEntityObj = userCreationService.save(registerUserCreationEntityObj);
+	            if (registerUserCreationEntityObj != null) {
+	                // Send an email with the user's details
+	                String subject = "Welcome to Our Service";
+	                String text = String.format("Dear %s,\n\nYour account has been created successfully.\n\nUsername: %s\nPassword: %s\n\nPlease keep your credentials safe.\n\nBest Regards,\nCVMSADMIN", 
+	                        userMasterMEntity.getFirstName(), 
+	                        userMasterMEntity.getEmail(), 
+	                        generatedPassword);
 
-				if (registerUserCreationEntityObj != null) {
-					// Send an email with the user's details
-					String subject = "Welcome to Our Service";
-					String text = String.format("Dear %s,\n\nYour account has been created successfully.\n\nUsername: %s\nPassword: %s\n\nPlease keep your credentials safe.\n\nBest Regards,\nCVMSADMIN", 
-							userMasterMEntity.getFirstName(), 
-							userMasterMEntity.getEmail(), 
-							generatedPassword);
+	                try {
+	                    emailService.sendEmail(userMasterMEntity.getEmail(), subject, text);
+	                } catch (MessagingException ex) {
+	                    // Handle the email sending failure
+	                    statusMap.put(Parameters.statusMsg, "Email sending failed: " + ex.getMessage());
+	                    return new ResponseEntity<>(statusMap, HttpStatus.INTERNAL_SERVER_ERROR);
+	                }
 
-					try {
-						emailService.sendEmail(userMasterMEntity.getEmail(), subject, text);
-					} catch (MessagingException ex) {
-						// Handle the email sending failure
-						statusMap.put(Parameters.statusMsg, "Email sending failed: " + ex.getMessage());
-						return new ResponseEntity<>(statusMap, HttpStatus.INTERNAL_SERVER_ERROR);
-					}
-
-					statusMap.put(Parameters.statusMsg, StatusMessageConstants.USER_REGISTERED_SUCCESSFULLY);
-					statusMap.put(Parameters.status, Constants.SUCCESS);
-					statusMap.put(Parameters.statusCode, "RU_200");
-					return new ResponseEntity<>(statusMap, HttpStatus.OK);
-				} else {
-					statusMap.put(Parameters.statusMsg, StatusMessageConstants.USER_NOT_REGISTERED);
-					statusMap.put(Parameters.status, Constants.FAIL);
-					statusMap.put(Parameters.statusCode, "RU_301");
-					return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
-				}
-			} catch (Exception ex) {
-				statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
-				statusMap.put(Parameters.statusCode, Constants.SVD_USR);
-				statusMap.put(Parameters.status, Constants.FAIL);
-				return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		} catch (Exception ex) {
-			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	                // Corrected message with clear formatting
+	                String successMessage = StatusMessageConstants.USER_REGISTERED_SUCCESSFULLY 
+	                        + ". Your credentials have been sent to your email.";
+	                statusMap.put(Parameters.statusMsg, successMessage);
+	                statusMap.put(Parameters.status, Constants.SUCCESS);
+	                statusMap.put(Parameters.statusCode, "RU_200");
+	                return new ResponseEntity<>(statusMap, HttpStatus.OK);
+	            } else {
+	                statusMap.put(Parameters.statusMsg, StatusMessageConstants.USER_NOT_REGISTERED);
+	                statusMap.put(Parameters.status, Constants.FAIL);
+	                statusMap.put(Parameters.statusCode, "RU_301");
+	                return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
+	            }
+	        } catch (Exception ex) {
+	            statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
+	            statusMap.put(Parameters.statusCode, Constants.SVD_USR);
+	            statusMap.put(Parameters.status, Constants.FAIL);
+	            return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	        }
+	    } catch (Exception ex) {
+	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
 
 	// Method to generate a random password
 	private String generateRandomPassword() {
-		int length = 8; // Password length
-		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$&-";
-		SecureRandom random = new SecureRandom();
-		StringBuilder sb = new StringBuilder(length);
-		for (int i = 0; i < length; i++) {
-			int index = random.nextInt(characters.length());
-			sb.append(characters.charAt(index));
-		}
-		return sb.toString();
+	    int length = 8; // Password length
+	    String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$&-";
+	    SecureRandom random = new SecureRandom();
+	    StringBuilder sb = new StringBuilder(length);
+	    for (int i = 0; i < length; i++) {
+	        int index = random.nextInt(characters.length());
+	        sb.append(characters.charAt(index));
+	    }
+	    return sb.toString();
 	}
+
 
 
 
@@ -327,8 +329,3 @@ public class UserMasterController{
 	} 
 
 }
-
-
-
-
-

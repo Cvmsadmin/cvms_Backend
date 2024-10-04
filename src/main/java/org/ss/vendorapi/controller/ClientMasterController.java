@@ -1,4 +1,3 @@
-
 package org.ss.vendorapi.controller;
 
 import java.util.HashMap;
@@ -62,80 +61,152 @@ public class ClientMasterController {
 
 	@Autowired 
 	private DataValidationService dataValidationService;
-
+	
+	
 	@PostMapping("/addClient") 
-	public ResponseEntity<?> addClient(@RequestBody  CustomerDetailsDTO addClientMEntity,HttpServletRequest request){
+	public ResponseEntity<?> addClient(@RequestBody CustomerDetailsDTO addClientMEntity, HttpServletRequest request) {
 
-		String methodName =request.getRequestURI();
-		// logger.logMethodStart(methodName);
+	    String methodName = request.getRequestURI();
+	    Map<String, Object> statusMap = new HashMap<>();
 
-		Map<String,Object> statusMap= new HashMap<String,Object>();
+	    try {
+	        // Validate required fields
+	        if (UtilValidate.isEmpty(addClientMEntity.getClientName()) ||
+	            UtilValidate.isEmpty(addClientMEntity.getAddress()) ||
+	            UtilValidate.isEmpty(addClientMEntity.getCity()) ||
+	            UtilValidate.isEmpty(addClientMEntity.getState()) ||
+	            UtilValidate.isEmpty(addClientMEntity.getPinCode()) ||
+	            UtilValidate.isEmpty(addClientMEntity.getDistrict()) ||
+	            UtilValidate.isEmpty(addClientMEntity.getContactPerson()) ||
+	            UtilValidate.isEmpty(addClientMEntity.getContactNo()) ||
+	            UtilValidate.isEmpty(addClientMEntity.getEmail()) ||
+	            UtilValidate.isEmpty(addClientMEntity.getGst()) ||
+	            UtilValidate.isEmpty(addClientMEntity.getPan()) ||
+	            UtilValidate.isEmpty(addClientMEntity.getTypeOfService()) ||
+	            UtilValidate.isEmpty(addClientMEntity.getAccountManager())) { 
 
-		ClientMasterEntity clientCreationEntityObj=null; 
-		try{
+	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED); 
+	        }
 
-			if(UtilValidate.isEmpty(addClientMEntity.getClientName()) ||
-					UtilValidate.isEmpty(addClientMEntity.getAddress()) ||
-					UtilValidate.isEmpty(addClientMEntity.getCity()) ||
-					UtilValidate.isEmpty(addClientMEntity.getState()) ||
-					UtilValidate.isEmpty(addClientMEntity.getPinCode()) ||
-					UtilValidate.isEmpty(addClientMEntity.getDistrict()) ||
-					UtilValidate.isEmpty(addClientMEntity.getContactPerson()) ||
-					UtilValidate.isEmpty(addClientMEntity.getContactNo()) ||
-					UtilValidate.isEmpty(addClientMEntity.getEmail()) ||
-					UtilValidate.isEmpty(addClientMEntity.getGst()) ||
-					UtilValidate.isEmpty(addClientMEntity.getPan()) ||
-					UtilValidate.isEmpty(addClientMEntity.getTypeOfService()) ||
-					UtilValidate.isEmpty(addClientMEntity.getAccountManager())){ 
+	        // Check if client already exists
+	        ClientMasterEntity existingClient = clientMasterService.findByEmail(addClientMEntity.getEmail()); // or use any unique field
+	        if (existingClient != null) {
+	            statusMap.put(Parameters.statusMsg, StatusMessageConstants.CLIENT_ALREADY_REGISTERED);
+	            statusMap.put(Parameters.status, Constants.FAIL);
+	            statusMap.put(Parameters.statusCode, "RU_409");
+	            return new ResponseEntity<>(statusMap, HttpStatus.CONFLICT);
+	        }
 
-				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED); 
-			}
+	        // Proceed to create the new client
+	        ClientMasterEntity clientCreationEntityObj = new ClientMasterEntity();
+	        clientCreationEntityObj.setClientName(addClientMEntity.getClientName());
+	        clientCreationEntityObj.setAddress(addClientMEntity.getAddress());
+	        clientCreationEntityObj.setCity(addClientMEntity.getCity());
+	        clientCreationEntityObj.setState(addClientMEntity.getState());
+	        clientCreationEntityObj.setPincode(addClientMEntity.getPinCode());
+	        clientCreationEntityObj.setDistrict(addClientMEntity.getDistrict());
+	        clientCreationEntityObj.setContactPerson(addClientMEntity.getContactPerson());
+	        clientCreationEntityObj.setContactNo(addClientMEntity.getContactNo());
+	        clientCreationEntityObj.setEmail(addClientMEntity.getEmail());
+	        clientCreationEntityObj.setGst(addClientMEntity.getGst());
+	        clientCreationEntityObj.setPan(addClientMEntity.getPan());
+	        clientCreationEntityObj.setTypeOfService(addClientMEntity.getTypeOfService());
+	        clientCreationEntityObj.setAccountManager(addClientMEntity.getAccountManager()); 
 
+	        // Save the client to the database
+	        clientCreationEntityObj = clientMasterService.save(clientCreationEntityObj);
 
-			clientCreationEntityObj=new ClientMasterEntity();
-			clientCreationEntityObj.setClientName(addClientMEntity.getClientName());
-			clientCreationEntityObj.setAddress(addClientMEntity.getAddress());
-			clientCreationEntityObj.setCity(addClientMEntity.getCity());
-			clientCreationEntityObj.setState(addClientMEntity.getState());
-			clientCreationEntityObj.setPincode(addClientMEntity.getPinCode());
-			clientCreationEntityObj.setDistrict(addClientMEntity.getDistrict());
-			clientCreationEntityObj.setContactPerson(addClientMEntity.getContactPerson());
-			clientCreationEntityObj.setContactNo(addClientMEntity.getContactNo());
-			clientCreationEntityObj.setEmail(addClientMEntity.getEmail());
-			clientCreationEntityObj.setGst(addClientMEntity.getGst());
-			clientCreationEntityObj.setPan(addClientMEntity.getPan());
-			clientCreationEntityObj.setTypeOfService(addClientMEntity.getTypeOfService());
-			clientCreationEntityObj.setAccountManager(addClientMEntity.getAccountManager()); 
+	        if (clientCreationEntityObj != null) {
+	            statusMap.put(Parameters.statusMsg, StatusMessageConstants.CLIENT_REGISTERED_SUCCESSFULLY);
+	            statusMap.put(Parameters.status, Constants.SUCCESS);
+	            statusMap.put(Parameters.statusCode, "RU_200");
+	            return new ResponseEntity<>(statusMap, HttpStatus.OK);
+	        } else {
+	            statusMap.put(Parameters.statusMsg, StatusMessageConstants.CLIENT_NOT_REGISTERED);
+	            statusMap.put(Parameters.status, Constants.FAIL);
+	            statusMap.put(Parameters.statusCode, "RU_301");
+	            return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
+	        }
 
-			// SAVE THE USER TO THE DB ENTITY
-			try { 
-				clientCreationEntityObj=clientMasterService.save(clientCreationEntityObj);
-
-				if (clientCreationEntityObj != null) {
-					statusMap.put(Parameters.statusMsg, StatusMessageConstants.CLIENT_REGISTERED_SUCCESSFULLY);
-					statusMap.put(Parameters.status, Constants.SUCCESS);
-					statusMap.put(Parameters.statusCode, "RU_200");
-					return new ResponseEntity<>(statusMap, HttpStatus.OK);
-				} else {
-					statusMap.put(Parameters.statusMsg, StatusMessageConstants.CLIENT_NOT_REGISTERED);
-					statusMap.put(Parameters.status, Constants.FAIL);
-					statusMap.put(Parameters.statusCode, "RU_301");
-					return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
-				}
-			} catch (Exception ex) {
-				// logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 2. Failed to save user in DB response : " + ex.getMessage());
-				statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
-				statusMap.put(Parameters.statusCode, Constants.SVD_USR);
-				statusMap.put(Parameters.status, Constants.FAIL);
-				return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		} catch (Exception ex) {
-			// if (logger.isErrorLoggingEnabled()) {
-			// logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage());
-			// }
-			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	    } catch (Exception ex) {
+	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
+
+
+//	@PostMapping("/addClient") 
+//	public ResponseEntity<?> addClient(@RequestBody  CustomerDetailsDTO addClientMEntity,HttpServletRequest request){
+//
+//		String methodName =request.getRequestURI();
+//		// logger.logMethodStart(methodName);
+//
+//		Map<String,Object> statusMap= new HashMap<String,Object>();
+//
+//		ClientMasterEntity clientCreationEntityObj=null; 
+//		try{
+//
+//			if(UtilValidate.isEmpty(addClientMEntity.getClientName()) ||
+//					UtilValidate.isEmpty(addClientMEntity.getAddress()) ||
+//					UtilValidate.isEmpty(addClientMEntity.getCity()) ||
+//					UtilValidate.isEmpty(addClientMEntity.getState()) ||
+//					UtilValidate.isEmpty(addClientMEntity.getPinCode()) ||
+//					UtilValidate.isEmpty(addClientMEntity.getDistrict()) ||
+//					UtilValidate.isEmpty(addClientMEntity.getContactPerson()) ||
+//					UtilValidate.isEmpty(addClientMEntity.getContactNo()) ||
+//					UtilValidate.isEmpty(addClientMEntity.getEmail()) ||
+//					UtilValidate.isEmpty(addClientMEntity.getGst()) ||
+//					UtilValidate.isEmpty(addClientMEntity.getPan()) ||
+//					UtilValidate.isEmpty(addClientMEntity.getTypeOfService()) ||
+//					UtilValidate.isEmpty(addClientMEntity.getAccountManager())){ 
+//
+//				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED); 
+//			}
+//
+//
+//			clientCreationEntityObj=new ClientMasterEntity();
+//			clientCreationEntityObj.setClientName(addClientMEntity.getClientName());
+//			clientCreationEntityObj.setAddress(addClientMEntity.getAddress());
+//			clientCreationEntityObj.setCity(addClientMEntity.getCity());
+//			clientCreationEntityObj.setState(addClientMEntity.getState());
+//			clientCreationEntityObj.setPincode(addClientMEntity.getPinCode());
+//			clientCreationEntityObj.setDistrict(addClientMEntity.getDistrict());
+//			clientCreationEntityObj.setContactPerson(addClientMEntity.getContactPerson());
+//			clientCreationEntityObj.setContactNo(addClientMEntity.getContactNo());
+//			clientCreationEntityObj.setEmail(addClientMEntity.getEmail());
+//			clientCreationEntityObj.setGst(addClientMEntity.getGst());
+//			clientCreationEntityObj.setPan(addClientMEntity.getPan());
+//			clientCreationEntityObj.setTypeOfService(addClientMEntity.getTypeOfService());
+//			clientCreationEntityObj.setAccountManager(addClientMEntity.getAccountManager()); 
+//
+//			// SAVE THE USER TO THE DB ENTITY
+//			try { 
+//				clientCreationEntityObj=clientMasterService.save(clientCreationEntityObj);
+//
+//				if (clientCreationEntityObj != null) {
+//					statusMap.put(Parameters.statusMsg, StatusMessageConstants.CLIENT_REGISTERED_SUCCESSFULLY);
+//					statusMap.put(Parameters.status, Constants.SUCCESS);
+//					statusMap.put(Parameters.statusCode, "RU_200");
+//					return new ResponseEntity<>(statusMap, HttpStatus.OK);
+//				} else {
+//					statusMap.put(Parameters.statusMsg, StatusMessageConstants.CLIENT_NOT_REGISTERED);
+//					statusMap.put(Parameters.status, Constants.FAIL);
+//					statusMap.put(Parameters.statusCode, "RU_301");
+//					return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
+//				}
+//			} catch (Exception ex) {
+//				// logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 2. Failed to save user in DB response : " + ex.getMessage());
+//				statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
+//				statusMap.put(Parameters.statusCode, Constants.SVD_USR);
+//				statusMap.put(Parameters.status, Constants.FAIL);
+//				return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//			}
+//		} catch (Exception ex) {
+//			// if (logger.isErrorLoggingEnabled()) {
+//			// logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage());
+//			// }
+//			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//	}
 
 
 
@@ -331,4 +402,3 @@ public class ClientMasterController {
 		}
 	}
 }
-

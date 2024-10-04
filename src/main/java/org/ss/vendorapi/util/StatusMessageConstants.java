@@ -16,6 +16,7 @@ public class StatusMessageConstants {
 	public static final String CLIENT_REGISTERED_SUCCESSFULLY="CLient registered successfully";
 	public static final String CLIENT_NOT_REGISTERED = "Client not registered";
 	
+	
 //	**********************************************profitLoss_master***********************************************************
 	
 	public static final String PROFIT_LOSS_GENERATED_SUCCESSFULLY="Profit loss generated successfully";
@@ -65,4 +66,5 @@ public class StatusMessageConstants {
 	public static final Object INVALID_OLD_PASSWORD = "invalid old password";
 	public static final Object PASSWORD_RESET_SUCCESS = "password reset success";
 	public static final Object USER_NOT_FOUND = "user not found";
+	public static final Object CLIENT_ALREADY_REGISTERED = "client already registered";
 }

@@ -73,4 +73,11 @@ public class ClientMasterServiceImpl implements ClientMasterService{
 		return list;
 	}
 
-}
+
+	@Override
+	public ClientMasterEntity findByEmail(String email) {
+		return clientMasterRepository.findByEmail(email);
+	}
+	}
+
+

@@ -14,4 +14,5 @@ public interface ClientMasterService {
 	public List<ClientMasterEntity> findByAccountManager(String userId);
 	public List<ClientMasterEntity> findByWhere(String where);
 	//public List<ClientMasterEntity> findByProjectManager(String userId);
+	public ClientMasterEntity findByEmail(String email);
 }

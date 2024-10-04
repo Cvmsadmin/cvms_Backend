@@ -12,7 +12,8 @@ import org.ss.vendorapi.entity.ClientMasterEntity;
 public interface ClientMasterRepository extends JpaRepository<ClientMasterEntity, Long>{
 	
 	
+	public ClientMasterEntity findByEmail(String email);
 	public List<ClientMasterEntity> findByAccountManager(String accountManager);
-//	public List<ClientMasterEntity> findByProjectManager(String projectManager);
+
 
 }
