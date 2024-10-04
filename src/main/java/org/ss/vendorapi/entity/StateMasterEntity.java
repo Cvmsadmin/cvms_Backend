@@ -1,7 +1,6 @@
 package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,8 +16,9 @@ import lombok.Setter;
 @NoArgsConstructor @Setter @Getter @AllArgsConstructor
 @Table(name="state_master")
 @Entity
-public class StateMasterEntity implements Serializable{
+public class StateMasterEntity extends ParentEntity implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,13 +27,7 @@ public class StateMasterEntity implements Serializable{
     @Column(name="state_name")
     private String stateName;
     
-    private Integer active;
     
-    @Column(name="create_date")
-	private Date 	createDate;
-	
-	@Column(name="update_date")
-	private Date updateDate;
 }
     
 	

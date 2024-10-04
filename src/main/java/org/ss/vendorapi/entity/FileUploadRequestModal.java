@@ -1,11 +1,6 @@
 package org.ss.vendorapi.entity;
 
-import java.nio.file.Paths;
-import java.util.Date;
-
-import org.w3c.dom.DocumentType;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.io.Serializable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,7 +18,9 @@ import lombok.Setter;
 @NoArgsConstructor @Setter @Getter @AllArgsConstructor
 @Entity
 @Table(name = "DocumentUpload")
-public class FileUploadRequestModal {
+public class FileUploadRequestModal extends ParentEntity implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 
     @Id

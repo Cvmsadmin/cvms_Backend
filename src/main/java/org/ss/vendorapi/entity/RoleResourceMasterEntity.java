@@ -2,6 +2,8 @@ package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
 
+import org.hibernate.annotations.Where;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor @Setter @Getter @AllArgsConstructor
+@Where(clause="ACTIVE=1")
 @Entity
 @Table(name = "ROLE_RESOURCE_MASTER")
 public class RoleResourceMasterEntity extends ParentEntity implements Serializable{

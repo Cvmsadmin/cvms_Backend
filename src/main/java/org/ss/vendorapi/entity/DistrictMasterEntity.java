@@ -1,7 +1,8 @@
 package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import org.hibernate.annotations.Where;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,12 +10,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Setter@Getter@AllArgsConstructor@NoArgsConstructor
 @Table(name="district_master")
+@Where(clause="ACTIVE=1")
 @Entity
-public class DistrictMasterEntity implements Serializable {
+public class DistrictMasterEntity extends ParentEntity implements Serializable {
 
 	private static final long serialVersionUID=1L;
 
@@ -28,10 +33,5 @@ public class DistrictMasterEntity implements Serializable {
     
     private String stateId;
     
-    private Integer active;
-    @Column(name="create_date")
-	private Date 	createDate;
-	
-	@Column(name="update_date")
-	private Date updateDate;
+   
 }

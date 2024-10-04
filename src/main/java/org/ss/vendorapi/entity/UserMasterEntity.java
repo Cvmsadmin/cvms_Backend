@@ -2,16 +2,22 @@ package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
 
+import org.hibernate.annotations.Where;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@NoArgsConstructor @Setter @Getter @AllArgsConstructor
 @Entity
+@Where(clause="ACTIVE=1")
 @Table(name="USER_MASTER")
 public class UserMasterEntity extends ParentEntity implements Serializable{
 	
