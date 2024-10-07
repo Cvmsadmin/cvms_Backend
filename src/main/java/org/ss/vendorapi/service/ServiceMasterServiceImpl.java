@@ -1,5 +1,6 @@
 package org.ss.vendorapi.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class ServiceMasterServiceImpl implements ServiceMasterService{
 
 	
 	@Override
-	public List<ServiceMasterEntity> getAllService(){
+	public List<ServiceMasterEntity> findAll(){
 		return serviceMasterRepository.findAll();
 	}
 
@@ -23,7 +24,25 @@ public class ServiceMasterServiceImpl implements ServiceMasterService{
 
 	@Override
 	public ServiceMasterEntity save(ServiceMasterEntity serviceMasterEntity) {
+		serviceMasterEntity.setActive(1);
+		serviceMasterEntity.setCreateDate(new Date());
 		return serviceMasterRepository.save(serviceMasterEntity);
+	}
+
+
+
+	@Override
+	public ServiceMasterEntity update(ServiceMasterEntity serviceMasterEntity) {
+		serviceMasterEntity.setUpdateDate(new Date());
+		return serviceMasterRepository.save(serviceMasterEntity);
+		
+	}
+
+
+
+	@Override
+	public ServiceMasterEntity findById(Long id) {
+		return serviceMasterRepository.findById(id).orElse(null);
 	}
 
 

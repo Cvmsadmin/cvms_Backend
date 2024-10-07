@@ -214,7 +214,7 @@ public class ClientMasterController {
 	public ResponseEntity<?> getAllClient() { 
 		try {
 			Map<String,Object> statusMap=new HashMap<>();
-			List<ClientMasterEntity> clientList = clientMasterService.getAllClient();
+			List<ClientMasterEntity> clientList = clientMasterService.findAll();
 
 			statusMap.put("ClientMasterEntity",clientList);
 			statusMap.put(Parameters.statusMsg,  StatusMessageConstants.CLIENT_FOUND_SUCCESSFULLY );
@@ -311,8 +311,13 @@ public class ClientMasterController {
 						client.setAccountManager(name);
 					}
 				});
-			}else {
-				//return error
+			}
+				else if(RoleConstants.ADMINISTRATION.equals(userMasterEntity.getRole())) {
+					clientList=clientMasterService.findAll();
+				}else {
+					statusMap.put(Parameters.status, Constants.FAIL);
+					statusMap.put(Parameters.statusCode, "RU_404");
+					return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
 			}
 			// After updating, put the updated clientList into statusMap
 			statusMap.put("clientMasterEntities", clientList);

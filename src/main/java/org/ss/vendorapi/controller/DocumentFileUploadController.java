@@ -102,7 +102,7 @@
  * if (fileContent == null || fileContent.length == 0) { return
  * ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); }
  * 
- * return ResponseEntity.ok() .contentType(MediaType.APPLICATION_OCTET_STREAM)
+ * return ResponseEntity.ok() .contentType(MediaType.APPLICATION_OCTET _STREAM)
  * .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName
  * + "\"") .body(fileContent); }
  * 

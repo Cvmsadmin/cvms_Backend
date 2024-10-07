@@ -57,14 +57,15 @@ public class ServiceMasterController {
 
 	    try {
 	        for (ServiceMasterDTO serviceMasterDTO : serviceList) {
-	            if (UtilValidate.isEmpty(serviceMasterDTO.getSrNo()) || UtilValidate.isEmpty(serviceMasterDTO.getServiceName())) {
+	            if (UtilValidate.isEmpty(serviceMasterDTO.getSrNo()) ||
+	            		UtilValidate.isEmpty(serviceMasterDTO.getServiceName())) {
 	                return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
 	            }
 
 	            ServiceMasterEntity serviceCreationEntityObj = new ServiceMasterEntity();
 	            serviceCreationEntityObj.setSrNo(serviceMasterDTO.getSrNo());
 	            serviceCreationEntityObj.setServiceName(serviceMasterDTO.getServiceName());
-	            serviceCreationEntityObj.setActive(true);
+	           
 
 	            try {
 	                serviceCreationEntityObj = serviceMasterService.save(serviceCreationEntityObj);
@@ -104,7 +105,7 @@ public class ServiceMasterController {
 	@GetMapping("/getAllService")	
 	public ResponseEntity<?> getAllService() {
 	    try {
-	        List<ServiceMasterEntity> users = serviceMasterService.getAllService();
+	        List<ServiceMasterEntity> users = serviceMasterService.findAll();
 	        return new ResponseEntity<>(users, HttpStatus.OK);
 	    } catch (Exception ex) {
 	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

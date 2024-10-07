@@ -22,7 +22,7 @@ public class ClientMasterServiceImpl implements ClientMasterService{
 	private EntityManager entityManager;
 	
 	
-	public List<ClientMasterEntity> getAllClient(){
+	public List<ClientMasterEntity> findAll(){
 		return clientMasterRepository.findAll();
 	}
 
