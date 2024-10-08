@@ -19,7 +19,7 @@ import lombok.Setter;
 @Entity
 @Where(clause="ACTIVE=1")
 @Table(name="service_master")
-public class ServiceMasterEntity implements Serializable {
+public class ServiceMasterEntity extends ParentEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
@@ -33,7 +33,5 @@ public class ServiceMasterEntity implements Serializable {
 	@Column(name="Service_name")
 	private String serviceName;
 	
-	@Column(name="active")
-	private Boolean active;
 
 }
