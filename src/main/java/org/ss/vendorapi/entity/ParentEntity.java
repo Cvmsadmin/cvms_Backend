@@ -4,6 +4,9 @@ package org.ss.vendorapi.entity;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
@@ -24,6 +27,7 @@ public class ParentEntity {
 	@Column(name="UPDATED_BY")
 	private String updatedBy;
 	
+	@NotNull @NotEmpty
 	@Column(name="ACTIVE")
 	private Integer active;
 
