@@ -149,8 +149,6 @@ public class UserMasterController{
 	public ResponseEntity<?> userCreation(@RequestBody CustomerDetailsDTO userMasterMEntity, 
 	        @RequestParam String id, 
 	        HttpServletRequest request) {
-	    ResponseEntity<?> responseEntity = null;
-	    String methodName = request.getRequestURI();
 	    Map<String, Object> statusMap = new HashMap<>();
 
 	    try {
@@ -214,12 +212,18 @@ public class UserMasterController{
 	                    return new ResponseEntity<>(statusMap, HttpStatus.INTERNAL_SERVER_ERROR);
 	                }
 
-	                // Corrected message with clear formatting
+	                // Add username and password to the response
+	                statusMap.put("username", userMasterMEntity.getEmail());
+	                statusMap.put("password", generatedPassword);
+
+	                // Success message
 	                String successMessage = StatusMessageConstants.USER_REGISTERED_SUCCESSFULLY 
 	                        + ". Your credentials have been sent to your email.";
 	                statusMap.put(Parameters.statusMsg, successMessage);
 	                statusMap.put(Parameters.status, Constants.SUCCESS);
 	                statusMap.put(Parameters.statusCode, "RU_200");
+	                
+	                // Return response including username and password
 	                return new ResponseEntity<>(statusMap, HttpStatus.OK);
 	            } else {
 	                statusMap.put(Parameters.statusMsg, StatusMessageConstants.USER_NOT_REGISTERED);
@@ -238,6 +242,7 @@ public class UserMasterController{
 	    }
 	}
 
+
 	// Method to generate a random password
 	private String generateRandomPassword() {
 	    int length = 8; // Password length
@@ -250,6 +255,8 @@ public class UserMasterController{
 	    }
 	    return sb.toString();
 	}
+
+
 
 
 

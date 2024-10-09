@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.config.AESDecryptionService;
 import org.ss.vendorapi.config.EncryptSecurityUtil;
 import org.ss.vendorapi.entity.FeatureMasterEntity;
+import org.ss.vendorapi.entity.ForgotPasswordVerifyRequest;
 import org.ss.vendorapi.entity.LoginRequest;
 import org.ss.vendorapi.entity.RefreshToken;
 import org.ss.vendorapi.entity.RoleResourceMasterEntity;
@@ -30,7 +31,9 @@ import org.ss.vendorapi.modal.ForgotPasswordRequest;
 import org.ss.vendorapi.modal.response.JwtResponse;
 import org.ss.vendorapi.security.JwtHelper;
 import org.ss.vendorapi.service.CustomUserDetailService;
+import org.ss.vendorapi.service.EmailService;
 import org.ss.vendorapi.service.FeatureMasterService;
+import org.ss.vendorapi.service.OtpService;
 import org.ss.vendorapi.service.RefreshTokenService;
 import org.ss.vendorapi.service.ResourceMasterService;
 import org.ss.vendorapi.service.RoleResourceMasterService;
@@ -54,6 +57,12 @@ public class LoginController {
 
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private OtpService otpService;
+	
+	@Autowired
+	private EmailService emailSenderService;
 
 	@Autowired
 	private UserMasterService userMasterService;
@@ -251,39 +260,86 @@ public class LoginController {
 	}
 
 
+
 	@PostMapping("/forgotPassword")
 	public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
-		Map<String, Object> statusMap = new HashMap<>();
+	    String email = forgotPasswordRequest.getEmail();
+	    String phone = forgotPasswordRequest.getPhone();
 
-		try {
-			String email = forgotPasswordRequest.getEmail();
-			String phone = forgotPasswordRequest.getPhone();
-			String newPassword = forgotPasswordRequest.getNewPassword();
-			String confirmPassword = forgotPasswordRequest.getConfirmPassword();
+	    if (UtilValidate.isEmpty(email) || UtilValidate.isEmpty(phone)) {
+	        return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING,
+	                HttpStatus.EXPECTATION_FAILED);
+	    }
 
-			if (UtilValidate.isEmpty(email) || UtilValidate.isEmpty(phone) || UtilValidate.isEmpty(newPassword) || UtilValidate.isEmpty(confirmPassword)) {
-				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
-			}
+	    UserMasterEntity user = userMasterService.findByEmailAndPhone(email, phone);
 
-			if (!newPassword.equals(confirmPassword)) {
-				return CommonUtils.createResponse(Constants.FAIL, "Passwords do not match", HttpStatus.BAD_REQUEST);
-			}
+	    if (user == null) {
+	        return CommonUtils.createResponse(Constants.FAIL, "Invalid email or phone number", HttpStatus.BAD_REQUEST);
+	    }
 
-			boolean isUpdated = userMasterService.updatePasswordByEmailAndPhone(email, phone, newPassword);
+	    // Generate OTP and store with expiration (e.g., 2 minutes)
+	    String otp = otpService.generateOtpForEmail(email);
 
-			if (isUpdated) {
-				statusMap.put(Parameters.status, Constants.SUCCESS);
-				statusMap.put(Parameters.statusCode, "PASSWORD_RESET_200");
-				statusMap.put(Parameters.statusMsg, "Your new password is: " + newPassword);
-				return new ResponseEntity<>(statusMap, HttpStatus.OK);
-			} else {
-				statusMap.put(Parameters.statusMsg, "Invalid email or phone number");
-				statusMap.put(Parameters.status, Constants.FAIL);
-				statusMap.put(Parameters.statusCode, "PASSWORD_RESET_201");
-				return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
-			}
-		} catch (Exception ex) {
-			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	    try {
+	        // Send OTP to the user's email
+	        emailSenderService.sendEmail(email, "OTP for Password Reset", 
+	                                     "Your OTP for password reset is: " + otp);
+
+	        // If no exception, OTP email was successfully sent
+	        return CommonUtils.createResponse(Constants.SUCCESS, "OTP sent to your email", HttpStatus.OK);
+	    } catch (Exception e) {
+	        // Handle exception if email sending fails
+	        return CommonUtils.createResponse(Constants.FAIL, "Failed to send OTP. Please try again later.",
+	                HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
+
+
+    @PostMapping("/verifyOtp")
+    public ResponseEntity<?> verifyOtp(@RequestBody ForgotPasswordVerifyRequest forgotPasswordVerifyRequest) {
+        String email = forgotPasswordVerifyRequest.getEmail();
+        String otp = forgotPasswordVerifyRequest.getOtp();
+        String newPassword = forgotPasswordVerifyRequest.getNewPassword();
+        String confirmPassword = forgotPasswordVerifyRequest.getConfirmPassword();
+
+        if (UtilValidate.isEmpty(email) || UtilValidate.isEmpty(otp) || UtilValidate.isEmpty(newPassword)
+                || UtilValidate.isEmpty(confirmPassword)) {
+            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING,
+                    HttpStatus.EXPECTATION_FAILED);
+        }
+
+        // Validate OTP
+        boolean isOtpValid = otpService.validateOtp(email, otp);
+        if (!isOtpValid) {
+            return CommonUtils.createResponse(Constants.FAIL, "Invalid or expired OTP", HttpStatus.BAD_REQUEST);
+        }
+
+        // Validate new password
+        if (!newPassword.equals(confirmPassword)) {
+            return CommonUtils.createResponse(Constants.FAIL, "Passwords do not match", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!isValidPassword(newPassword)) {
+            return CommonUtils.createResponse(Constants.FAIL, "Password must be at least 8 characters long and contain a mix of letters, numbers, and special characters.", HttpStatus.BAD_REQUEST);
+        }
+
+        // Update password in the database
+        UserMasterEntity user = userMasterService.findByEmail(email);
+        if (user != null) {
+            user.setPassword(encryptUtil.encode(newPassword));
+            userMasterService.save(user);
+        }
+
+        // Invalidate the OTP after use
+        otpService.invalidateOtp(email);
+
+        return CommonUtils.createResponse(Constants.SUCCESS, "Password updated successfully", HttpStatus.OK);
+    }
+
+    // Helper method to validate password strength
+    private boolean isValidPassword(String password) {
+        // Example validation: Password must contain at least 8 characters, one letter, one number, and one special character.
+        String passwordPattern = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+        return password.matches(passwordPattern);
+    }
 }

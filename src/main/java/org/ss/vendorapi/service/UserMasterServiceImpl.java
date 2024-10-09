@@ -186,4 +186,19 @@ public class UserMasterServiceImpl implements UserMasterService {
 		return userMasterRepository.findById(id).orElse(null);
 	}
 
+	@Override
+	public UserMasterEntity findByEmailAndPhone(String email, String phone) {
+	    return userMasterRepository.findByEmailAndPhone(email, phone);
+	}
+
+
+	@Override
+	public UserMasterEntity findByEmail(String email) {
+		return userMasterRepository.findByEmail(email);
+	}
+
+	@Override
+	public void save(UserMasterEntity user) {
+		userMasterRepository.save(user);
+	}
 }

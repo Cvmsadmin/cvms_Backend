@@ -25,6 +25,9 @@ public interface UserMasterService {
 	public List<UserMasterEntity> findByRoleId(String roleId);
 	public List<UserMasterEntity> findAll();
 	public UserMasterEntity findById(Long id);
+	UserMasterEntity findByEmailAndPhone(String email, String phone);
+	UserMasterEntity findByEmail(String email);
+	void save(UserMasterEntity user);
 	
 	
 	
