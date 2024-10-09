@@ -87,62 +87,7 @@ public class UserMasterController{
 
 	public static final String UTILITY_USER_ROLE="UtilityUser";
 	public static final String END_CONSUMER_ROLE="EndConsumer";
-
-
-
-	@PostMapping("/resetPassword")
-	public ResponseEntity<?> resetPassword(@RequestParam String email, 
-			@RequestParam String oldPassword,
-			@RequestParam String newPassword,
-			@RequestParam String confirmPassword) {
-		Map<String, Object> statusMap = new HashMap<>();
-
-		try {
-			Optional<UserMasterEntity> optionalUser = userCreationService.findByEmail(email);
-			if (!optionalUser.isPresent()) {
-				statusMap.put(Parameters.statusMsg, StatusMessageConstants.USER_NOT_FOUND);
-				statusMap.put(Parameters.status, Constants.FAIL);
-				statusMap.put(Parameters.statusCode, "RU_404");
-				return new ResponseEntity<>(statusMap, HttpStatus.NOT_FOUND);
-			}
-
-			UserMasterEntity user = optionalUser.get();
-
-			// Log the user's stored password for debugging (consider security implications)
-			System.out.println("Stored password (hashed): " + user.getPassword());
-
-			// Verify old password
-			if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-				statusMap.put(Parameters.statusMsg, StatusMessageConstants.INVALID_OLD_PASSWORD);
-				statusMap.put(Parameters.status, Constants.FAIL);
-				statusMap.put(Parameters.statusCode, "RU_403");
-				return new ResponseEntity<>(statusMap, HttpStatus.FORBIDDEN);
-			}
-
-			// Check if new password and confirm password match
-			if (!newPassword.equals(confirmPassword)) {
-				statusMap.put(Parameters.statusMsg, StatusMessageConstants.PASSWORDS_DO_NOT_MATCH);
-				statusMap.put(Parameters.status, Constants.FAIL);
-				statusMap.put(Parameters.statusCode, "RU_400");
-				return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
-			}
-
-			// Encode and save the new password
-			String encodedPassword = passwordEncoder.encode(newPassword);
-			user.setPassword(encodedPassword);
-			userCreationService.save(user); // Save the updated user
-
-			statusMap.put(Parameters.statusMsg, StatusMessageConstants.PASSWORD_RESET_SUCCESS);
-			statusMap.put(Parameters.status, Constants.SUCCESS);
-			return new ResponseEntity<>(statusMap, HttpStatus.OK);
-
-		} catch (Exception ex) {
-			statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
-			statusMap.put(Parameters.status, Constants.FAIL);
-			statusMap.put(Parameters.statusCode, Constants.SVD_USR);
-			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}	
+	
 
 
 	@PostMapping("/userCreation")

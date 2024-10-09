@@ -24,6 +24,7 @@ import org.ss.vendorapi.entity.FeatureMasterEntity;
 import org.ss.vendorapi.entity.ForgotPasswordVerifyRequest;
 import org.ss.vendorapi.entity.LoginRequest;
 import org.ss.vendorapi.entity.RefreshToken;
+import org.ss.vendorapi.entity.ResetPasswordRequest;
 import org.ss.vendorapi.entity.RoleResourceMasterEntity;
 import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.modal.FeatureDTO;
@@ -342,4 +343,53 @@ public class LoginController {
         String passwordPattern = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
         return password.matches(passwordPattern);
     }
+    
+    @PostMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        String email = resetPasswordRequest.getEmail();
+        String oldPassword = resetPasswordRequest.getOldPassword();
+        String newPassword = resetPasswordRequest.getNewPassword();
+        String confirmPassword = resetPasswordRequest.getConfirmPassword();
+
+        if (UtilValidate.isEmpty(email) || UtilValidate.isEmpty(oldPassword) || 
+            UtilValidate.isEmpty(newPassword) || UtilValidate.isEmpty(confirmPassword)) {
+            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING,
+                    HttpStatus.EXPECTATION_FAILED);
+        }
+
+        // Fetch user by email
+        UserMasterEntity user = userMasterService.findByEmail(email);
+        if (user == null) {
+            return CommonUtils.createResponse(Constants.FAIL, "User not found", HttpStatus.BAD_REQUEST);
+        }
+
+        // Verify old password
+        if (!encryptUtil.encode(oldPassword).equals(user.getPassword())) {
+            return CommonUtils.createResponse(Constants.FAIL, "Old password is incorrect", HttpStatus.BAD_REQUEST);
+        }
+
+        // Validate new password
+        if (!newPassword.equals(confirmPassword)) {
+            return CommonUtils.createResponse(Constants.FAIL, "Passwords do not match", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!isValidPassword(newPassword)) {
+            return CommonUtils.createResponse(Constants.FAIL, 
+                "Password must be at least 8 characters long and contain a mix of letters, numbers, and special characters.",
+                HttpStatus.BAD_REQUEST);
+        }
+
+        // Update password in the database
+        user.setPassword(encryptUtil.encode(newPassword));
+        userMasterService.save(user);
+
+        return CommonUtils.createResponse(Constants.SUCCESS, "Password updated successfully", HttpStatus.OK);
+    }
+
+    // Helper method to validate password strength
+    private boolean isValidPassword1(String password) {
+        String passwordPattern = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+        return password.matches(passwordPattern);
+    }
+
 }
