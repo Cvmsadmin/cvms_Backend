@@ -7,4 +7,6 @@ import org.ss.vendorapi.entity.PurchaseMasterEntity;
 @Repository
 public interface PurchaseMasterRepository extends JpaRepository<PurchaseMasterEntity, Long>{
 
+	
+		PurchaseMasterEntity findByPrNo(String prNo);
 }

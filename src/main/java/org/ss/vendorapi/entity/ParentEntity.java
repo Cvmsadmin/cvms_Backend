@@ -29,7 +29,7 @@ public class ParentEntity {
 	
 	@NotNull @NotEmpty
 	@Column(name="ACTIVE")
-	private Integer active;
+	private Integer active=1;
 
 }
 

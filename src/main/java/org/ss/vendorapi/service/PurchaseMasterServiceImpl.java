@@ -21,6 +21,7 @@ public class PurchaseMasterServiceImpl implements PurchaseMasterService{
 
 
 
+
 	@Override
 	public PurchaseMasterEntity save(PurchaseMasterEntity purchaseMasterEntity) {
 		return purchaseMasterRepository.save(purchaseMasterEntity);
@@ -47,4 +48,11 @@ public class PurchaseMasterServiceImpl implements PurchaseMasterService{
 		purchaseMasterRepository.save(purchaseMaster);
 		
 	}
+
+
+
+	@Override
+    public PurchaseMasterEntity findByPrNo(String prNo) {
+        return purchaseMasterRepository.findByPrNo(prNo);
+    }
 }

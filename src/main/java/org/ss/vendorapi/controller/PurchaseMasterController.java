@@ -26,11 +26,6 @@ import org.ss.vendorapi.service.PurchaseBOMService;
 import org.ss.vendorapi.service.PurchaseMasterService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
-import org.ss.vendorapi.util.Parameters;
-import org.ss.vendorapi.util.StatusMessageConstants;
-import org.ss.vendorapi.util.UtilValidate;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -51,13 +46,22 @@ public class PurchaseMasterController {
 	private PurchaseBOMService purchaseBOMService;
 	
 	
-	
-	
 	@PostMapping("/addPurchase")
 	public ResponseEntity<Map<String, Object>> addPurchase(@RequestBody PurchaseMasterEntity purchaseRequestDTO) {
 	    Map<String, Object> response = new HashMap<>();
-	    
+
 	    try {
+	        // Check if a purchase with the same PR number already exists
+	        PurchaseMasterEntity existingPurchase = purchaseMasterService.findByPrNo(purchaseRequestDTO.getPrNo());
+	        
+	        if (existingPurchase != null) {
+	            // If the purchase already exists, return an error message
+	            response.put("message", "Purchase with the same PR number already exists.");
+	            response.put("status", HttpStatus.CONFLICT); // 409 Conflict status
+	            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+	        }
+
+	        // Create a new PurchaseMasterEntity and populate it
 	        PurchaseMasterEntity purchaseMaster = new PurchaseMasterEntity();
 	        purchaseMaster.setClientName(purchaseRequestDTO.getClientName());
 	        purchaseMaster.setProjectName(purchaseRequestDTO.getProjectName());
@@ -67,9 +71,9 @@ public class PurchaseMasterController {
 	        purchaseMaster.setPrNo(purchaseRequestDTO.getPrNo());
 	        purchaseMaster.setPrDate(purchaseRequestDTO.getPrDate());
 	        purchaseMaster.setPrAmount(purchaseRequestDTO.getPrAmount());
-	        
+
+	        // Handle status
 	        String status = purchaseRequestDTO.getStatus();
-	       
 	        if ("Approved".equalsIgnoreCase(status)) {
 	            purchaseMaster.setStatus("Approved");
 	            purchaseMaster.setApproveDate(new Date()); // Set current date for approval
@@ -80,16 +84,57 @@ public class PurchaseMasterController {
 	            purchaseMaster.setStatus("Pending"); // Default to Pending
 	        }
 
-	        purchaseMasterService.savePurchase(purchaseMaster); // Assuming this method saves the entity
+	        // Save the new purchase
+	        purchaseMasterService.savePurchase(purchaseMaster);
 	        response.put("message", "Purchase added successfully.");
 	        response.put("status", HttpStatus.OK);
 	        return new ResponseEntity<>(response, HttpStatus.OK);
+
 	    } catch (Exception e) {
 	        response.put("message", "Error while adding purchase: " + e.getMessage());
 	        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
 	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
+	
+//	@PostMapping("/addPurchase")
+//	public ResponseEntity<Map<String, Object>> addPurchase(@RequestBody PurchaseMasterEntity purchaseRequestDTO) {
+//	    Map<String, Object> response = new HashMap<>();
+//	    
+//	    try {
+//	        PurchaseMasterEntity purchaseMaster = new PurchaseMasterEntity();
+//	        purchaseMaster.setClientName(purchaseRequestDTO.getClientName());
+//	        purchaseMaster.setProjectName(purchaseRequestDTO.getProjectName());
+//	        purchaseMaster.setVendor(purchaseRequestDTO.getVendor());
+//	        purchaseMaster.setRequestorName(purchaseRequestDTO.getRequestorName());
+//	        purchaseMaster.setDescription(purchaseRequestDTO.getDescription());
+//	        purchaseMaster.setPrNo(purchaseRequestDTO.getPrNo());
+//	        purchaseMaster.setPrDate(purchaseRequestDTO.getPrDate());
+//	        purchaseMaster.setPrAmount(purchaseRequestDTO.getPrAmount());
+//	        
+//	        String status = purchaseRequestDTO.getStatus();
+//	       
+//	        if ("Approved".equalsIgnoreCase(status)) {
+//	            purchaseMaster.setStatus("Approved");
+//	            purchaseMaster.setApproveDate(new Date()); // Set current date for approval
+//	            purchaseMaster.setPoNo(purchaseRequestDTO.getPoNo()); // Set PO number
+//	        } else if ("Reject".equalsIgnoreCase(status)) {
+//	            purchaseMaster.setStatus("Pending"); // Set status to Pending if rejected
+//	        } else {
+//	            purchaseMaster.setStatus("Pending"); // Default to Pending
+//	        }
+//
+//	        purchaseMasterService.savePurchase(purchaseMaster); // Assuming this method saves the entity
+//	        response.put("message", "Purchase added successfully.");
+//	        response.put("status", HttpStatus.OK);
+//	        return new ResponseEntity<>(response, HttpStatus.OK);
+//	    } catch (Exception e) {
+//	        response.put("message", "Error while adding purchase: " + e.getMessage());
+//	        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+//	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
 
 
 //	@PostMapping("/addPurchase")
@@ -199,26 +244,26 @@ public class PurchaseMasterController {
 //    }
 //
 //	}
-
-
-
-
 	
 	@GetMapping("/getAllPurchase")
 	public ResponseEntity<?> getAllPurchase() {
-		Map<String, Object> statusMap = new HashMap<>();
-		try {
-			List<PurchaseMasterEntity> purchaseMasterEntityList = purchaseMasterService.findAll();
-			statusMap.put("PurchaseMasterEntity",purchaseMasterEntityList);
-			statusMap.put("Status","Success");
-			statusMap.put("Status_Code","RU_200");
-			return new ResponseEntity<>(statusMap,HttpStatus.OK);
-		}
-		catch(Exception ex){
-			ex.printStackTrace();
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	    Map<String, Object> statusMap = new HashMap<>();
+	    try {
+	        // Fetch all purchase records
+	        List<PurchaseMasterEntity> purchaseMasterEntityList = purchaseMasterService.findAll();
+	        
+	        // Add data to the response
+	        statusMap.put("PurchaseMasterEntity", purchaseMasterEntityList);
+	        statusMap.put("Status", "Success");
+	        statusMap.put("Status_Code", "RU_200");
+
+	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+	    } catch (Exception ex) {
+	        ex.printStackTrace();
+	        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
+
 
 	
 	@GetMapping("/getAllBOMDetails")
@@ -350,4 +395,4 @@ public class PurchaseMasterController {
 				return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
   }
-}    
+}

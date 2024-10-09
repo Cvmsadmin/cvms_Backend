@@ -192,6 +192,7 @@ public class UserMasterController{
 	        registerUserCreationEntityObj.setPhysicalLocation(userMasterMEntity.getPhysicalLocation());
 	        registerUserCreationEntityObj.setRole(id);
 	        registerUserCreationEntityObj.setPassword(encodedPassword);
+	        registerUserCreationEntityObj.setActive(1);
 
 	        try {
 	            // Save the user to the database

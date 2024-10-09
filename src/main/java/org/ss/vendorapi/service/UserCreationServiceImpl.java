@@ -1,5 +1,6 @@
 package org.ss.vendorapi.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,8 @@ public class UserCreationServiceImpl implements UserCreationService{
 
 	@Override
 	public UserMasterEntity save(UserMasterEntity userMasterEntity) {
+		userMasterEntity.setActive(1);
+		userMasterEntity.setCreateDate(new Date());
 		return creationUserRepository.save(userMasterEntity);
 	}
 
@@ -41,6 +44,7 @@ public class UserCreationServiceImpl implements UserCreationService{
 
 	@Override
 	public UserMasterEntity update(UserMasterEntity userMasterEntity) {
+		userMasterEntity.setUpdateDate(new Date());
 		return creationUserRepository.save(userMasterEntity);
 	}
 
