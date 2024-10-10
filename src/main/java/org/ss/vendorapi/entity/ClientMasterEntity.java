@@ -63,6 +63,6 @@ public class ClientMasterEntity extends ParentEntity implements Serializable{
 	@Column(name="type_of_service")
 	private String typeOfService;
 
-	@Column(name="account_manager")
-	private String accountManager;
+	@Column(name="account_managerId")
+	private String accountManagerId;
 }

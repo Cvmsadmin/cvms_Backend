@@ -30,11 +30,11 @@ public class ProfitLossMasterEntity extends ParentEntity implements Serializable
 	private Long id;
 	
 	
-	@Column(name="client_name")
-	private String clientName;
+	@Column(name="client_id")
+	private String clientId;
 	
-	@Column(name="project_name")
-	private String projectName;
+	@Column(name="project_id")
+	private String projectId;
 	
 	@Column(name="serial_no")
 	private String SrNo;

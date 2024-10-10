@@ -32,8 +32,8 @@ public class ProjectMasterEntity extends ParentEntity implements Serializable{
 	private Long id;
 
 	
-	@Column(name = "client_name")
-	private String clientName;
+	@Column(name = "client_id")
+	private String clientId;
 
 	@Column(name = "project_name")
 	private String projectName;
@@ -91,11 +91,11 @@ public class ProjectMasterEntity extends ParentEntity implements Serializable{
 	@Column(name = "date_of_loa")
 	private Date dateOfLoa;
 
-	@Column(name = "account_manager")
-	private String accountManager;
+	@Column(name = "account_manager_id")
+	private String accountManagerId;
 
-	@Column(name = "project_manager")
-	private String projectManager;
+	@Column(name = "project_manager_id")
+	private String projectManagerId;
 
 	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "contract_date")

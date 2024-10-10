@@ -103,7 +103,7 @@ public class ProjectMasterController {
 			}
 			ProjectMasterEntity projectMasterEntity = new ProjectMasterEntity();
 
-			projectMasterEntity.setClientName(projectRequestDTO.getClientName());
+			projectMasterEntity.setClientId(projectRequestDTO.getClientName());
 			projectMasterEntity.setProjectName(projectRequestDTO.getProjectName());
 			projectMasterEntity.setAddress(projectRequestDTO.getAddress());
 			projectMasterEntity.setCity(projectRequestDTO.getCity());
@@ -121,8 +121,8 @@ public class ProjectMasterController {
 			projectMasterEntity.setTDate(projectRequestDTO.getTDate());
 			projectMasterEntity.setLoiNo(projectRequestDTO.getLoiNo());
 			projectMasterEntity.setDateOfLoa(projectRequestDTO.getDateOfLoa());
-			projectMasterEntity.setAccountManager(projectRequestDTO.getAccountManager());
-			projectMasterEntity.setProjectManager(projectRequestDTO.getProjectManager());
+			projectMasterEntity.setAccountManagerId(projectRequestDTO.getAccountManager());
+			projectMasterEntity.setProjectManagerId(projectRequestDTO.getProjectManager());
 			projectMasterEntity.setContractDate(projectRequestDTO.getContractDate());
 			projectMasterEntity.setSingOfDate(projectRequestDTO.getSingOfDate());
 			projectMasterEntity.setContractPrice(projectRequestDTO.getContractPrice());
@@ -296,7 +296,7 @@ public class ProjectMasterController {
 			ProjectMasterEntity projectMasterEntity=projectMasterService.findById(projectRequestDTO.getId());
 
 
-			projectMasterEntity.setClientName(projectRequestDTO.getClientName()!=null?projectRequestDTO.getClientName():projectMasterEntity.getClientName());
+			projectMasterEntity.setClientId(projectRequestDTO.getClientName()!=null?projectRequestDTO.getClientName():projectMasterEntity.getClientId());
 			projectMasterEntity.setProjectName(projectRequestDTO.getProjectName()!=null?projectRequestDTO.getProjectName():projectMasterEntity.getProjectName());
 			projectMasterEntity.setAddress(projectRequestDTO.getAddress()!=null?projectRequestDTO.getAddress():projectMasterEntity.getAddress());
 			projectMasterEntity.setCity(projectRequestDTO.getCity() != null ? projectRequestDTO.getCity() : projectMasterEntity.getCity());
@@ -314,8 +314,8 @@ public class ProjectMasterController {
 			projectMasterEntity.setTDate(projectRequestDTO.getTDate() != null ? projectRequestDTO.getTDate() : projectMasterEntity.getTDate());
 			projectMasterEntity.setLoiNo(projectRequestDTO.getLoiNo() != null ? projectRequestDTO.getLoiNo() : projectMasterEntity.getLoiNo());
 			projectMasterEntity.setDateOfLoa(projectRequestDTO.getDateOfLoa() != null ? projectRequestDTO.getDateOfLoa() : projectMasterEntity.getDateOfLoa());
-			projectMasterEntity.setAccountManager(projectRequestDTO.getAccountManager() != null ? projectRequestDTO.getAccountManager() : projectMasterEntity.getAccountManager());
-			projectMasterEntity.setProjectManager(projectRequestDTO.getProjectManager() != null ? projectRequestDTO.getProjectManager() : projectMasterEntity.getProjectManager());
+			projectMasterEntity.setAccountManagerId(projectRequestDTO.getAccountManager() != null ? projectRequestDTO.getAccountManager() : projectMasterEntity.getAccountManagerId());
+			projectMasterEntity.setProjectManagerId(projectRequestDTO.getProjectManager() != null ? projectRequestDTO.getProjectManager() : projectMasterEntity.getProjectManagerId());
 			projectMasterEntity.setContractDate(projectRequestDTO.getContractDate() != null ? projectRequestDTO.getContractDate() : projectMasterEntity.getContractDate());
 			projectMasterEntity.setSingOfDate(projectRequestDTO.getSingOfDate() != null ? projectRequestDTO.getSingOfDate() : projectMasterEntity.getSingOfDate());
 			projectMasterEntity.setContractPrice(projectRequestDTO.getContractPrice() != null ? projectRequestDTO.getContractPrice() : projectMasterEntity.getContractPrice());

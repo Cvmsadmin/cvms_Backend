@@ -88,8 +88,8 @@ public class ProfiLossMasterController {
                 ProfitLossMasterEntity profitLossCreationEntityObj = new ProfitLossMasterEntity();
 
                 profitLossCreationEntityObj.setSrNo(profitLossMasterDTO.getSrNo());
-                profitLossCreationEntityObj.setClientName(profitLossRequestDTO.getClientName());
-                profitLossCreationEntityObj.setProjectName(profitLossRequestDTO.getProjectName());
+                profitLossCreationEntityObj.setClientId(profitLossRequestDTO.getClientName());
+                profitLossCreationEntityObj.setProjectId(profitLossRequestDTO.getProjectName());
                 profitLossCreationEntityObj.setDescription(profitLossMasterDTO.getDescription());
                 profitLossCreationEntityObj.setGstPercent(profitLossMasterDTO.getGstPercent());
                 profitLossCreationEntityObj.setClientBillIncludeGst(profitLossMasterDTO.getClientBillIncludeGst());

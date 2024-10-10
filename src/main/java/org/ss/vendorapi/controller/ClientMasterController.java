@@ -111,7 +111,7 @@ public class ClientMasterController {
 	        clientCreationEntityObj.setGst(addClientMEntity.getGst());
 	        clientCreationEntityObj.setPan(addClientMEntity.getPan());
 	        clientCreationEntityObj.setTypeOfService(addClientMEntity.getTypeOfService());
-	        clientCreationEntityObj.setAccountManager(addClientMEntity.getAccountManager()); 
+	        clientCreationEntityObj.setAccountManagerId(addClientMEntity.getAccountManager()); 
 
 	        // Save the client to the database
 	        clientCreationEntityObj = clientMasterService.save(clientCreationEntityObj);
@@ -261,10 +261,10 @@ public class ClientMasterController {
 
 				// Assuming client.getAccountManager() returns a String, convert it to Long for comparison
 				clientList.stream()
-				.filter(client -> client.getAccountManager() != null)  // Ensure accountManager is not null
+				.filter(client -> client.getAccountManagerId() != null)  // Ensure accountManager is not null
 				.forEach(client -> {
 					// Convert client.getAccountManager() (String) to Long
-					Long accountManagerId = Long.parseLong(client.getAccountManager());
+					Long accountManagerId = Long.parseLong(client.getAccountManagerId());
 					// Check if userMasterMap contains the corresponding account manager ID
 					if (userMasterMap.containsKey(accountManagerId)) {
 						// Set the account manager's name from the UserMasterEntity
@@ -277,7 +277,7 @@ public class ClientMasterController {
 						if(userMasterEntity1.getLastName()!=null && !userMasterEntity1.getLastName().isEmpty())
 							name+=" "+userMasterEntity1.getLastName();
 
-						client.setAccountManager(name);
+						client.setAccountManagerId(name);
 					}
 				});
 			}else if(RoleConstants.PROJECT_MANAGER.equals(userMasterEntity.getRole())) { 
@@ -285,17 +285,17 @@ public class ClientMasterController {
 				List<ProjectMasterEntity> projects=projectMasterService.findByWhere("o.projectManager='"+userId+"'");
 
 				String clientIds = "(" + projects.stream()
-				.map(project ->  project.getClientName()) // Assuming 'getId()' gets the client ID
+				.map(project ->  project.getClientId()) // Assuming 'getId()' gets the client ID
 				.collect(Collectors.joining(",")) + ")";
 
 				String where="o.id in "+clientIds;
 				clientList=clientMasterService.findByWhere(where);
 
 				clientList.stream()
-				.filter(client -> client.getAccountManager() != null)  // Ensure accountManager is not null
+				.filter(client -> client.getAccountManagerId() != null)  // Ensure accountManager is not null
 				.forEach(client -> {
 					// Convert client.getAccountManager() (String) to Long
-					Long accountManagerId = Long.parseLong(client.getAccountManager());
+					Long accountManagerId = Long.parseLong(client.getAccountManagerId());
 					// Check if userMasterMap contains the corresponding account manager ID
 					if (userMasterMap.containsKey(accountManagerId)) {
 						// Set the account manager's name from the UserMasterEntity
@@ -308,7 +308,7 @@ public class ClientMasterController {
 						if(userMasterEntity1.getLastName()!=null && !userMasterEntity1.getLastName().isEmpty())
 							name+=" "+userMasterEntity1.getLastName();
 
-						client.setAccountManager(name);
+						client.setAccountManagerId(name);
 					}
 				});
 			}
@@ -358,7 +358,7 @@ public class ClientMasterController {
 
 			clientEntity.setTypeOfService(addClientMEntity.getTypeOfService()!=null?addClientMEntity.getTypeOfService():clientEntity.getTypeOfService());
 
-			clientEntity.setAccountManager(addClientMEntity.getAccountManager()!=null?addClientMEntity.getAccountManager():clientEntity.getAccountManager());
+			clientEntity.setAccountManagerId(addClientMEntity.getAccountManager()!=null?addClientMEntity.getAccountManager():clientEntity.getAccountManagerId());
 
 			clientEntity.setClientName(addClientMEntity.getClientName()!=null?addClientMEntity.getClientName():clientEntity.getClientName());
 
