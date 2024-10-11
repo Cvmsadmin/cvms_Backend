@@ -247,7 +247,7 @@ public class ClientMasterController {
 
 			List<ClientMasterEntity> clientList=null;
 
-			/** START :::::  FETCH ALL THER REGISTERED USER FROM USER_MASTER TABLE */
+			/** START :::::  FETCH ALL THE REGISTERED USER FROM USER_MASTER TABLE */
 			List<UserMasterEntity> userMasterList= userMasterService.findAll();
 			Map<Long, UserMasterEntity> userMasterMap = userMasterList.stream()
 					.collect(Collectors.toMap(UserMasterEntity::getId, userMaster -> userMaster));

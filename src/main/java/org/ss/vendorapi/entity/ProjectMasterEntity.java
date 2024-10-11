@@ -109,27 +109,4 @@ public class ProjectMasterEntity extends ParentEntity implements Serializable{
 	private String contractPrice;
 
 	
-
-	    
-//	    @Column(name = "agreement")
-//	    private byte[] agreement;
-//	
-//	    @Column(name = "dwa")
-//	    private byte[] dwa;
-//	
-//	    @Column(name = "nda")
-//	    private byte[] nda;
-//	
-//	    @Column(name = "gst_certificate")
-//	    private byte[] gstCertificate;
-//	
-//	    @Column(name = "pan")
-//	    private byte[] pan;
-//	    
-//	    @Column(name = "miscellaneous")
-//	    private byte[] miscellaneous;
-
-
-
-	
 }

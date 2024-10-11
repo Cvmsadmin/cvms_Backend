@@ -244,7 +244,7 @@ public class ProjectMasterController {
 				.map(client -> "'" + client.getId() + "'") // Assuming 'getId()' gets the client ID
 				.collect(Collectors.joining(",")) + ")";
 
-				String where="o.clientName in "+clientIds;
+				String where="o.clientId in "+clientIds;
 				 projectList=projectMasterService.findByWhere(where);
 
 			}else if(RoleConstants.PROJECT_MANAGER.equals(userMasterEntity.getRole())) {

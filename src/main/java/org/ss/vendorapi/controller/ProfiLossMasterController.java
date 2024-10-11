@@ -154,7 +154,7 @@ public class ProfiLossMasterController {
 			    .map(client -> "'" + client.getId() + "'") // Assuming 'getId()' gets the client ID
 			    .collect(Collectors.joining(",")) + ")";
 				
-				String where="o.clientName in "+clientIds;
+				String where="o.clientId in "+clientIds;
 				
 				profitList=profitLossMasterService.findByWhere(where);
 				
@@ -166,7 +166,7 @@ public class ProfiLossMasterController {
 			    .map(project -> "'" + project.getId() + "'") // Assuming 'getId()' gets the client ID
 			    .collect(Collectors.joining(",")) + ")";
 				
-				String where="o.projectName in "+projectIds;		
+				String where="o.projectId in "+projectIds;		
 				profitList=profitLossMasterService.findByWhere(where);
 				
 			}else if(RoleConstants.ADMINISTRATION.equals(userMasterEntity.getRole())) {
