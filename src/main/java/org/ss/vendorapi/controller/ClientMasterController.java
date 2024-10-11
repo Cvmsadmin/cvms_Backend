@@ -257,7 +257,7 @@ public class ClientMasterController {
 			/** FETCH CLIENTS FOR ACCOUNT MANAGER */
 			if(RoleConstants.ACCOUNT_MANAGER.equals(userMasterEntity.getRole())) {
 
-				clientList = clientMasterService.findByAccountManager(userId.toString());
+				clientList = clientMasterService.findByAccountManagerId(userId.toString());
 
 				// Assuming client.getAccountManager() returns a String, convert it to Long for comparison
 				clientList.stream()

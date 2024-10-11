@@ -52,8 +52,8 @@ public class ClientMasterServiceImpl implements ClientMasterService{
 
 
 	@Override
-	public List<ClientMasterEntity> findByAccountManager(String userId) {
-		return clientMasterRepository.findByAccountManager(userId);
+	public List<ClientMasterEntity> findByAccountManagerId(String userId) {
+		return clientMasterRepository.findByAccountManagerId(userId);
 	}
 
 

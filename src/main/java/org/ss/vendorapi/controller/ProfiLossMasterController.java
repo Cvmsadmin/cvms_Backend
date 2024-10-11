@@ -148,7 +148,7 @@ public class ProfiLossMasterController {
 			}
 			List<ProfitLossMasterEntity> profitList=null;
 			if(RoleConstants.ACCOUNT_MANAGER.equals(userMasterEntity.getRole())) {
-				List<ClientMasterEntity> clients=clientMasterService.findByAccountManager(userId.toString());
+				List<ClientMasterEntity> clients=clientMasterService.findByAccountManagerId(userId.toString());
 				
 				String clientIds = "(" + clients.stream()
 			    .map(client -> "'" + client.getId() + "'") // Assuming 'getId()' gets the client ID
