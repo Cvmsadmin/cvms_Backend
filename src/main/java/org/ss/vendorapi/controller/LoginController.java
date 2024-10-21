@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.config.AESDecryptionService;
 import org.ss.vendorapi.config.EncryptSecurityUtil;
 import org.ss.vendorapi.entity.FeatureMasterEntity;
@@ -105,6 +106,7 @@ public class LoginController {
 	public static final String UTILITY_USER_ROLE = "UtilityUser";
 	public static final String END_CONSUMER_ROLE = "EndConsumer";
 
+	@EncryptResponse
 	@PostMapping("/userLogin")
 	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
 
@@ -261,7 +263,7 @@ public class LoginController {
 	}
 
 
-
+	@EncryptResponse
 	@PostMapping("/forgotPassword")
 	public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
 	    String email = forgotPasswordRequest.getEmail();
@@ -295,7 +297,7 @@ public class LoginController {
 	    }
 	}
 
-
+	@EncryptResponse
     @PostMapping("/verifyOtp")
     public ResponseEntity<?> verifyOtp(@RequestBody ForgotPasswordVerifyRequest forgotPasswordVerifyRequest) {
         String email = forgotPasswordVerifyRequest.getEmail();
@@ -344,6 +346,8 @@ public class LoginController {
         return password.matches(passwordPattern);
     }
     
+    
+    @EncryptResponse
     @PostMapping("/resetPassword")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
         String email = resetPasswordRequest.getEmail();

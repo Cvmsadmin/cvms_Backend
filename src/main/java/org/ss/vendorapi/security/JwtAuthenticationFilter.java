@@ -31,22 +31,21 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	
 	@Autowired
 	private JwtHelper jwtHelper;
 
 	@Autowired
 	private UserDetailsService userDetailsService;
-	
+
 	@Value("${spring.ss.apiKey}")
-    private String apiKey;
+	private String apiKey;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
 		if (isPublicApi(request)) {
-			
+
 			String requestHeader = request.getHeader("Authorization");
 
 			String appServiceKey = request.getHeader("appServiceKey");
@@ -54,17 +53,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			ResponseEntity<?> responseEntity = CommonUtils.validateAppServiceKey(appServiceKey, apiKey);
 
 			/** IF API KEY IS INVALID/CORRUPT RETURN THE RESPONSE */
-			
-			if(!request.getRequestURI().contains("/v3/")) {
-				if (responseEntity != null) {
-					this.pubAPIExcepMsg(response, "Access Denied !!");
-					return;
-				}
-			}
+
+//			if (!request.getRequestURI().contains("/v3/")) {
+//				if (responseEntity != null) {
+//					this.pubAPIExcepMsg(response, "Access Denied !!");
+//					return;
+//				}
+//			}
 		} else {
 			String requestHeader = request.getHeader("Authorization");
 
-			System.out.println( " Header :  {}" + requestHeader);
+			System.out.println(" Header :  {}" + requestHeader);
 			String username = null, token = null;
 			if (requestHeader != null && requestHeader.startsWith("Bearer")) {
 				// looking good
@@ -74,28 +73,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					username = this.jwtHelper.getUsernameFromToken(token);
 
 				} catch (IllegalArgumentException e) {
-					System.out.println( "Illegal Argument while fetching the username !!");
+					System.out.println("Illegal Argument while fetching the username !!");
 					e.printStackTrace();
 				} catch (ExpiredJwtException e) {
 
-					System.out.println( "Token is expired !!");
+					System.out.println("Token is expired !!");
 					e.printStackTrace();
 //					this.privAPIExcepMsg(response, "Token is expired !!");
 //					return;
 				} catch (MalformedJwtException e) {
-					System.out.println( "Invalid Token !!");
+					System.out.println("Invalid Token !!");
 					e.printStackTrace();
 //					this.privAPIExcepMsg(response, "Invalid Token !!");
 //					return;
 				} catch (Exception e) {
-					System.out.println( "Access Denied !!");
+					System.out.println("Access Denied !!");
 					e.printStackTrace();
 //					this.privAPIExcepMsg(response, "Access Denied !!");
 //					return;
 				}
 
 			} else {
-				System.out.println( "@@@@ PRIVATE : Invalid Header Value !! @@@@");
+				System.out.println("@@@@ PRIVATE : Invalid Header Value !! @@@@");
 //				this.privAPIExcepMsg(response, "Invalid Header Value !! ");
 //				return;
 			}
@@ -115,7 +114,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					SecurityContextHolder.getContext().setAuthentication(authentication);
 
 				} else {
-					System.out.println( "Validation fails !!");
+					System.out.println("Validation fails !!");
 //					this.privAPIExcepMsg(response, "Access Denied !!");
 //					return;
 				}
@@ -127,7 +126,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private boolean isPublicApi(HttpServletRequest request) {
 
-		if (request.getRequestURI().contains("/v2/") || request.getRequestURI().contains("Payment/") || request.getRequestURI().contains("/v3/")) {
+		if (request.getRequestURI().contains("/v2/") || request.getRequestURI().contains("Payment/")
+				|| request.getRequestURI().contains("/v3/")) {
 			return true;
 		}
 		return false;

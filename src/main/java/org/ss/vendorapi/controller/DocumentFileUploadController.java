@@ -84,9 +84,9 @@ public class DocumentFileUploadController {
     @GetMapping("/downloadVendor")
     public ResponseEntity<byte[]> downloadVendorFile(@RequestParam("vendorName") String vendorName,
                                                      @RequestParam("fileName") String fileName) {
- 
+
         String remoteFilePath = "/opt/cvmsdocuments/Vendor/" + vendorName + "/ERP/" + fileName;
- 
+
         byte[] fileContent;
         try {
             fileContent = sftpUploaderService.downloadFileFromServer(remoteFilePath);
@@ -94,25 +94,98 @@ public class DocumentFileUploadController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
- 
+
         if (fileContent == null || fileContent.length == 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
- 
+
+        // Determine the content type based on the file extension
+        String contentType = "application/octet-stream"; // Default content type
+        if (fileName.endsWith(".pdf")) {
+            contentType = "application/pdf";
+        } else if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
+            contentType = "text/html";
+        } else if (fileName.endsWith(".xls")) {
+            contentType = "application/vnd.ms-excel"; // For BIFF .xls files
+        } else if (fileName.endsWith(".xlsx")) {
+            contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"; // For .xlsx files
+        } else if (fileName.endsWith(".csv")) {
+            contentType = "text/csv"; // For CSV files
+        }
+
         return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .body(fileContent);
     }
+
+
+    
+//    @GetMapping("/downloadVendor")
+//    public ResponseEntity<byte[]> downloadVendorFile(@RequestParam("vendorName") String vendorName,
+//                                                     @RequestParam("fileName") String fileName) {
+//
+//        String remoteFilePath = "/opt/cvmsdocuments/Vendor/" + vendorName + "/ERP/" + fileName;
+//
+//        byte[] fileContent;
+//        try {
+//            fileContent = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//        }
+//
+//        if (fileContent == null || fileContent.length == 0) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+//
+//        // Determine the content type based on the file extension
+//        String contentType = "application/octet-stream"; // default content type
+//        if (fileName.endsWith(".pdf")) {
+//            contentType = "application/pdf";
+//        }
+//
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.parseMediaType(contentType))
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+//                .body(fileContent);
+//    }
+
+    
+//    @GetMapping("/downloadVendor")
+//    public ResponseEntity<byte[]> downloadVendorFile(@RequestParam("vendorName") String vendorName,
+//                                                     @RequestParam("fileName") String fileName) {
+// 
+//        String remoteFilePath = "/opt/cvmsdocuments/Vendor/" + vendorName + "/ERP/" + fileName;
+// 
+//        byte[] fileContent;
+//        try {
+//            fileContent = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//        }
+// 
+//        if (fileContent == null || fileContent.length == 0) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+// 
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+//                .body(fileContent);
+//    }
  
+    
+    
     @GetMapping("/downloadClientDoc")
     public ResponseEntity<byte[]> downloadFile(@RequestParam("clientName") String clientName,
                                                @RequestParam("projectName") String projectName,
                                                @RequestParam("fileName") String fileName) {
- 
+
         // Construct the remote file path
         String remoteFilePath = "/opt/cvmsdocuments/Client/" + clientName + "/" + projectName + "/" + fileName;
- 
+
         byte[] fileContent;
         try {
             // Retrieve the file from the server
@@ -121,18 +194,60 @@ public class DocumentFileUploadController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
- 
+
         // Check if file content is empty
         if (fileContent == null || fileContent.length == 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
- 
+
+        // Determine the content type based on the file extension
+        String contentType = "application/octet-stream"; // Default content type
+        if (fileName.endsWith(".pdf")) {
+            contentType = "application/pdf";
+        } else if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
+            contentType = "text/html";
+        } else if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
+            contentType = "application/vnd.ms-excel"; // For .xls and .xlsx
+        } else if (fileName.endsWith(".csv")) {
+            contentType = "text/csv"; // For CSV files
+        }
+
         // Create the HTTP response with file content
         return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .body(fileContent);
     }
+
+    
+//    @GetMapping("/downloadClientDoc")
+//    public ResponseEntity<byte[]> downloadFile(@RequestParam("clientName") String clientName,
+//                                               @RequestParam("projectName") String projectName,
+//                                               @RequestParam("fileName") String fileName) {
+// 
+//        // Construct the remote file path
+//        String remoteFilePath = "/opt/cvmsdocuments/Client/" + clientName + "/" + projectName + "/" + fileName;
+// 
+//        byte[] fileContent;
+//        try {
+//            // Retrieve the file from the server
+//            fileContent = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//        }
+// 
+//        // Check if file content is empty
+//        if (fileContent == null || fileContent.length == 0) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+// 
+//        // Create the HTTP response with file content
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+//                .body(fileContent);
+//    }
     
     
     
@@ -169,10 +284,10 @@ public class DocumentFileUploadController {
     public ResponseEntity<byte[]> downloadSalesOpportunityFile(@RequestParam("customerName") String customerName,
                                                                @RequestParam("srNo") String srNo,
                                                                @RequestParam("fileName") String fileName) {
- 
+
         // Construct the remote file path for Sales/Opportunity
         String remoteFilePath = "/opt/cvmsdocuments/Sales_Opportunity/" + customerName + "/" + srNo + "/" + fileName;
- 
+
         byte[] fileContent;
         try {
             // Retrieve the file from the server
@@ -181,17 +296,59 @@ public class DocumentFileUploadController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
- 
+
         // Check if file content is empty
         if (fileContent == null || fileContent.length == 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
- 
+
+        // Determine the content type based on the file extension
+        String contentType = "application/octet-stream"; // Default content type
+        if (fileName.endsWith(".pdf")) {
+            contentType = "application/pdf";
+        } else if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
+            contentType = "text/html";
+        } else if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
+            contentType = "application/vnd.ms-excel"; // For .xls and .xlsx
+        } else if (fileName.endsWith(".csv")) {
+            contentType = "text/csv"; // For CSV files
+        }
+
         // Create the HTTP response with file content
         return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .body(fileContent);
     }
+
+    
+//    @GetMapping("/downloadSalesOpportunityDoc")
+//    public ResponseEntity<byte[]> downloadSalesOpportunityFile(@RequestParam("customerName") String customerName,
+//                                                               @RequestParam("srNo") String srNo,
+//                                                               @RequestParam("fileName") String fileName) {
+// 
+//        // Construct the remote file path for Sales/Opportunity
+//        String remoteFilePath = "/opt/cvmsdocuments/Sales_Opportunity/" + customerName + "/" + srNo + "/" + fileName;
+// 
+//        byte[] fileContent;
+//        try {
+//            // Retrieve the file from the server
+//            fileContent = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//        }
+// 
+//        // Check if file content is empty
+//        if (fileContent == null || fileContent.length == 0) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+// 
+//        // Create the HTTP response with file content
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+//                .body(fileContent);
+//    }
    
 }
