@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.CityMasterEntity;
 import org.ss.vendorapi.service.CityMasterService;
 import org.ss.vendorapi.util.CommonUtils;
@@ -29,7 +30,7 @@ public class CityMasterController {
 	@Autowired
 	private CityMasterService cityMasterService;
 
-
+	@EncryptResponse
 	@PostMapping("/saveCity")
 	public ResponseEntity<?>  saveCity(@RequestBody CityMasterEntity cityMasterEntity){
 		Map<String,Object> statusMap=new HashMap<>();
@@ -46,6 +47,7 @@ public class CityMasterController {
 	}
 
 
+	@EncryptResponse
 	@GetMapping("/getAllCities")
 	public ResponseEntity<?> getCityById(@RequestParam String districtId ){
 		Map<String,Object> statusMap=new HashMap<>();

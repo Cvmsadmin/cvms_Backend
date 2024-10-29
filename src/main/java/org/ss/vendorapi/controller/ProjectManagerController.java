@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.service.UserMasterService;
 import org.ss.vendorapi.util.CommonUtils;
@@ -27,6 +28,8 @@ public class ProjectManagerController {
 	@Autowired
 	private UserMasterService userMasterService;
 
+	
+	@EncryptResponse
 	@PostMapping("/getAllProjectManagers")
 	public ResponseEntity<?> getAllAccountManagers(){
 		Map<String,Object> statusMap=new HashMap<>();

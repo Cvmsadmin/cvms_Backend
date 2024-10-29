@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.ClientInvoiceMasterDTO;
@@ -55,7 +56,7 @@ public class ClientInvoiceMasterController {
 	private ClientInvoiceMasterService clientInvoiceService;	
 
 	
-	
+	@EncryptResponse
 	@PostMapping("/addClientInvoices")
 	public ResponseEntity<?> addClientInvoices(@RequestBody ClientInvoiceMasterDTO clientInvoiceDTO, HttpServletRequest request) {
 
@@ -170,6 +171,7 @@ public class ClientInvoiceMasterController {
 	//	*********************************************************************************get api****************************************************************************************************
 
 
+	@EncryptResponse
 	@GetMapping("/getAllClientInvoice")
 	 public ResponseEntity<?> getAllClientInvoices() {
 		    try {
@@ -186,6 +188,7 @@ public class ClientInvoiceMasterController {
 		    }
 		}
 	
+	@EncryptResponse
 	@GetMapping("/byClientInvoiceNumber")
 	public ResponseEntity<?> getClientInvoicesByNumber(@RequestBody ClientInvoiceMasterDTO clientInvoiceDTO ){
 		Map<String,Object> statusMap=new HashMap<>();
@@ -212,6 +215,9 @@ public class ClientInvoiceMasterController {
 		
 		
 	}
+	
+	
+	@EncryptResponse
 	@PutMapping("/updateClientInvoiceMaster")
 	public ResponseEntity<?>updateClientMaster(@RequestBody ClientInvoiceMasterDTO clientInvoiceMasterDTO ){
 
@@ -262,6 +268,8 @@ public class ClientInvoiceMasterController {
 	return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 }
 	
+	
+	@EncryptResponse
 	@DeleteMapping("/deleteClientInvoice")
 	public ResponseEntity<?> deleteClientInvoice(@RequestParam Long id){
 		Map<String, Object> statusMap=new HashMap<String, Object>();

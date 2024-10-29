@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.StateMasterEntity;
 import org.ss.vendorapi.service.StateMasterService;
 import org.ss.vendorapi.util.CommonUtils;
@@ -31,6 +31,8 @@ public class StateMasterController {
 	@Autowired
 	private StateMasterService stateMasterService;
 	
+	
+	  @EncryptResponse
 	  @PostMapping("/createState")
 	    public ResponseEntity<?> createState(@RequestBody StateMasterEntity stateMasterDTO){
 		  Map<String,Object> statusMap= new HashMap<String,Object>();
@@ -61,6 +63,8 @@ public class StateMasterController {
 			  }
 		  }
 	  
+	  
+	  @EncryptResponse
 	  @GetMapping("/getAllState")
 		 public ResponseEntity<?> getAllState() {
 			    try {
@@ -76,6 +80,8 @@ public class StateMasterController {
 			        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			    }
 			}
+	  
+	  @EncryptResponse
 	  @GetMapping("/getStateById")
 		 public ResponseEntity<?> getAllState(@RequestParam Long id) {
 			Map<String,Object> statusMap=new HashMap<>();

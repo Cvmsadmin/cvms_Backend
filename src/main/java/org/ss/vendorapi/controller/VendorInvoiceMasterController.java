@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
 import org.ss.vendorapi.entity.SalesOpportunityMasterEntity;
 import org.ss.vendorapi.entity.VendorInvoiceMasterEntity;
@@ -147,7 +148,7 @@ public class VendorInvoiceMasterController {
 //		}
 //	}
 	
-	
+	@EncryptResponse
 	@PostMapping("/addVendorInvoices")
 	public ResponseEntity<?> addVendorInvoices(@RequestBody VendorInvioceMasterDTO vendorInvoiceDTO, HttpServletRequest request) {
 
@@ -240,7 +241,7 @@ public class VendorInvoiceMasterController {
     //************************************************************************************************************************************************************************************
    //***********************************************************************************************get api **************************************************************************************
 	
-	
+	@EncryptResponse
 	@GetMapping("/getAllVendorInvoice")
 	public ResponseEntity<?> getAllVendorInvoices() {
 	    try {
@@ -251,6 +252,8 @@ public class VendorInvoiceMasterController {
 	    }
 	}
 	
+	
+	@EncryptResponse
 	@PutMapping("/updateVendorInvoiceMaster")
 	public ResponseEntity<?>updateVendorMaster(@RequestBody VendorInvioceMasterDTO vendorInvioceMasterDTO ){
 
@@ -293,6 +296,9 @@ public class VendorInvoiceMasterController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		}
+	
+	
+	@EncryptResponse
 	@DeleteMapping("/deleteVendorInvoice")
 	public ResponseEntity<?> deleteVendorInvoiceMaster(@RequestParam Long id){
 		Map<String, Object> statusMap=new HashMap<String, Object>();

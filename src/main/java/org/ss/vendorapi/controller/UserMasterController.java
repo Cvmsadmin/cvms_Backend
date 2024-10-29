@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.config.EncryptSecurityUtil;
 //import org.ss.vendorapi.entity.UserCreationEntity;
 import org.ss.vendorapi.entity.UserMasterEntity;
@@ -90,6 +91,7 @@ public class UserMasterController{
 	
 
 
+	@EncryptResponse
 	@PostMapping("/userCreation")
 	public ResponseEntity<?> userCreation(@RequestBody CustomerDetailsDTO userMasterMEntity, 
 	        @RequestParam String id, 
@@ -206,6 +208,7 @@ public class UserMasterController{
 
 
 
+	@EncryptResponse
 	@GetMapping("/getAllUsers")
 	public ResponseEntity<?> getAllUsers() {
 		try {
@@ -217,6 +220,7 @@ public class UserMasterController{
 	} 
 
 
+	@EncryptResponse
 	@PutMapping("/updateUserMaster") 
 	public ResponseEntity<?>updateUserMaster(@RequestBody CustomerDetailsDTO userDto ){
 
@@ -251,6 +255,7 @@ public class UserMasterController{
 	}
 
 
+	@EncryptResponse
 	@DeleteMapping("/deleteUser")
 	public ResponseEntity<?> deleteUserMaster(@RequestParam Long id){
 		Map<String, Object> statusMap=new HashMap<String, Object>();

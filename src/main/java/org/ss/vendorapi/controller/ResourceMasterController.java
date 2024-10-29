@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.ResourceMasterEntity;
 import org.ss.vendorapi.service.ResourceMasterService;
 import org.ss.vendorapi.util.Parameters;
@@ -28,6 +29,7 @@ public class ResourceMasterController {
 	@Autowired
 	private ResourceMasterService resourceMasterService;
 	
+	@EncryptResponse
 	@PostMapping("/saveRoleUrl")
 	public ResponseEntity<?> roleCreated(@RequestBody ResourceMasterEntity resourceMaster){
 		Map<String, Object> statusMap=new HashMap<String, Object>();
@@ -66,6 +68,9 @@ public class ResourceMasterController {
 
 		return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
 	} 
+	
+	
+	@EncryptResponse
 	@GetMapping("/getAllRolesUrl")
 	public ResponseEntity<?> getAllRoleDetailsUrl(){
 		Map<String, Object> statusMap=new HashMap<String, Object>();

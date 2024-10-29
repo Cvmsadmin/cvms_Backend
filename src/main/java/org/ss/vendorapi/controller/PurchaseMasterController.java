@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.PurchaseBOMMasterEntity;
 import org.ss.vendorapi.entity.PurchaseMasterEntity;
 import org.ss.vendorapi.modal.PurchaseRequestDTO;
@@ -45,7 +46,7 @@ public class PurchaseMasterController {
 	@Autowired
 	private PurchaseBOMService purchaseBOMService;
 	
-	
+	@EncryptResponse
 	@PostMapping("/addPurchase")
 	public ResponseEntity<Map<String, Object>> addPurchase(@RequestBody PurchaseMasterEntity purchaseRequestDTO) {
 	    Map<String, Object> response = new HashMap<>();
@@ -245,6 +246,8 @@ public class PurchaseMasterController {
 //
 //	}
 	
+	
+	@EncryptResponse
 	@GetMapping("/getAllPurchase")
 	public ResponseEntity<?> getAllPurchase() {
 	    Map<String, Object> statusMap = new HashMap<>();
@@ -265,7 +268,7 @@ public class PurchaseMasterController {
 	}
 
 
-	
+	@EncryptResponse
 	@GetMapping("/getAllBOMDetails")
 	public ResponseEntity<?> getAllBOMPurchaseDetails(@RequestParam String purchaseId){
 		Map<String, Object> statusMap = new HashMap<>();
@@ -291,6 +294,7 @@ public class PurchaseMasterController {
 
 
 
+	@EncryptResponse
 	@PutMapping("/updatePurchase")
 	public ResponseEntity<?>updatePurchase(@RequestBody PurchaseRequestDTO purchaseRequestDTO ){
 		Map<String,Object> statusMap=new HashMap<String,Object>();
@@ -326,6 +330,8 @@ public class PurchaseMasterController {
 		}
 	}
 
+	
+	@EncryptResponse
 	@PutMapping("/updatePurchaseBOM")
 	public ResponseEntity<?>updatePurchaseBOM(@RequestBody PurchaseRequestDTO purchaseRequestDTO ){
 
@@ -367,6 +373,7 @@ public class PurchaseMasterController {
 	
 	
 	
+	@EncryptResponse
 	 @DeleteMapping("/deletePurchase")
 		public ResponseEntity<?> deletePurchaseMaster(@RequestParam Long id){
 			Map<String, Object> statusMap=new HashMap<String, Object>();

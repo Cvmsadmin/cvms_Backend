@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.RoleResourceMasterEntity;
 import org.ss.vendorapi.modal.RoleResourceDTO;
 import org.ss.vendorapi.service.RoleResourceMasterService;
@@ -23,6 +24,7 @@ public class RoleResourceController {
 	@Autowired
 	private RoleResourceMasterService roleResourceService;
 
+	@EncryptResponse
 	@PostMapping("/createRoleResources")
 	public ResponseEntity<?> roleMapping(@RequestBody RoleResourceDTO roleResourceDTO){
 		Map<String, Object> statusMap=new HashMap<String, Object>();
