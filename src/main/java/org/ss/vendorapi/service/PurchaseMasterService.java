@@ -13,6 +13,7 @@ public interface PurchaseMasterService {
 	public PurchaseMasterEntity findById(Long id);
 	public void savePurchase(PurchaseMasterEntity purchaseMaster);
 	public PurchaseMasterEntity findByPrNo(String prNo);
+	public PurchaseMasterEntity findByPoNo(String poNo);
 	
 	
 }

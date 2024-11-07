@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.RoleMasterEntity;
 import org.ss.vendorapi.service.RoleMasterService;
 import org.ss.vendorapi.service.RoleResourceMasterService;
@@ -36,6 +37,8 @@ public class RoleMasterController {
 	@Autowired
 	private RoleResourceMasterService roleResourceMasterService;
 
+	
+	@EncryptResponse
 	@GetMapping("/getAllRoles")
 	public ResponseEntity<?> getAllRoleDetails(){
 		Map<String, Object> statusMap=new HashMap<String, Object>();
@@ -58,6 +61,8 @@ public class RoleMasterController {
 		return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
 	}
 
+	
+	@EncryptResponse
 	@PostMapping("/createRole")
 	public ResponseEntity<?> roleCreated(@RequestBody RoleMasterEntity role){
 		Map<String, Object> statusMap=new HashMap<String, Object>();
@@ -93,6 +98,7 @@ public class RoleMasterController {
 	}    
 
 
+	@EncryptResponse
 	@PutMapping("/updateRole")
 	public ResponseEntity<?> updateRole(@RequestBody RoleMasterEntity role){
 		Map<String, Object> statusMap=new HashMap<String, Object>();
@@ -125,6 +131,8 @@ public class RoleMasterController {
 
 	}
 
+	
+	@EncryptResponse
 	@DeleteMapping("/deleteRole")
 	public ResponseEntity<?> deleteRole(@RequestParam Long id){
 		Map<String, Object> statusMap=new HashMap<String, Object>();

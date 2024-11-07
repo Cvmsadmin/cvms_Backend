@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.SalesOpportunityMasterEntity;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.SalesOpportunityDTO;
@@ -43,6 +44,7 @@ public class SalesOpportunityController {
 	@Autowired
 	private SalesOpportunityService salesOpportunityService;
 
+	@EncryptResponse
 	@PostMapping("/SalesCreated")
 	public ResponseEntity<?>createSales(@RequestBody SalesOpportunityDTO salesDTO,HttpServletRequest request){
 		String methodName = request.getRequestURI();
@@ -162,6 +164,9 @@ public class SalesOpportunityController {
 //					return new ResponseEntity<>(statusMap,HttpStatus.OK);
 //				}
 //			}else {
+	
+	
+	@EncryptResponse
 	@GetMapping("/getAllSales")
 	public ResponseEntity<?>getAllSales(){
 		Map<String,Object> statusMap=new HashMap<>();
@@ -179,7 +184,7 @@ public class SalesOpportunityController {
 	}
 	
 	
-	
+	@EncryptResponse
 	@PutMapping("/updateSales")
 	public ResponseEntity<?>updateSales(@RequestBody SalesOpportunityDTO salesDTO ){
 		Map<String,Object> statusMap=new HashMap<>();
@@ -232,6 +237,10 @@ public class SalesOpportunityController {
 		}
 
 	}
+	
+	
+	
+	@EncryptResponse
 	@DeleteMapping("/deleteSalesOpportunity")
 	public ResponseEntity<?> deleteSalesOpportunityMaster(@RequestParam Long id){
 		Map<String, Object> statusMap=new HashMap<String, Object>();

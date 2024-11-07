@@ -69,24 +69,49 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
     @Column(name = "status")
     private String status;
 
-    @JsonFormat(pattern="dd/MM/yyyy")
-    @Column(name = "date")
-    private Date date;
+    // New fields added
+    @Column(name = "invoice_base_value")
+    private String invoiceBaseValue;
 
-    @Column(name = "tds_deducted")
-    private String tdsDeducted;
+    @Column(name = "gst_base_value")
+    private String gstBaseValue;
 
-    @Column(name = "amount")
-    private String amount;
+    @Column(name = "invoice_inclusive_of_gst")
+    private String invoiceInclusiveOfGst;
+
+    @Column(name = "tds_base_value")
+    private String tdsBaseValue;
+
+    @Column(name = "cgst_on_tds")
+    private String cgstOnTds;
+
+    @Column(name = "sgst_on_tds")
+    private String sgstOnTds;
+
+    @Column(name = "total_tds_deducted")
+    private String totalTdsDeducted;
+
+    @Column(name = "balance")
+    private String balance;
 
     @Column(name = "penalty")
     private String penalty;
 
-    @Column(name = "labor_cess")
-    private String laborCess;
+    @Column(name = "penalty_deduction_on_base")
+    private String penaltyDeductionOnBase;
 
-    @Column(name = "total_amount")
-    private String totalAmount;
+    @Column(name = "gst_on_penalty")
+    private String gstOnPenalty;
+
+    @Column(name = "total_penalty_deduction")
+    private String totalPenaltyDeduction;
+
+    @Column(name = "total_payment_received")
+    private String totalPaymentReceived;
+
+ 
+}
+    
 
 
 
@@ -106,4 +131,4 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 //    private byte[] miscellaneous;
 
 	
-}
+

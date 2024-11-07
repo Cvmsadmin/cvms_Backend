@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.entity.ProjectMasterEntity;
 import org.ss.vendorapi.entity.UserMasterEntity;
@@ -63,6 +64,7 @@ public class ClientMasterController {
 	private DataValidationService dataValidationService;
 	
 	
+	@EncryptResponse
 	@PostMapping("/addClient") 
 	public ResponseEntity<?> addClient(@RequestBody CustomerDetailsDTO addClientMEntity, HttpServletRequest request) {
 
@@ -210,6 +212,7 @@ public class ClientMasterController {
 
 
 
+	@EncryptResponse
 	@GetMapping("/getAllClient")
 	public ResponseEntity<?> getAllClient() { 
 		try {
@@ -234,6 +237,8 @@ public class ClientMasterController {
 	 * @param userId ::::: This is id of user from user_master
 	 * @return :: returning list of clients
 	 */
+	
+	@EncryptResponse
 	@GetMapping("/getAllClientByManager")
 	public ResponseEntity<?> getAllClientByManager(@RequestParam("id") Long userId) { 
 		Map<String,Object> statusMap=new HashMap<>();
@@ -330,6 +335,8 @@ public class ClientMasterController {
 		}
 	} 
 
+	
+	@EncryptResponse
 	@PutMapping("/updateClientMaster")
 	public  ResponseEntity<?>updateClientMaster(@RequestBody CustomerDetailsDTO addClientMEntity ){
 
@@ -379,6 +386,7 @@ public class ClientMasterController {
 
 
 
+	@EncryptResponse
 	@DeleteMapping("/deleteClientMaster")
 	public ResponseEntity<?>  deleteClient(@RequestParam Long id){
 		Map<String, Object> statusMap=new HashMap<String, Object>();

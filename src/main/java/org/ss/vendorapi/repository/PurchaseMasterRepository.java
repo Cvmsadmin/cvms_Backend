@@ -9,4 +9,6 @@ public interface PurchaseMasterRepository extends JpaRepository<PurchaseMasterEn
 
 	
 		PurchaseMasterEntity findByPrNo(String prNo);
+
+		PurchaseMasterEntity findByPoNo(String poNo);
 }

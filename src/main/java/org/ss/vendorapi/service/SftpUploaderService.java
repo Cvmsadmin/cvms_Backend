@@ -30,12 +30,14 @@ public class SftpUploaderService {
      * @author Jaydeep Pal
      * @since 04-Feb-2024 {@summary IT REFERS TO file upload }
      */
+    
+    
  
-    public String uploadFileToServer(MultipartFile file, String baseDir, String clientName) {
+    public String uploadFileToServer(MultipartFile file, String baseDir, String clientName, String newFileName) {
         return uploadFileToServer(file, baseDir, clientName, "ERP");
     }
  
-    public String uploadFileToServer(MultipartFile file, String baseDir, String clientName, String projectName) {
+    public String uploadFileToServer(MultipartFile file, String baseDir, String clientName, String projectName, String newFileName) {
         Session session = null;
         ChannelSftp channelSftp = null;
  
@@ -59,11 +61,17 @@ public class SftpUploaderService {
  
             // Ensure directory exists
             ensureDirectoryExists(channelSftp, fullPath);
- 
-            try (InputStream inputStream = file.getInputStream()) {
-                channelSftp.put(inputStream, fullPath + "/" + file.getOriginalFilename());
-                return "File uploaded successfully to: " + fullPath;
-            }
+// 
+//            try (InputStream inputStream = file.getInputStream()) {
+//                channelSftp.put(inputStream, fullPath + "/" + file.getOriginalFilename());
+//                return "File uploaded successfully to: " + fullPath;
+//            }
+    
+    // Upload the file with the new name
+    try (InputStream inputStream = file.getInputStream()) {
+        channelSftp.put(inputStream, fullPath + "/" + newFileName);
+        return "File uploaded successfully to: " + fullPath + "/" + newFileName;
+    }
  
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,6 +127,11 @@ public class SftpUploaderService {
             session.disconnect();
         }
     }
+    
+
+
+
+   
 }
  
  

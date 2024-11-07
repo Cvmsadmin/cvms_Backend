@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.entity.MilestoneMasterEntity;
 import org.ss.vendorapi.entity.ProfitLossMasterEntity;
@@ -64,6 +65,7 @@ public class ProjectMasterController {
 
 
 
+	@EncryptResponse
 	@PostMapping("/addProject")
 	public ResponseEntity<?> addProject(@RequestBody ProjectRequestDTO projectRequestDTO, HttpServletRequest request) {
 		String methodName = request.getRequestURI();
@@ -187,6 +189,7 @@ public class ProjectMasterController {
 	//	    *****************************************************************************************************************************************************************
 	//	    *****************************************************************************get api ****************************************************************************
 
+	@EncryptResponse
 	@GetMapping("/getAllProject")	    
 	public ResponseEntity<?> getAllProject() {
 		Map<String, Object> statusMap = new HashMap<>();
@@ -226,6 +229,8 @@ public class ProjectMasterController {
 //		}
 //	}
 
+	
+	@EncryptResponse
 	@GetMapping("/getAllProjectByManager")	    
 	public ResponseEntity<?> getAllProjectByManager(@RequestParam("id") Long userId) {
 		Map<String, Object> statusMap = new HashMap<>();
@@ -269,6 +274,7 @@ public class ProjectMasterController {
 	}
 
 
+	@EncryptResponse
 	@GetMapping("/getMilestone")
 	public ResponseEntity<?> getMilestoneDetails(@RequestParam String projectId) {
 		Map<String, Object> statusMap = new HashMap<>();
@@ -289,6 +295,8 @@ public class ProjectMasterController {
 		}
 	}
 
+	
+	@EncryptResponse
 	@PutMapping("/updateProjectMaster")
 	public ResponseEntity<?>updateClientMaster(@RequestBody ProjectRequestDTO projectRequestDTO){
 		Map<String, Object> statusMap = new HashMap<>();
@@ -333,7 +341,11 @@ public class ProjectMasterController {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-	}	
+	}
+	
+	
+	
+	@EncryptResponse
 	@PutMapping("/updateMilestoneMaster")
 	public ResponseEntity<?> updateMilestoneMaster(@RequestBody ProjectRequestDTO projectRequestDTO) {
 	    Map<String, Object> statusMap = new HashMap<>();
@@ -392,6 +404,7 @@ public class ProjectMasterController {
 
 
 
+	@EncryptResponse
 	@DeleteMapping("/deleteProject")
 	public ResponseEntity<?> deleteProjectMaster(@RequestParam Long id){
 		Map<String, Object> statusMap=new HashMap<String, Object>();

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.FeatureMasterEntity;
 import org.ss.vendorapi.service.FeatureMasterService;
 import org.ss.vendorapi.util.CommonUtils;
@@ -30,6 +31,7 @@ public class FeatureMasterController {
 	private FeatureMasterService featureMasterService;
 
 
+	@EncryptResponse
 	@PostMapping("/saveFeature")
 	public ResponseEntity<?> roleFeature(@RequestBody FeatureMasterEntity roleFeatureMaster){
 		Map<String, Object> statusMap=new HashMap<String, Object>();
@@ -57,6 +59,7 @@ public class FeatureMasterController {
 		}
 	}
 
+	@EncryptResponse
 	@GetMapping("/getMainFeatures")
 	public ResponseEntity<?> getRoleFeature(){
 		Map<String, Object> statusMap=new HashMap<String, Object>();
@@ -79,6 +82,8 @@ public class FeatureMasterController {
 		return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
 	}
 
+	
+	@EncryptResponse
 	@GetMapping("/getSubFeatures")
 	public ResponseEntity<?> getSubFeatures( @RequestParam("id") String id){
 		Map<String, Object> statusMap=new HashMap<String, Object>();

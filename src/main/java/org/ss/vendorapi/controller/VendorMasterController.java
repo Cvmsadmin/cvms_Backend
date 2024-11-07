@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.CityMasterEntity;
 import org.ss.vendorapi.entity.VendorMasterEntity;
 //import org.ss.vendorapi.logging.UPPCLLogger;
@@ -57,6 +57,7 @@ public class VendorMasterController {
 	private CityMasterService cityMasterService;
 	
 	
+	@EncryptResponse
 	@PostMapping("/addVendor")
 	public ResponseEntity<?> addVendor(@RequestBody CustomerDetailsDTO addVendorMEntity,HttpServletRequest request){
 		
@@ -151,6 +152,8 @@ public class VendorMasterController {
 //	******************************************************************************************************************************************************************************************
 //	***************************************************************************************get api***************************************************************************************************
 	
+	
+	@EncryptResponse
 	@GetMapping("/getAllVendor")
 	public ResponseEntity<?> getAllVendor() {
 	    try {
@@ -166,7 +169,7 @@ public class VendorMasterController {
 
 
 
-		
+	 @EncryptResponse
 	 @PutMapping("/updateVendorMaster") 
 	  public ResponseEntity<?>updateVendorMaster(@RequestBody CustomerDetailsDTO addVendorEntity ){
 		
@@ -202,7 +205,8 @@ public class VendorMasterController {
 	 }
 		
 		
-		@DeleteMapping("/deleteVendor")
+	 @EncryptResponse
+	 @DeleteMapping("/deleteVendor")
 		 public ResponseEntity<?> deleteVendorMaster(@RequestParam Long id){
 		 Map<String, Object> statusMap=new HashMap<String, Object>();
 		

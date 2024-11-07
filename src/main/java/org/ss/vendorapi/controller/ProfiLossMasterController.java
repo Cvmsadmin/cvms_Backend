@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.entity.ProfitLossMasterEntity;
 import org.ss.vendorapi.entity.ProjectMasterEntity;
@@ -61,6 +62,7 @@ public class ProfiLossMasterController {
     private ProjectMasterService projectMasterService;
     
 
+    @EncryptResponse
     @PostMapping("/addProfitLoss")
     public ResponseEntity<?> addProfitLoss(@RequestBody ProfitLossRequestDTO profitLossRequestDTO, HttpServletRequest request) {
         String methodName = request.getRequestURI();
@@ -137,6 +139,7 @@ public class ProfiLossMasterController {
 //    *****************************************************get api ***********************************************************************************************************
  
     
+    @EncryptResponse
     @GetMapping("/getAllProfitLossByManager")    
     public ResponseEntity<?> getAllProfitLossByManager(@RequestParam("id") Long userId) {
     	Map<String, Object> statusMap = new HashMap<>();
@@ -186,6 +189,7 @@ public class ProfiLossMasterController {
 		}
 	}
     
+    @EncryptResponse
     @GetMapping("/getAllProfitLoss")    
     public ResponseEntity<?> getAllProfitLoss() {
 	    try {

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.PurchaseBOMMasterEntity;
 import org.ss.vendorapi.entity.PurchaseMasterEntity;
 import org.ss.vendorapi.modal.PurchaseRequestDTO;
@@ -45,7 +46,7 @@ public class PurchaseMasterController {
 	@Autowired
 	private PurchaseBOMService purchaseBOMService;
 	
-	
+	@EncryptResponse
 	@PostMapping("/addPurchase")
 	public ResponseEntity<Map<String, Object>> addPurchase(@RequestBody PurchaseMasterEntity purchaseRequestDTO) {
 	    Map<String, Object> response = new HashMap<>();
@@ -71,6 +72,12 @@ public class PurchaseMasterController {
 	        purchaseMaster.setPrNo(purchaseRequestDTO.getPrNo());
 	        purchaseMaster.setPrDate(purchaseRequestDTO.getPrDate());
 	        purchaseMaster.setPrAmount(purchaseRequestDTO.getPrAmount());
+
+	        // New fields added:
+	        purchaseMaster.setBillability(purchaseRequestDTO.getBillability());
+	        purchaseMaster.setTypeOfExpenditure(purchaseRequestDTO.getTypeOfExpenditure());
+	        purchaseMaster.setPrFor(purchaseRequestDTO.getPrFor());
+	        purchaseMaster.setRejectionReason(purchaseRequestDTO.getRejectionReason());
 
 	        // Handle status
 	        String status = purchaseRequestDTO.getStatus();
@@ -98,6 +105,59 @@ public class PurchaseMasterController {
 	}
 
 	
+//	@EncryptResponse
+//	@PostMapping("/addPurchase")
+//	public ResponseEntity<Map<String, Object>> addPurchase(@RequestBody PurchaseMasterEntity purchaseRequestDTO) {
+//	    Map<String, Object> response = new HashMap<>();
+//
+//	    try {
+//	        // Check if a purchase with the same PR number already exists
+//	        PurchaseMasterEntity existingPurchase = purchaseMasterService.findByPrNo(purchaseRequestDTO.getPrNo());
+//	        
+//	        if (existingPurchase != null) {
+//	            // If the purchase already exists, return an error message
+//	            response.put("message", "Purchase with the same PR number already exists.");
+//	            response.put("status", HttpStatus.CONFLICT); // 409 Conflict status
+//	            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+//	        }
+//
+//	        // Create a new PurchaseMasterEntity and populate it
+//	        PurchaseMasterEntity purchaseMaster = new PurchaseMasterEntity();
+//	        purchaseMaster.setClientName(purchaseRequestDTO.getClientName());
+//	        purchaseMaster.setProjectName(purchaseRequestDTO.getProjectName());
+//	        purchaseMaster.setVendor(purchaseRequestDTO.getVendor());
+//	        purchaseMaster.setRequestorName(purchaseRequestDTO.getRequestorName());
+//	        purchaseMaster.setDescription(purchaseRequestDTO.getDescription());
+//	        purchaseMaster.setPrNo(purchaseRequestDTO.getPrNo());
+//	        purchaseMaster.setPrDate(purchaseRequestDTO.getPrDate());
+//	        purchaseMaster.setPrAmount(purchaseRequestDTO.getPrAmount());
+//
+//	        // Handle status
+//	        String status = purchaseRequestDTO.getStatus();
+//	        if ("Approved".equalsIgnoreCase(status)) {
+//	            purchaseMaster.setStatus("Approved");
+//	            purchaseMaster.setApproveDate(new Date()); // Set current date for approval
+//	            purchaseMaster.setPoNo(purchaseRequestDTO.getPoNo()); // Set PO number
+//	        } else if ("Reject".equalsIgnoreCase(status)) {
+//	            purchaseMaster.setStatus("Pending"); // Set status to Pending if rejected
+//	        } else {
+//	            purchaseMaster.setStatus("Pending"); // Default to Pending
+//	        }
+//
+//	        // Save the new purchase
+//	        purchaseMasterService.savePurchase(purchaseMaster);
+//	        response.put("message", "Purchase added successfully.");
+//	        response.put("status", HttpStatus.OK);
+//	        return new ResponseEntity<>(response, HttpStatus.OK);
+//
+//	    } catch (Exception e) {
+//	        response.put("message", "Error while adding purchase: " + e.getMessage());
+//	        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+//	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+
+//*************************************************************************************************************************************************************
 //	@PostMapping("/addPurchase")
 //	public ResponseEntity<Map<String, Object>> addPurchase(@RequestBody PurchaseMasterEntity purchaseRequestDTO) {
 //	    Map<String, Object> response = new HashMap<>();
@@ -245,6 +305,8 @@ public class PurchaseMasterController {
 //
 //	}
 	
+	
+	@EncryptResponse
 	@GetMapping("/getAllPurchase")
 	public ResponseEntity<?> getAllPurchase() {
 	    Map<String, Object> statusMap = new HashMap<>();
@@ -265,7 +327,7 @@ public class PurchaseMasterController {
 	}
 
 
-	
+	@EncryptResponse
 	@GetMapping("/getAllBOMDetails")
 	public ResponseEntity<?> getAllBOMPurchaseDetails(@RequestParam String purchaseId){
 		Map<String, Object> statusMap = new HashMap<>();
@@ -291,6 +353,7 @@ public class PurchaseMasterController {
 
 
 
+	@EncryptResponse
 	@PutMapping("/updatePurchase")
 	public ResponseEntity<?>updatePurchase(@RequestBody PurchaseRequestDTO purchaseRequestDTO ){
 		Map<String,Object> statusMap=new HashMap<String,Object>();
@@ -326,6 +389,8 @@ public class PurchaseMasterController {
 		}
 	}
 
+	
+	@EncryptResponse
 	@PutMapping("/updatePurchaseBOM")
 	public ResponseEntity<?>updatePurchaseBOM(@RequestBody PurchaseRequestDTO purchaseRequestDTO ){
 
@@ -367,6 +432,7 @@ public class PurchaseMasterController {
 	
 	
 	
+	@EncryptResponse
 	 @DeleteMapping("/deletePurchase")
 		public ResponseEntity<?> deletePurchaseMaster(@RequestParam Long id){
 			Map<String, Object> statusMap=new HashMap<String, Object>();
@@ -395,4 +461,35 @@ public class PurchaseMasterController {
 				return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}
   }
+	
+	
+	@GetMapping("/getPurchaseByPoNo")
+	public ResponseEntity<Map<String, Object>> getPurchaseByPoNo(@RequestParam String poNo) {
+	    Map<String, Object> response = new HashMap<>();
+
+	    try {
+	        // Fetch PurchaseMasterEntity based on poNo
+	        PurchaseMasterEntity purchaseMaster = purchaseMasterService.findByPoNo(poNo);
+
+	        if (purchaseMaster == null) {
+	            // If no purchase found, return 404 Not Found
+	            response.put("message", "Purchase with PO number " + poNo + " not found.");
+	            response.put("status", HttpStatus.NOT_FOUND); // 404 Not Found
+	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	        }
+
+	        // If purchase is found, return 200 OK with purchase details
+	        response.put("message", "Purchase fetched successfully.");
+	        response.put("data", purchaseMaster);
+	        response.put("status", HttpStatus.OK); // 200 OK
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+
+	    } catch (Exception e) {
+	        response.put("message", "Error while fetching purchase: " + e.getMessage());
+	        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
+	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
+	
 }

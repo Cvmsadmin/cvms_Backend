@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.BaseLocationEntity;
 import org.ss.vendorapi.service.BaseLocationService;
 
@@ -28,7 +29,7 @@ public class BaseLocationController {
 	 @Autowired
 	    private BaseLocationService baseLocationService;
 
-	
+	@EncryptResponse
 	@PostMapping("/addLocation")
     public ResponseEntity<?> addLocation(@RequestBody List<BaseLocationEntity> locationList, HttpServletRequest request) {
         Map<String, Object> statusMap = new HashMap<>();
@@ -67,6 +68,8 @@ public class BaseLocationController {
         }
     }
 	
+	
+	@EncryptResponse
 	@GetMapping("/allLocation")
     public ResponseEntity<List<BaseLocationEntity>> getAllLocations() {
         List<BaseLocationEntity> locations = baseLocationService.getAllLocations();

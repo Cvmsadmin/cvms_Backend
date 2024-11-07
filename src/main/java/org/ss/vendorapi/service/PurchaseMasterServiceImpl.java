@@ -55,4 +55,12 @@ public class PurchaseMasterServiceImpl implements PurchaseMasterService{
     public PurchaseMasterEntity findByPrNo(String prNo) {
         return purchaseMasterRepository.findByPrNo(prNo);
     }
+
+
+
+
+	@Override
+	public PurchaseMasterEntity findByPoNo(String poNo) {	
+		return purchaseMasterRepository.findByPoNo(poNo);
+	}
 }

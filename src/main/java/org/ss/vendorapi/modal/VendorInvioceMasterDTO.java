@@ -25,13 +25,27 @@ public class VendorInvioceMasterDTO {
 	private String invoiceAmountExcluGst;
 	private String invoiceAmountIncluGst;
 	private String status;
-	@JsonFormat(pattern="dd/MM/yyyy")
-	private Date date;
-	private String tdsDeducted;
-	private String amount;
-	private String penalty;
-	private String laborCess;
-	private String totalAmount;
+	
+	  private String invoiceBaseValue;              
+	    private String gstBaseValue;                 
+	    private String invoiceInclusiveOfGst;         
+	    private String tdsBaseValue;                 
+	    private String cgstOnTds;                   
+	    private String sgstOnTds;                  
+	    private String totalTdsDeducted;              
+	    private String balance;                      
+	    private String penaltyDeductionOnBase;       
+	    private String gstOnPenalty;                
+	    private String totalPenaltyDeduction;         
+	    private String totalPaymentReceived; 
+	
+//	@JsonFormat(pattern="dd/MM/yyyy")
+//	private Date date;
+//	private String tdsDeducted;
+//	private String amount;
+//	private String penalty;
+//	private String laborCess;
+//	private String totalAmount;
 	//	    private byte[] invoiceUpload;
 	//	    private byte[] po;
 	//	    private byte[] deliveryAcceptance;

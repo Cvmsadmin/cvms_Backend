@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.ServiceMasterEntity;
 import org.ss.vendorapi.modal.ServiceMasterDTO;
 import org.ss.vendorapi.service.ServiceMasterService;
@@ -47,6 +48,8 @@ public class ServiceMasterController {
 	
 //	************************************************************************
 	
+	
+	@EncryptResponse
 	@PostMapping("/addService")
 	public ResponseEntity<?> addService(@RequestBody List<ServiceMasterDTO> serviceList, HttpServletRequest request) {
 	    String methodName = request.getRequestURI();
@@ -102,6 +105,8 @@ public class ServiceMasterController {
 //	********************************************************
 //	**********************get api ******************************
 	
+	
+	@EncryptResponse
 	@GetMapping("/getAllService")	
 	public ResponseEntity<?> getAllService() {
 	    try {
