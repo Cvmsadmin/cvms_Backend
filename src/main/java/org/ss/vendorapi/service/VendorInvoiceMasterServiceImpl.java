@@ -43,5 +43,12 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
 	}
 
 
+	@Override
+	public List<VendorInvoiceMasterEntity> findAll() {
+	    return vendorinviceMasterRepository.findAll();
+	}
+
+
+
 
 }

@@ -1,6 +1,9 @@
 package org.ss.vendorapi.modal;
 
 import java.util.Date;
+import java.util.List;
+
+import org.ss.vendorapi.entity.DescriptionAndBaseValue;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -26,18 +29,28 @@ public class VendorInvioceMasterDTO {
 	private String invoiceAmountIncluGst;
 	private String status;
 	
-	  private String invoiceBaseValue;              
-	    private String gstBaseValue;                 
-	    private String invoiceInclusiveOfGst;         
-	    private String tdsBaseValue;                 
-	    private String cgstOnTds;                   
-	    private String sgstOnTds;                  
-	    private String totalTdsDeducted;              
-	    private String balance;                      
-	    private String penaltyDeductionOnBase;       
-	    private String gstOnPenalty;                
-	    private String totalPenaltyDeduction;         
-	    private String totalPaymentReceived; 
+	private List<DescriptionAndBaseValue> descriptionsAndBaseValues;
+	private String invoiceBaseValue;
+	private String gstBaseValue;
+	private String invoiceInclusiveOfGst;
+	private String tdsBaseValue;
+	private String cgstOnTds;
+	private String sgstOnTds;
+	private String totalTdsDeducted;
+	private String balance;
+	private String penaltyDeductionOnBase;
+	private String gstOnPenalty;
+	private String totalPenaltyDeduction;
+	private String totalPaymentReceived;
+	private String TdsPer;
+	private String TdsOnGst;
+	private String IgstOnTds;
+	private String Penalty;
+	private String CreditNote;
+		
+		
+}	
+	
 	
 //	@JsonFormat(pattern="dd/MM/yyyy")
 //	private Date date;
@@ -51,4 +64,3 @@ public class VendorInvioceMasterDTO {
 	//	    private byte[] deliveryAcceptance;
 	//	    private byte[] eWayBill;
 	//	    private byte[] miscellaneous;
-}

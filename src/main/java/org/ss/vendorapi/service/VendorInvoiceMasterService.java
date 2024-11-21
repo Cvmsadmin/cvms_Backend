@@ -9,4 +9,6 @@ public interface VendorInvoiceMasterService {
 	public List<VendorInvoiceMasterEntity> getAllVendorInvoices();
 	public VendorInvoiceMasterEntity update(VendorInvoiceMasterEntity vendorInvoiceMasterEntity);
 	public VendorInvoiceMasterEntity findById(Long id);
+	public List<VendorInvoiceMasterEntity> findAll();
+	
 }

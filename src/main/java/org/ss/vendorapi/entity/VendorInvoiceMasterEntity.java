@@ -2,16 +2,20 @@ package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.annotations.Where;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -78,9 +82,19 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 
     @Column(name = "invoice_inclusive_of_gst")
     private String invoiceInclusiveOfGst;
+    
+    @Column(name = "tds_Per")
+	private String tdsPer;
+    
 
     @Column(name = "tds_base_value")
     private String tdsBaseValue;
+    
+    @Column(name = "tds_on_gst_Per")
+	private String tdsOnGstPer;
+    
+    @Column(name = "igst_on_tds")
+    private String igstOnTds;
 
     @Column(name = "cgst_on_tds")
     private String cgstOnTds;
@@ -106,8 +120,17 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
     @Column(name = "total_penalty_deduction")
     private String totalPenaltyDeduction;
 
+    @Column(name = "credit_note")
+    private String creditNote;
+    
     @Column(name = "total_payment_received")
     private String totalPaymentReceived;
+    
+    
+    @OneToMany(mappedBy = "vendorInvoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<InvoiceDescriptionValue> descriptionValues;
+    
+ 
 
  
 }

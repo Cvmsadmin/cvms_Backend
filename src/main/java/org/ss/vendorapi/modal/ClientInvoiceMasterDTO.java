@@ -1,6 +1,9 @@
 package org.ss.vendorapi.modal;
 
 import java.util.Date;
+import java.util.List;
+
+import org.ss.vendorapi.entity.ClientDescriptionAndBaseValue;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -39,10 +42,32 @@ public class ClientInvoiceMasterDTO {
 	private String totalPenaltyDeduction;
 	private String totalPaymentReceived;
 	private String tdsDeductionIncluGst;
-//	private byte[] invoiceUpload;
-//	private byte[] po;
-//	private byte[] deliveryAcceptance;
-//	private byte[] eWayBill;
-//	private byte[] miscellaneous;
+
+	private String TdsPer;
+	private String TdsOnGstPer;
+	private String IgstOnTds;
+	private String CreditNote;
+	
+	private String TdsOnGst;
+	
+	private String BillableState;
+	private List<ClientDescriptionAndBaseValue> clientDescriptionAndBaseValue;
+
+
+
+	private String DescriptionsAndBaseValues;
+
+
+
+
+
+
+
+
+	
+
+
+
+
 
 }
