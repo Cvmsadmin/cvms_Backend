@@ -1,6 +1,7 @@
 package org.ss.vendorapi.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,8 @@ public interface ClientMasterRepository extends JpaRepository<ClientMasterEntity
 	
 	public ClientMasterEntity findByEmail(String email);
 	public List<ClientMasterEntity> findByAccountManagerId(String accountManagerId);
+	
+//	Optional<ClientMasterEntity> findByClientName(String clientName);
 
 
 }

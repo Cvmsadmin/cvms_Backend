@@ -12,6 +12,8 @@ public interface ClientInvoiceMasterService {
 	public List<ClientInvoiceMasterEntity> findAll();
 	public ClientInvoiceMasterEntity findById(Long id);
 	public ClientInvoiceMasterEntity findByInvoiceNo(String invoiceNo);
+
+
 	
 	
 	

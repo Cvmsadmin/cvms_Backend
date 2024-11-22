@@ -68,29 +68,16 @@ public class PurchaseMasterEntity extends ParentEntity implements Serializable{
 	@Column(name = " purchase_order_no")
 	private String poNo;
 
-	// New fields added:
-		@Column(name = "billability")
-		private String billability;
-
-		@Column(name = "type_of_expenditure")
-		private String typeOfExpenditure;
-
-		@Column(name = "pr_for")
+    @Column(name = "pr_for")
 		private String prFor;
 
-		@Column(name = "rejection_reason")
+    @Column(name = "rejection_reason")
 		private String rejectionReason;
+    
+    @JsonFormat(pattern="dd/MM/yyyy")
+	@Column(name = "po_approve_Date")
+	private Date poApproveDate;
 
-
-	    
-//	    @Column(name = "agreement")
-//	    private byte[] agreement;
-//	
-//	    @Column(name = "proposal")
-//	    private byte[] dwa;
-//	    
-//	    @Column(name = "miscellaneous")
-//	    private byte[] miscellaneous;
 
 
 

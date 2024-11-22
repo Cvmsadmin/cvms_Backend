@@ -1,5 +1,8 @@
 package org.ss.vendorapi.controller;
  
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,104 +32,317 @@ public class DocumentFileUploadController {
     @Autowired
     private DocumentUploadRepository documentUploadRepository;
     
-    
-    
     @EncryptResponse
-    @PostMapping("/uploadClientDoc")
-    public String uploadFile(@RequestParam("file") MultipartFile file,
-                             @RequestParam("clientName") String clientName,
-                             @RequestParam("projectName") String projectName,
-                             @RequestParam("documentType") DocumentType documentType,
-                             @RequestParam("applicantId") String applicantId) {
-        if (file.isEmpty()) {
-            return "File is empty";
+    @PostMapping("/uploadClientDocs")
+    public List<String> uploadFiles(
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam("clientName") String clientName,
+            @RequestParam("projectName") String projectName,
+            @RequestParam("documentTypes") List<DocumentType> documentTypes,
+            @RequestParam("applicantId") String applicantId) {
+
+        List<String> uploadResults = new ArrayList<>();
+
+        if (files.size() != documentTypes.size()) {
+            uploadResults.add("Error: The number of files and document types must match.");
+            return uploadResults;
         }
 
-        // Define base directory
-        String baseDir = "/opt/cvmsdocuments/Client";
+        for (int i = 0; i < files.size(); i++) {
+            MultipartFile file = files.get(i);
+            DocumentType documentType = documentTypes.get(i);
 
-        // Create new file name based on document type
-        String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+            if (file.isEmpty()) {
+                uploadResults.add("File is empty for document type: " + documentType);
+                continue;
+            }
 
-        String uploadStatus = sftpUploaderService.uploadFileToServer(file, baseDir, clientName, projectName, newFileName);
+            String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+            String uploadStatus = sftpUploaderService.uploadFileToServer(file, "/opt/cvmsdocuments/client", clientName, projectName, newFileName);
 
-        if (uploadStatus.startsWith("File uploaded successfully")) {
-            // Create and save FileUploadRequestModal entity
-            FileUploadRequestModal fileUploadRequest = new FileUploadRequestModal();
-            fileUploadRequest.setApplicantId(applicantId);
-            fileUploadRequest.setDocumentType(documentType);
-            fileUploadRequest.setDocumentPath(baseDir + "/" + clientName + "/" + projectName + "/" + newFileName);
+            if (uploadStatus.startsWith("File uploaded successfully")) {
+                FileUploadRequestModal fileUploadRequest = new FileUploadRequestModal();
+                fileUploadRequest.setApplicantId(applicantId);
+                fileUploadRequest.setDocumentType(documentType);
+                fileUploadRequest.setDocumentPath("/opt/cvmsdocuments/client" + "/" + clientName + "/" + projectName + "/" + newFileName);
 
-            documentUploadRepository.save(fileUploadRequest);
-            return uploadStatus;
-        } else {
-            return uploadStatus;
+                documentUploadRepository.save(fileUploadRequest);
+                uploadResults.add("File uploaded successfully for document type: " + documentType);
+            } else {
+                uploadResults.add("File upload failed for document type: " + documentType);
+            }
         }
+        return uploadResults;
     }
     
-
+    
     @EncryptResponse
-    @PostMapping("/uploadVendorDoc")
-    public String uploadVendorFile(@RequestParam("file") MultipartFile file,
-                                   @RequestParam("vendorName") String vendorName,
-                                   @RequestParam("documentType") DocumentType documentType,
-                                   @RequestParam("applicantId") String applicantId) {
-        if (file.isEmpty()) {
-            return "File is empty";
+    @PostMapping("/uploadVendorDocs")
+    public List<String> uploadVendorFiles(
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam("vendorName") String vendorName,
+            @RequestParam("documentTypes") List<DocumentType> documentTypes,
+            @RequestParam("applicantId") String applicantId) {
+
+        List<String> uploadResults = new ArrayList<>();
+
+        // Check if the number of files matches the number of document types
+        if (files.size() != documentTypes.size()) {
+            uploadResults.add("Error: The number of files and document types must match.");
+            return uploadResults;
         }
 
-        String baseDir = "/opt/cvmsdocuments/Vendor";
+        for (int i = 0; i < files.size(); i++) {
+            MultipartFile file = files.get(i);
+            DocumentType documentType = documentTypes.get(i);
 
-        // Create new file name based on document type
-        String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+            if (file.isEmpty()) {
+                uploadResults.add("File is empty for document type: " + documentType);
+                continue;
+            }
 
-        String uploadStatus = sftpUploaderService.uploadFileToServer(file, baseDir, vendorName, "ERP", newFileName);
+            String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+            String baseDir = "/opt/cvmsdocuments/vendor";
+            String uploadStatus = sftpUploaderService.uploadFileToServer(file, baseDir, vendorName, "ERP", newFileName);
 
-        if (uploadStatus.startsWith("File uploaded successfully")) {
-            FileUploadRequestModal fileUploadRequest = new FileUploadRequestModal();
-            fileUploadRequest.setApplicantId(applicantId);
-            fileUploadRequest.setDocumentType(documentType);
-            fileUploadRequest.setDocumentPath(baseDir + "/" + vendorName + "/" + newFileName);
+            if (uploadStatus.startsWith("File uploaded successfully")) {
+                FileUploadRequestModal fileUploadRequest = new FileUploadRequestModal();
+                fileUploadRequest.setApplicantId(applicantId);
+                fileUploadRequest.setDocumentType(documentType);
+                fileUploadRequest.setDocumentPath(baseDir + "/" + vendorName + "/" + newFileName);
 
-            documentUploadRepository.save(fileUploadRequest);
-            return uploadStatus;
-        } else {
-            return uploadStatus;
+                documentUploadRepository.save(fileUploadRequest);
+                uploadResults.add("File uploaded successfully for document type: " + documentType);
+            } else {
+                uploadResults.add("File upload failed for document type: " + documentType);
+            }
         }
+        return uploadResults;
     }
 
-    @EncryptResponse
-    @PostMapping("/uploadSalesOpportunityDoc")
-    public String uploadSalesOpportunityFile(@RequestParam("file") MultipartFile file,
-                                             @RequestParam("customerName") String customerName,
-                                             @RequestParam("srNo") String srNo,
-                                             @RequestParam("documentType") DocumentType documentType,
-                                             @RequestParam("applicantId") String applicantId) {
-        if (file.isEmpty()) {
-            return "File is empty";
+
+
+    
+//    @EncryptResponse
+//    @PostMapping("/uploadClientDoc")
+//    public String uploadFile(@RequestParam("file") MultipartFile file,
+//                             @RequestParam("clientName") String clientName,
+//                             @RequestParam("projectName") String projectName,
+//                             @RequestParam("documentType") DocumentType documentType,
+//                             @RequestParam("applicantId") String applicantId) {
+//        if (file.isEmpty()) {
+//            return "File is empty";
+//        }
+//
+//        // Define base directory
+//        String baseDir = "/opt/cvmsdocuments/Client";
+//
+//        // Create new file name based on document type
+//        String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+//
+//        String uploadStatus = sftpUploaderService.uploadFileToServer(file, baseDir, clientName, projectName, newFileName);
+//
+//        if (uploadStatus.startsWith("File uploaded successfully")) {
+//            // Create and save FileUploadRequestModal entity
+//            FileUploadRequestModal fileUploadRequest = new FileUploadRequestModal();
+//            fileUploadRequest.setApplicantId(applicantId);
+//            fileUploadRequest.setDocumentType(documentType);
+//            fileUploadRequest.setDocumentPath(baseDir + "/" + clientName + "/" + projectName + "/" + newFileName);
+//
+//            documentUploadRepository.save(fileUploadRequest);
+//            return uploadStatus;
+//        } else {
+//            return uploadStatus;
+//        }
+//    }
+    
+
+//    @EncryptResponse
+//    @PostMapping("/uploadVendorDoc")
+//    public String uploadVendorFile(@RequestParam("file") MultipartFile file,
+//                                   @RequestParam("vendorName") String vendorName,
+//                                   @RequestParam("documentType") DocumentType documentType,
+//                                   @RequestParam("applicantId") String applicantId) {
+//        if (file.isEmpty()) {
+//            return "File is empty";
+//        }
+//
+//        String baseDir = "/opt/cvmsdocuments/Vendor";
+//
+//        // Create new file name based on document type
+//        String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+//
+//        String uploadStatus = sftpUploaderService.uploadFileToServer(file, baseDir, vendorName, "ERP", newFileName);
+//
+//        if (uploadStatus.startsWith("File uploaded successfully")) {
+//            FileUploadRequestModal fileUploadRequest = new FileUploadRequestModal();
+//            fileUploadRequest.setApplicantId(applicantId);
+//            fileUploadRequest.setDocumentType(documentType);
+//            fileUploadRequest.setDocumentPath(baseDir + "/" + vendorName + "/" + newFileName);
+//
+//            documentUploadRepository.save(fileUploadRequest);
+//            return uploadStatus;
+//        } else {
+//            return uploadStatus;
+//        }
+//    }
+    
+    
+    
+    
+    
+//    *************************************
+//    @EncryptResponse
+//    @PostMapping("/uploadSalesOpportunityDocs")
+//    public List<String> uploadSalesOpportunityFiles(
+//            @RequestParam("files") List<MultipartFile> files,
+//            @RequestParam("customerName") String customerName,
+//            @RequestParam("srNo") String srNo,
+//            @RequestParam("documentTypes") List<DocumentType> documentTypes,
+//            @RequestParam("applicantId") String applicantId) {
+//
+//        List<String> uploadResults = new ArrayList<>();
+//
+//        // Check if the number of files matches the number of document types
+//        if (files.size() != documentTypes.size()) {
+//            uploadResults.add("Error: The number of files and document types must match.");
+//            return uploadResults;
+//        }
+//
+//        // Define base directory for Sales/Opportunity
+//        String baseDir = "/opt/cvmsdocuments/sales_opportunity";
+//
+//        // Loop through files and document types
+//        for (int i = 0; i < files.size(); i++) {
+//            MultipartFile file = files.get(i);
+//       @EncryptResponse
+    @PostMapping("/uploadSalesOpportunityDocs")
+    public List<String> uploadSalesOpportunityFiles(
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam("customerName") String customerName,
+            @RequestParam("srNo") String srNo,
+            @RequestParam("documentTypes") List<String> documentTypes,  // Updated to List<String> to accept string values
+            @RequestParam("applicantId") String applicantId) {
+
+        List<String> uploadResults = new ArrayList<>();
+
+        // Check if the number of files matches the number of document types
+        if (files.size() != documentTypes.size()) {
+            uploadResults.add("Error: The number of files and document types must match.");
+            return uploadResults;
         }
 
         // Define base directory for Sales/Opportunity
-        String baseDir = "/opt/cvmsdocuments/Sales_Opportunity";
+        String baseDir = "/opt/cvmsdocuments/sales_opportunity";
 
-        // Create new file name based on document type
-        String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+        // Loop through files and document types
+        for (int i = 0; i < files.size(); i++) {
+            MultipartFile file = files.get(i);
+            String documentTypeString = documentTypes.get(i); // Get the string value of document type
 
-        String uploadStatus = sftpUploaderService.uploadFileToServer(file, baseDir, customerName, srNo, newFileName);
+            // Convert string to DocumentType enum
+            DocumentType documentType;
+            try {
+                documentType = DocumentType.valueOf(documentTypeString);  // Convert to enum
+            } catch (IllegalArgumentException e) {
+                uploadResults.add("Invalid document type: " + documentTypeString);
+                continue;  // Skip invalid document types
+            }
 
-        if (uploadStatus.startsWith("File uploaded successfully")) {
-            // Create and save FileUploadRequestModal entity for Sales/Opportunity
-            FileUploadRequestModal fileUploadRequest = new FileUploadRequestModal();
-            fileUploadRequest.setApplicantId(applicantId);
-            fileUploadRequest.setDocumentType(documentType);
-            fileUploadRequest.setDocumentPath(baseDir + "/" + customerName + "/" + srNo + "/" + newFileName);
+            if (file.isEmpty()) {
+                uploadResults.add("File is empty for document type: " + documentType);
+                continue;
+            }
 
-            documentUploadRepository.save(fileUploadRequest);
-            return uploadStatus;
-        } else {
-            return uploadStatus;
+            // Create a new file name based on document type and timestamp
+            String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+
+            // Upload the file to the server
+            String uploadStatus = sftpUploaderService.uploadFileToServer(file, baseDir, customerName, srNo, newFileName);
+
+            // Check upload status
+            if (uploadStatus.startsWith("File uploaded successfully")) {
+                // Create and save FileUploadRequestModal entity for Sales/Opportunity
+                FileUploadRequestModal fileUploadRequest = new FileUploadRequestModal();
+                fileUploadRequest.setApplicantId(applicantId);
+                fileUploadRequest.setDocumentType(documentType);
+                fileUploadRequest.setDocumentPath(baseDir + "/" + customerName + "/" + srNo + "/" + newFileName);
+
+                documentUploadRepository.save(fileUploadRequest);
+                uploadResults.add("File uploaded successfully for document type: " + documentType);
+            } else {
+                uploadResults.add("File upload failed for document type: " + documentType);
+            }
         }
+
+        return uploadResults;
     }
+//     DocumentType documentType = documentTypes.get(i);
+
+//            if (file.isEmpty()) {
+//                uploadResults.add("File is empty for document type: " + documentType);
+//                continue;
+//            }
+//
+//            // Create a new file name based on document type and timestamp
+//            String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+//
+//            // Upload the file to the server
+//            String uploadStatus = sftpUploaderService.uploadFileToServer(file, baseDir, customerName, srNo, newFileName);
+//
+//            // Check upload status
+//            if (uploadStatus.startsWith("File uploaded successfully")) {
+//                // Create and save FileUploadRequestModal entity for Sales/Opportunity
+//                FileUploadRequestModal fileUploadRequest = new FileUploadRequestModal();
+//                fileUploadRequest.setApplicantId(applicantId);
+//                fileUploadRequest.setDocumentType(documentType);
+//                fileUploadRequest.setDocumentPath(baseDir + "/" + customerName + "/" + srNo + "/" + newFileName);
+//
+//                documentUploadRepository.save(fileUploadRequest);
+//                uploadResults.add("File uploaded successfully for document type: " + documentType);
+//            } else {
+//                uploadResults.add("File upload failed for document type: " + documentType);
+//            }
+//        }
+//
+//        return uploadResults;
+//    }
+//         ****************************************************************
+    
+    
+
+//    @EncryptResponse
+//    @PostMapping("/uploadSalesOpportunityDoc")
+//    public String uploadSalesOpportunityFile(@RequestParam("file") MultipartFile file,
+//                                             @RequestParam("customerName") String customerName,
+//                                             @RequestParam("srNo") String srNo,
+//                                             @RequestParam("documentType") DocumentType documentType,
+//                                             @RequestParam("applicantId") String applicantId) {
+//        if (file.isEmpty()) {
+//            return "File is empty";
+//        }
+//
+//        // Define base directory for Sales/Opportunity
+//        String baseDir = "/opt/cvmsdocuments/Sales_Opportunity";
+//
+//        // Create new file name based on document type
+//        String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+//
+//        String uploadStatus = sftpUploaderService.uploadFileToServer(file, baseDir, customerName, srNo, newFileName);
+//
+//        if (uploadStatus.startsWith("File uploaded successfully")) {
+//            // Create and save FileUploadRequestModal entity for Sales/Opportunity
+//            FileUploadRequestModal fileUploadRequest = new FileUploadRequestModal();
+//            fileUploadRequest.setApplicantId(applicantId);
+//            fileUploadRequest.setDocumentType(documentType);
+//            fileUploadRequest.setDocumentPath(baseDir + "/" + customerName + "/" + srNo + "/" + newFileName);
+//
+//            documentUploadRepository.save(fileUploadRequest);
+//            return uploadStatus;
+//        } else {
+//            return uploadStatus;
+//        }
+//    }
 
     // Helper method to get the file extension
     private String getFileExtension(String originalFileName) {
@@ -171,7 +387,7 @@ public class DocumentFileUploadController {
     public ResponseEntity<byte[]> downloadVendorFile(@RequestParam("vendorName") String vendorName,
                                                      @RequestParam("fileName") String fileName) {
 
-        String remoteFilePath = "/opt/cvmsdocuments/Vendor/" + vendorName + "/ERP/" + fileName;
+        String remoteFilePath = "/opt/cvmsdocuments/vendor/" + vendorName + "/ERP/" + fileName;
 
         byte[] fileContent;
         try {
@@ -270,7 +486,7 @@ public class DocumentFileUploadController {
                                                @RequestParam("fileName") String fileName) {
 
         // Construct the remote file path
-        String remoteFilePath = "/opt/cvmsdocuments/Client/" + clientName + "/" + projectName + "/" + fileName;
+        String remoteFilePath = "/opt/cvmsdocuments/client/" + clientName + "/" + projectName + "/" + fileName;
 
         byte[] fileContent;
         try {
@@ -345,7 +561,7 @@ public class DocumentFileUploadController {
                                                                @RequestParam("fileName") String fileName) {
 
         // Construct the remote file path for Sales/Opportunity
-        String remoteFilePath = "/opt/cvmsdocuments/Sales_Opportunity/" + customerName + "/" + srNo + "/" + fileName;
+        String remoteFilePath = "/opt/cvmsdocuments/sales_opportunity/" + customerName + "/" + srNo + "/" + fileName;
 
         byte[] fileContent;
         try {

@@ -157,94 +157,6 @@ public class VendorInvoiceMasterController {
 //		}
 //	}
 	
-//	@EncryptResponse
-//	@PostMapping("/addVendorInvoices")
-//	public ResponseEntity<?> addVendorInvoices(@RequestBody VendorInvioceMasterDTO vendorInvoiceDTO, HttpServletRequest request) {
-//
-//	    ResponseEntity<?> responseEntity = null;
-//	    String methodName = request.getRequestURI();
-//	    // logger.logMethodStart(methodName);
-//
-//	    Map<String, Object> statusMap = new HashMap<>();
-//
-//	   
-//	    try {
-//
-//	        if (UtilValidate.isEmpty(vendorInvoiceDTO.getVendorName()) || 
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getClientName()) || 
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getProjectName()) ||
-//	            vendorInvoiceDTO.getInvoiceDate()==null||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceNo()) || 
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getPoNo()) || 
-//	            vendorInvoiceDTO.getInvoiceDueDate()==null || 
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceDescription()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getGstPer()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceAmountExcluGst()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceAmountIncluGst()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getStatus()) ||
-//	            vendorInvoiceDTO.getDate()==null ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getTdsDeducted()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getAmount()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getPenalty()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getLaborCess()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getTotalAmount())){
-//
-//	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
-//	        }
-//
-//	        VendorInvoiceMasterEntity vendorInvoiceMaster = new VendorInvoiceMasterEntity();
-//	        
-//	        // Removed vendorInvoiceCreationEntityObj.setVendorId(VendorInvoiceMEntity.getVendorId());
-//	        vendorInvoiceMaster.setVendorName(vendorInvoiceDTO.getVendorName());
-//	        vendorInvoiceMaster.setClientName(vendorInvoiceDTO.getClientName());
-//	        vendorInvoiceMaster.setProjectName(vendorInvoiceDTO.getProjectName());
-//	        vendorInvoiceMaster.setInvoiceDate(vendorInvoiceDTO.getInvoiceDate());
-//	        vendorInvoiceMaster.setInvoiceNo(vendorInvoiceDTO.getInvoiceNo());
-//	        vendorInvoiceMaster.setPoNo(vendorInvoiceDTO.getPoNo());
-//	        vendorInvoiceMaster.setInvoiceDueDate(vendorInvoiceDTO.getInvoiceDueDate());
-//	        vendorInvoiceMaster.setInvoiceDescription(vendorInvoiceDTO.getInvoiceDescription());
-//	        vendorInvoiceMaster.setGstPer(vendorInvoiceDTO.getGstPer());
-//	        vendorInvoiceMaster.setInvoiceAmountExcluGst(vendorInvoiceDTO.getInvoiceAmountExcluGst());
-//	        vendorInvoiceMaster.setInvoiceAmountIncluGst(vendorInvoiceDTO.getInvoiceAmountIncluGst());
-//	        vendorInvoiceMaster.setStatus(vendorInvoiceDTO.getStatus());
-//	        vendorInvoiceMaster.setDate(vendorInvoiceDTO.getDate());
-//	        vendorInvoiceMaster.setTdsDeducted(vendorInvoiceDTO.getTdsDeducted());
-//	        vendorInvoiceMaster.setAmount(vendorInvoiceDTO.getAmount());
-//	        vendorInvoiceMaster.setPenalty(vendorInvoiceDTO.getPenalty());
-//	        vendorInvoiceMaster.setLaborCess(vendorInvoiceDTO.getLaborCess());
-//	        vendorInvoiceMaster.setTotalAmount(vendorInvoiceDTO.getTotalAmount());
-//
-//	        try {
-//	            /* SAVE THE USER TO THE DB ENTITY */
-//	        	vendorInvoiceMaster = vendorInvoiceMasterService.save(vendorInvoiceMaster);
-//
-//	            if (vendorInvoiceMaster != null) {
-//
-//	                statusMap.put(Parameters.statusMsg, StatusMessageConstants.VENDOR_INVOICE_GENERATED_SUCCESSFULLY);
-//	                statusMap.put(Parameters.status, Constants.SUCCESS);
-//	                statusMap.put(Parameters.statusCode, "RU_200");
-//	                return new ResponseEntity<>(statusMap, HttpStatus.OK);
-//	            } else {
-//	                statusMap.put(Parameters.statusMsg, StatusMessageConstants.VENDOR_INVOICE_NOT_GENERATED);
-//	                statusMap.put(Parameters.status, Constants.FAIL);
-//	                statusMap.put(Parameters.statusCode, "RU_301");
-//	                return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
-//	            }
-//	        } catch (Exception ex) {
-//	            // logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 2. Failed to save user in DB response : " + ex.getMessage());
-//	            statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
-//	            statusMap.put(Parameters.statusCode, Constants.SVD_USR);
-//	            statusMap.put(Parameters.status, Constants.FAIL);
-//	            return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//	        }
-//	    } catch (Exception ex) {
-//	        // if (logger.isErrorLoggingEnabled()) {
-//	        // logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage());
-//	        // }
-//	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//	    }
-//	}
-	
 	@EncryptResponse
 	@PostMapping("/addVendorInvoices")
 	public ResponseEntity<?> addVendorInvoices(@RequestBody VendorInvioceMasterDTO vendorInvoiceDTO) {
@@ -553,7 +465,7 @@ public class VendorInvoiceMasterController {
    //***********************************************************************************************get api **************************************************************************************
 	
 	@EncryptResponse
-	@GetMapping("/getAllVendorInvoices")
+	@GetMapping("/getAllVendorInvoice")
 	public ResponseEntity<?> getAllVendorInvoices() {
 	    try {
 	        // Fetch all vendor invoices from the database
@@ -600,62 +512,6 @@ public class VendorInvoiceMasterController {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
-
-	
-//	@EncryptResponse
-//	@GetMapping("/getAllVendorInvoices")
-//	public ResponseEntity<?> getAllVendorInvoices() {
-//		try {
-//		    // Fetch all vendor invoices from the database
-//		    List<VendorInvoiceMasterEntity> vendorInvoices = vendorInvoiceMasterService.findAll();
-//
-//		    if (vendorInvoices.isEmpty()) {
-//		        return CommonUtils.createResponse(Constants.FAIL, "No Vendor Invoices Found", HttpStatus.NOT_FOUND);
-//		    }
-//
-//		    // Map entities to DTOs and handle nested objects explicitly
-//		    List<VendorInvioceMasterDTO> vendorInvoiceDTOs = vendorInvoices.stream()
-//		        .map(invoice -> {
-//		            VendorInvioceMasterDTO dto = new VendorInvioceMasterDTO();
-//		            BeanUtils.copyProperties(invoice, dto);
-//
-//		            // Map nested descriptionsAndBaseValues from descriptionValues
-//		            if (invoice.getDescriptionValues() != null) {
-//		                List<DescriptionAndBaseValue> descriptionAndBaseValues = invoice.getDescriptionValues().stream()
-//		                    .map(desc -> {
-//		                        DescriptionAndBaseValue value = new DescriptionAndBaseValue();
-//		                        value.setItemDescription(desc.getItemDescription());
-//		                        value.setBaseValue(desc.getBaseValue());
-//		                        return value;
-//		                    })
-//		                    .collect(Collectors.toList());
-//		                dto.setDescriptionsAndBaseValues(descriptionAndBaseValues);
-//		            }
-//
-//		            return dto;
-//		        })
-//		        .collect(Collectors.toList());
-//
-//		    return new ResponseEntity<>(vendorInvoiceDTOs, HttpStatus.OK);
-//
-//		} catch (Exception ex) {
-//		    return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-//
-//	}
-
-
-//	@EncryptResponse
-//	@GetMapping("/getAllVendorInvoice")
-//	public ResponseEntity<?> getAllVendorInvoices() {
-//	    try {
-//	        List<VendorInvoiceMasterEntity> users = vendorInvoiceMasterService.getAllVendorInvoices();
-//	        return new ResponseEntity<>(users, HttpStatus.OK);
-//	    } catch (Exception ex) {
-//	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//	    }
-//	}
-	
 	
 	@EncryptResponse
 	@PutMapping("/updateVendorInvoiceMaster")

@@ -1,6 +1,11 @@
 {
   "groups": [
     {
+      "name": "sftp",
+      "type": "org.ss.vendorapi.config.SftpConfig",
+      "sourceType": "org.ss.vendorapi.config.SftpConfig"
+    },
+    {
       "name": "spring.ss",
       "type": "org.ss.vendorapi.resources.APIKeyProperties",
       "sourceType": "org.ss.vendorapi.resources.APIKeyProperties"
@@ -27,6 +32,27 @@
     }
   ],
   "properties": [
+    {
+      "name": "sftp.host",
+      "type": "java.lang.String",
+      "sourceType": "org.ss.vendorapi.config.SftpConfig"
+    },
+    {
+      "name": "sftp.password",
+      "type": "java.lang.String",
+      "sourceType": "org.ss.vendorapi.config.SftpConfig"
+    },
+    {
+      "name": "sftp.port",
+      "type": "java.lang.Integer",
+      "sourceType": "org.ss.vendorapi.config.SftpConfig",
+      "defaultValue": 0
+    },
+    {
+      "name": "sftp.username",
+      "type": "java.lang.String",
+      "sourceType": "org.ss.vendorapi.config.SftpConfig"
+    },
     {
       "name": "spring.ss.api-key",
       "type": "java.lang.String",

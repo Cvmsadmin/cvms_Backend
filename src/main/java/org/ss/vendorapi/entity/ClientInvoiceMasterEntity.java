@@ -2,16 +2,20 @@ package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.annotations.Where;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +30,6 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	private static final long serialVersionUID=1L;
 	
 	@Id
-	@Column(name="id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
@@ -80,9 +83,18 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 
 	@Column(name = "invoice_inclusive_of_gst")
 	private String invoiceInclusiveOfGst;
+	
+	@Column(name = "tds_Per")
+	private String tdsPer;
+	
+	@Column(name = "tds_on_gst_Per")
+	private String tdsOnGstPer;
 
 	@Column(name = "tds_base_value")
 	private String tdsBaseValue;
+	
+	@Column(name = "igst_on_tds")
+	private String igstOnTds;
 
 	@Column(name = "cgst_on_tds")
 	private String cgstOnTds;
@@ -107,9 +119,33 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 
 	@Column(name = "total_penalty_deduction")
 	private String totalPenaltyDeduction;
-
+	
+	 @Column(name = "credit_note")
+	 private String creditNote;
+	
 	@Column(name = "total_payment_received")
 	private String totalPaymentReceived;
+
+	public Object getBillableState() {
+	    // Determine the billable state based on the status or other logic
+	    if ("Completed".equalsIgnoreCase(this.status)) {
+	        return "Billable";
+	    } else if ("Pending".equalsIgnoreCase(this.status)) {
+	        return "Non-Billable";
+	    } else if ("Rejected".equalsIgnoreCase(this.status)) {
+	        return "Not Applicable";
+	    } else {
+	        return "Unknown";
+	    }
+	}
+
+	
+	
+	
+//	@OneToMany(mappedBy = "clientInvoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+//	private List<ClientInvoiceDescriptionValue> descriptionValues;
+	
+	
 
 	
 

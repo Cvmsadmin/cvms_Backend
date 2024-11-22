@@ -11,9 +11,10 @@ public interface PurchaseMasterService {
 	public PurchaseMasterEntity update(PurchaseMasterEntity purchaseMasterEntity);
 	public List<PurchaseMasterEntity> findAll();
 	public PurchaseMasterEntity findById(Long id);
-	public void savePurchase(PurchaseMasterEntity purchaseMaster);
+
 	public PurchaseMasterEntity findByPrNo(String prNo);
 	public PurchaseMasterEntity findByPoNo(String poNo);
+	public void savePurchase(PurchaseMasterEntity purchaseMaster);
 	
 	
 }

@@ -24,11 +24,9 @@ public class ClientInvoiceDescriptionValue {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "invoice_id", nullable = false)
 	@ManyToOne
     @JoinColumn(name = "client_invoice_id", nullable = false)
-    private ClientInvoiceMasterEntity ClientInvoice;
+    private ClientInvoiceMasterEntity clientInvoice;
 
     @Column(name = "item_description")
     private String itemDescription;

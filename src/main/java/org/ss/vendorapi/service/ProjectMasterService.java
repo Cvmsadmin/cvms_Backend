@@ -11,6 +11,7 @@ public interface ProjectMasterService {
 	public ProjectMasterEntity update(ProjectMasterEntity projectMasterEntity);
 	public ProjectMasterEntity findById(Long id);
 	public List<ProjectMasterEntity> findByWhere(String where);
+//	public List<ProjectMasterEntity> getProjectsByClientId(Long clientId);
 
 
 }

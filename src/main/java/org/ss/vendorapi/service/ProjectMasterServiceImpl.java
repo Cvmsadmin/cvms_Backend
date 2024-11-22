@@ -66,6 +66,10 @@ public class ProjectMasterServiceImpl implements ProjectMasterService{
 		}
 		return list;
 	}
+	
+//	public List<ProjectMasterEntity> getProjectsByClientId(Long clientId) {
+//        return projectMasterRepository.findByClientId(clientId);
+//    }
 
 
 }

@@ -26,10 +26,17 @@ public class PurchaseRequestDTO {
 	private Date prDate;
 	private String prAmount;
 	private String status;
-	
 	@JsonFormat(pattern="dd/MM/yyyy")
 	private Date approveDate;
 	private String poNo;
+	
+	private String prFor;
+	
+	private String rejectionReason;
+
+	@JsonFormat(pattern="dd/MM/yyyy")
+	private Date poApproveDate; 
+		
 
 
 }

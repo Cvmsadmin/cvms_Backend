@@ -7,7 +7,9 @@ import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
 @Repository
 public interface ClientInvoiceMasterRepository extends JpaRepository<ClientInvoiceMasterEntity, Long>{
 
-public ClientInvoiceMasterEntity findByInvoiceNo(String invoiceNo);
+	ClientInvoiceMasterEntity findByInvoiceNo(String invoiceNo);
+
+
 
 
 }

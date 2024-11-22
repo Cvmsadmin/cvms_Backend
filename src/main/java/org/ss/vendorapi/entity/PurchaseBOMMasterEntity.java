@@ -41,9 +41,6 @@ public class PurchaseBOMMasterEntity extends ParentEntity implements Serializabl
 	@Column(name = "service")
 	private String service;
 
-	@Column(name = "type_of_expenditure")
-	private String typeOfExpenditure;
-
 	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "start_date")
 	private Date startDate;
@@ -70,6 +67,8 @@ public class PurchaseBOMMasterEntity extends ParentEntity implements Serializabl
 	@Column(name = "amount_incl_gst")
 	private String amountInclGst;
 
+    @Column(name = "uom")
+    private String uom;
 
 
 }
