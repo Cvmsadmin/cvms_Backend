@@ -1,5 +1,7 @@
 package org.ss.vendorapi.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.ss.vendorapi.entity.PurchaseMasterEntity;
@@ -11,4 +13,8 @@ public interface PurchaseMasterRepository extends JpaRepository<PurchaseMasterEn
 		PurchaseMasterEntity findByPrNo(String prNo);
 
 		PurchaseMasterEntity findByPoNo(String poNo);
+
+		List<PurchaseMasterEntity> findByProjectName(String projectName);
+		
+//		String findPoNoByProjectName(String projectName);
 }

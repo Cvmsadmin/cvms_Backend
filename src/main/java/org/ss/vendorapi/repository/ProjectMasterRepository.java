@@ -8,6 +8,8 @@ import org.ss.vendorapi.entity.ProjectMasterEntity;
 
 @Repository
 public interface ProjectMasterRepository extends JpaRepository<ProjectMasterEntity, Long>{
+
+	List<ProjectMasterEntity> findByClientId(String clientId);
 	
 //	List<ProjectMasterEntity> findByClientId(Long clientId);
 

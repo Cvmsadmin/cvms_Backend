@@ -63,4 +63,15 @@ public class PurchaseMasterServiceImpl implements PurchaseMasterService{
 	public PurchaseMasterEntity findByPoNo(String poNo) {	
 		return purchaseMasterRepository.findByPoNo(poNo);
 	}
+
+
+	public List<PurchaseMasterEntity> findByProjectName(String projectName) {
+	    return purchaseMasterRepository.findByProjectName(projectName);
+	}
+
+
+//	@Override
+//	public String getPoNoByProjectName(String projectName) {
+//        return purchaseMasterRepository.findPoNoByProjectName(projectName);
+//    }
 }

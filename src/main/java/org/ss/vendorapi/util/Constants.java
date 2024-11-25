@@ -197,4 +197,5 @@ public class Constants {
 	public static final String consumerDetailsNF = "GCD_NA_205";
 	public static final String billDetailsNF = "GBILLD_NA_205";
 	public static final String invalidAccount = "IA_300";
+	public static final Object FAILURE = "failure";
 }

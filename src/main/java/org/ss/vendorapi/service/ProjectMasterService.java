@@ -12,6 +12,7 @@ public interface ProjectMasterService {
 	public ProjectMasterEntity findById(Long id);
 	public List<ProjectMasterEntity> findByWhere(String where);
 //	public List<ProjectMasterEntity> getProjectsByClientId(Long clientId);
+	public List<ProjectMasterEntity> getProjectsByClientId(String clientId);
 
 
 }

@@ -15,6 +15,8 @@ public interface PurchaseMasterService {
 	public PurchaseMasterEntity findByPrNo(String prNo);
 	public PurchaseMasterEntity findByPoNo(String poNo);
 	public void savePurchase(PurchaseMasterEntity purchaseMaster);
+//	public String getPoNoByProjectName(String projectName);
+	public List<PurchaseMasterEntity> findByProjectName(String projectName);
 	
 	
 }

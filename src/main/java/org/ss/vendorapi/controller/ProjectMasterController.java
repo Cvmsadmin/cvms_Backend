@@ -205,6 +205,29 @@ public class ProjectMasterController {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
+	@EncryptResponse
+    @GetMapping("/getProjectByClientId/{clientId}")
+    public ResponseEntity<?> getProjectByClientId(@PathVariable String clientId) {
+        Map<String, Object> statusMap = new HashMap<>();
+        try {
+            List<ProjectMasterEntity> projectList = projectMasterService.getProjectsByClientId(clientId);
+            if (projectList.isEmpty()) {
+                statusMap.put(Parameters.statusMsg, StatusMessageConstants.NO_PROJECTS_FOUND);
+                statusMap.put(Parameters.status, Constants.FAILURE);
+                statusMap.put(Parameters.statusCode, "RU_404");
+                return new ResponseEntity<>(statusMap, HttpStatus.NOT_FOUND);
+            }
+            statusMap.put("ProjectMasterEntity", projectList);
+            statusMap.put(Parameters.statusMsg, StatusMessageConstants.PROJECT_FOUND_SUCCESSFULLY);
+            statusMap.put(Parameters.status, Constants.SUCCESS);
+            statusMap.put(Parameters.statusCode, "RU_200");
+            return new ResponseEntity<>(statusMap, HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 
 //	@GetMapping("/getAllProjectByManager")	    

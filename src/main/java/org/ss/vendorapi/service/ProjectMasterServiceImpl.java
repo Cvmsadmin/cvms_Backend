@@ -66,6 +66,12 @@ public class ProjectMasterServiceImpl implements ProjectMasterService{
 		}
 		return list;
 	}
+
+
+
+	public List<ProjectMasterEntity> getProjectsByClientId(String clientId) {
+        return projectMasterRepository.findByClientId(clientId);
+    }
 	
 //	public List<ProjectMasterEntity> getProjectsByClientId(Long clientId) {
 //        return projectMasterRepository.findByClientId(clientId);
