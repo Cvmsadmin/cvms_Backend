@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -595,4 +597,59 @@ public class VendorInvoiceMasterController {
 		}
 
 	}
+	
+	
+	@EncryptResponse
+	@GetMapping("/getVendorInvoice/{invoiceNo}")
+	public ResponseEntity<?> getVendorInvoiceByInvoiceNo(@PathVariable("invoiceNo") String invoiceNo) {
+	    try {
+	        // Fetch the invoice by invoiceNo
+	        Optional<VendorInvoiceMasterEntity> invoiceOptional = vendorInvoiceMasterService.findByInvoiceNo(invoiceNo);
+
+	        if (invoiceOptional.isEmpty()) {
+	            return CommonUtils.createResponse(Constants.FAIL, "Vendor Invoice Not Found", HttpStatus.NOT_FOUND);
+	        }
+
+	        VendorInvoiceMasterEntity invoice = invoiceOptional.get();
+	        
+	        // Map entity to DTO
+	        VendorInvioceMasterDTO dto = new VendorInvioceMasterDTO();
+	        BeanUtils.copyProperties(invoice, dto);
+
+	        // Handle nested descriptionsAndBaseValues mapping
+	        if (invoice.getDescriptionValues() != null && !invoice.getDescriptionValues().isEmpty()) {
+	            List<DescriptionAndBaseValue> descriptionAndBaseValues = invoice.getDescriptionValues().stream()
+	                .map(desc -> {
+	                    DescriptionAndBaseValue value = new DescriptionAndBaseValue();
+	                    value.setItemDescription(desc.getItemDescription() != null ? desc.getItemDescription() : "");
+	                    value.setBaseValue(desc.getBaseValue() != null ? desc.getBaseValue() : "0");
+	                    return value;
+	                })
+	                .collect(Collectors.toList());
+	            dto.setDescriptionsAndBaseValues(descriptionAndBaseValues);
+	        }
+
+	        return new ResponseEntity<>(dto, HttpStatus.OK);
+
+	    } catch (Exception ex) {
+	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	}

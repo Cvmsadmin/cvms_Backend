@@ -2,6 +2,7 @@ package org.ss.vendorapi.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,12 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
 	public List<VendorInvoiceMasterEntity> findAll() {
 	    return vendorinviceMasterRepository.findAll();
 	}
+
+
+	@Override
+	public Optional<VendorInvoiceMasterEntity> findByInvoiceNo(String invoiceNo) {
+        return vendorinviceMasterRepository.findByInvoiceNo(invoiceNo);
+    }
 
 
 
