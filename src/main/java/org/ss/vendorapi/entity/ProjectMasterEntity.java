@@ -109,10 +109,7 @@ public class ProjectMasterEntity extends ParentEntity implements Serializable{
 
 	@Column(name = "contract_price")
 	private String contractPrice;
-//	
-//	@ManyToOne
-//    @JoinColumn(name = "client_id", referencedColumnName = "id", insertable = false, updatable = false)
-//    private ClientMasterEntity client;
+
 	
 	
 

@@ -474,6 +474,10 @@ public class PurchaseMasterController {
 			purchaseMaster.setApproveDate(purchaseRequestDTO.getApproveDate()!=null?purchaseRequestDTO.getApproveDate():purchaseMaster.getApproveDate());
 			purchaseMaster.setPoNo(purchaseRequestDTO.getPoNo()!=null?purchaseRequestDTO.getPoNo():purchaseMaster.getPoNo());
 
+			 purchaseMaster.setPrFor(purchaseRequestDTO.getPrFor() != null ? purchaseRequestDTO.getPrFor() : purchaseMaster.getPrFor());
+		     purchaseMaster.setRejectionReason(purchaseRequestDTO.getRejectionReason() != null ? purchaseRequestDTO.getRejectionReason() : purchaseMaster.getRejectionReason());
+		     purchaseMaster.setPoApproveDate(purchaseRequestDTO.getPoApproveDate() != null ? purchaseRequestDTO.getPoApproveDate() : purchaseMaster.getPoApproveDate());
+		     
 			purchaseMasterService.update(purchaseMaster);
 
 
