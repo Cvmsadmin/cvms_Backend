@@ -139,33 +139,5 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	    }
 	}
 
-	
-	
-	
-//	@OneToMany(mappedBy = "clientInvoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-//	private List<ClientInvoiceDescriptionValue> descriptionValues;
-	
-	
-
-	
-
-
-	    
-//	    @Column(name = "invoice_upload")
-//	    private byte[] invoiceUpload;
-//	
-//	    @Column(name = "po")
-//	    private byte[] po;
-//	
-//	    @Column(name = "delivery_acceptance")
-//	    private byte[] deliveryAcceptance;
-//	
-//	    @Column(name = "e_way_bill")
-//	    private byte[] eWayBill;
-//	
-//	    @Column(name = "miscellaneous")
-//	    private byte[] miscellaneous;
-
-
 
 }

@@ -57,17 +57,4 @@ public class ClientInvoiceMasterDTO {
 
 	private String DescriptionsAndBaseValues;
 
-
-
-
-
-
-
-
-	
-
-
-
-
-
 }

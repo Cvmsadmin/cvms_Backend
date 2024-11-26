@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,10 +35,6 @@ import org.ss.vendorapi.util.StatusMessageConstants;
 import org.ss.vendorapi.util.UtilValidate;
 
 import jakarta.servlet.http.HttpServletRequest;
-
-
-
-
 
 @CrossOrigin(origins="*")
 @RestController
@@ -609,5 +606,69 @@ public class ClientInvoiceMasterController {
 		}
 
 	}
+	
+	@GetMapping("/getClientInvoice/{invoiceNo}")
+	public ResponseEntity<?> getClientInvoice(@PathVariable String invoiceNo) {
+	    try {
+	        // Fetch invoice by invoiceNo
+	        ClientInvoiceMasterEntity clientInvoice = clientInvoiceService.findByInvoiceNo(invoiceNo);
+
+	        // Check if the invoice exists
+	        if (clientInvoice == null) {
+	            return new ResponseEntity<>(Map.of("message", "Invoice not found"), HttpStatus.NOT_FOUND);
+	        }
+
+	        // Prepare response data
+	        Map<String, Object> responseMap = new HashMap<>();
+	        responseMap.put("clientName", clientInvoice.getClientName());
+	        responseMap.put("projectName", clientInvoice.getProjectName());
+	        responseMap.put("discom", clientInvoice.getDiscom());
+	        responseMap.put("invoiceDate", clientInvoice.getInvoiceDate());
+	        responseMap.put("invoiceNo", clientInvoice.getInvoiceNo());
+	        responseMap.put("invoiceDescription", clientInvoice.getInvoiceDescription());
+	        responseMap.put("invoiceDueDate", clientInvoice.getInvoiceDueDate());
+	        responseMap.put("gstPer", clientInvoice.getGstPer());
+	        responseMap.put("gstAmount", clientInvoice.getGstAmount());
+	        responseMap.put("invoiceAmountExcluGst", clientInvoice.getInvoiceAmountExcluGst());
+	        responseMap.put("invoiceAmountIncluGst", clientInvoice.getInvoiceAmountIncluGst());
+	        responseMap.put("status", clientInvoice.getStatus());
+	        responseMap.put("invoiceBaseValue", clientInvoice.getInvoiceBaseValue());
+	        responseMap.put("gstBaseValue", clientInvoice.getGstBaseValue());
+	        responseMap.put("invoiceInclusiveOfGst", clientInvoice.getInvoiceInclusiveOfGst());
+	        responseMap.put("tdsPer", clientInvoice.getTdsPer());
+	        responseMap.put("tdsBaseValue", clientInvoice.getTdsBaseValue());
+	        responseMap.put("igstOnTds", clientInvoice.getIgstOnTds());
+	        responseMap.put("cgstOnTds", clientInvoice.getCgstOnTds());
+	        responseMap.put("sgstOnTds", clientInvoice.getSgstOnTds());
+	        responseMap.put("totalTdsDeducted", clientInvoice.getTotalTdsDeducted());
+	        responseMap.put("balance", clientInvoice.getBalance());
+	        responseMap.put("penalty", clientInvoice.getPenalty());
+	        responseMap.put("penaltyDeductionOnBase", clientInvoice.getPenaltyDeductionOnBase());
+	        responseMap.put("gstOnPenalty", clientInvoice.getGstOnPenalty());
+	        responseMap.put("totalPenaltyDeduction", clientInvoice.getTotalPenaltyDeduction());
+	        responseMap.put("creditNote", clientInvoice.getCreditNote());
+	        responseMap.put("totalPaymentReceived", clientInvoice.getTotalPaymentReceived());
+	        responseMap.put("billableState", clientInvoice.getBillableState());
+
+	        // Fetch and map DescriptionAndBaseValue
+	        List<ClientInvoiceDescriptionValue> descriptions = clientInvoiceDescriptionValueService.findByInvoiceNo(invoiceNo);
+	        List<Map<String, Object>> descriptionList = descriptions.stream().map(desc -> {
+	            Map<String, Object> descMap = new HashMap<>();
+	            descMap.put("itemDescription", desc.getItemDescription());
+	            descMap.put("baseValue", desc.getBaseValue());
+	            return descMap;
+	        }).toList();
+
+	        responseMap.put("descriptionsAndBaseValues", descriptionList);
+
+	        return new ResponseEntity<>(responseMap, HttpStatus.OK);
+	    } catch (Exception ex) {
+	        return new ResponseEntity<>(Map.of("error", ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
+
+	
+	
 
 }

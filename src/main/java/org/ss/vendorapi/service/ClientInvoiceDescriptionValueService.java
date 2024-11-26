@@ -17,5 +17,7 @@ public interface ClientInvoiceDescriptionValueService {
 	
 	 List<ClientInvoiceDescriptionValue> findByClientInvoice(ClientInvoiceMasterEntity clientInvoice);
 
+	List<ClientInvoiceDescriptionValue> findByInvoiceNo(String invoiceNo);
+
 
 }

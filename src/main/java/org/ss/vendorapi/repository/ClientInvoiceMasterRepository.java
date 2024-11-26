@@ -10,6 +10,4 @@ public interface ClientInvoiceMasterRepository extends JpaRepository<ClientInvoi
 	ClientInvoiceMasterEntity findByInvoiceNo(String invoiceNo);
 
 
-
-
 }

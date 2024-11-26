@@ -34,5 +34,16 @@ public class ClientInvoiceDescriptionValue {
     @Column(name = "base_value")
     private String baseValue;
 
+    @Column(name = "invoice_no")
+    private String invoiceNo;
+
+    // Getters and Setters
+    public String getInvoiceNo() {
+        return invoiceNo;
+    }
+
+    public void setInvoiceNo(String invoiceNo) {
+        this.invoiceNo = invoiceNo;
+    }
 
 }

@@ -27,4 +27,11 @@ public class ClientInvoiceDescriptionValueServiceImpl implements ClientInvoiceDe
     }
 
 
+	@Override
+	public List<ClientInvoiceDescriptionValue> findByInvoiceNo(String invoiceNo) {
+	
+		return clientInvoiceDescriptionValueRepository.findByInvoiceNo(invoiceNo);
+	}
+
+
 }
