@@ -37,8 +37,13 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
         return clientInvoiceMasterRepository.findById(id).orElse(null);
     }
 
+//    @Override
+//    public ClientInvoiceMasterEntity findByInvoiceNo(String invoiceNo) {
+//        return clientInvoiceMasterRepository.findByInvoiceNo(invoiceNo);
+//    }
+    
     @Override
-    public ClientInvoiceMasterEntity findByInvoiceNo(String invoiceNo) {
-        return clientInvoiceMasterRepository.findByInvoiceNo(invoiceNo);
-    }
+  public ClientInvoiceMasterEntity findByInvoiceNo(String invoiceNo) {
+      return clientInvoiceMasterRepository.findByInvoiceNoNative(invoiceNo);
+  }
 }

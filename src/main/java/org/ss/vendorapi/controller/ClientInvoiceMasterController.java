@@ -611,6 +611,7 @@ public class ClientInvoiceMasterController {
 	public ResponseEntity<?> getClientInvoice(@PathVariable String invoiceNo) {
 	    try {
 	        // Fetch invoice by invoiceNo
+	    	invoiceNo = invoiceNo.trim();
 	        ClientInvoiceMasterEntity clientInvoice = clientInvoiceService.findByInvoiceNo(invoiceNo);
 
 	        // Check if the invoice exists
@@ -666,6 +667,8 @@ public class ClientInvoiceMasterController {
 	        return new ResponseEntity<>(Map.of("error", ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
+
 
 
 	
