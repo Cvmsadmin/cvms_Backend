@@ -402,6 +402,9 @@ public class ClientInvoiceMasterController {
 	        // Map entities to response structure
 	        List<Map<String, Object>> responseList = clientInvoices.stream().map(invoice -> {
 	            Map<String, Object> invoiceMap = new HashMap<>();
+	            
+	            invoiceMap.put("id", invoice.getId());
+	            
 	            invoiceMap.put("clientName", invoice.getClientName());
 	            invoiceMap.put("projectName", invoice.getProjectName());
 	            invoiceMap.put("discom", invoice.getDiscom());
