@@ -50,15 +50,11 @@ public class ClientMasterController {
 	@Autowired 
 	private ClientMasterService clientMasterService;
 
-
 	@Autowired
 	private ProjectMasterService projectMasterService;
 
-
-
 	@Autowired
 	private UserMasterService userMasterService;
-
 
 	@Autowired 
 	private DataValidationService dataValidationService;
@@ -112,7 +108,7 @@ public class ClientMasterController {
 	        clientCreationEntityObj.setEmail(addClientMEntity.getEmail());
 	        clientCreationEntityObj.setGst(addClientMEntity.getGst());
 	        clientCreationEntityObj.setPan(addClientMEntity.getPan());
-	        clientCreationEntityObj.setTypeOfService(addClientMEntity.getTypeOfService());
+	        clientCreationEntityObj.setTypeOfService(addClientMEntity.getTypeOfService().get(0));
 	        clientCreationEntityObj.setAccountManagerId(addClientMEntity.getAccountManager()); 
 
 	        // Save the client to the database
@@ -363,7 +359,7 @@ public class ClientMasterController {
 
 			clientEntity.setPan(addClientMEntity.getPan()!=null?addClientMEntity.getPan():clientEntity.getPan());
 
-			clientEntity.setTypeOfService(addClientMEntity.getTypeOfService()!=null?addClientMEntity.getTypeOfService():clientEntity.getTypeOfService());
+			clientEntity.setTypeOfService(addClientMEntity.getTypeOfService().get(0)!=null?addClientMEntity.getTypeOfService().get(0):clientEntity.getTypeOfService());
 
 			clientEntity.setAccountManagerId(addClientMEntity.getAccountManager()!=null?addClientMEntity.getAccountManager():clientEntity.getAccountManagerId());
 

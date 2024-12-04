@@ -1,10 +1,12 @@
 package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.hibernate.annotations.Where;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -55,7 +57,8 @@ public class VendorMasterEntity extends ParentEntity implements Serializable  {
 	private String email;
 	
 	@Column(name="type_of_service")
-	private String typeOfService;
+	@ElementCollection
+	private List<String> typeOfService;
 	
 	@Column(name="gst")
 	private String gst;

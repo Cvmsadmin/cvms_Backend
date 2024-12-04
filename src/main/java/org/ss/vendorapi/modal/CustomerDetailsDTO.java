@@ -3,6 +3,7 @@ package org.ss.vendorapi.modal;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import lombok.Data;
 @Data
@@ -27,7 +28,7 @@ public class CustomerDetailsDTO implements Serializable{
 	private String ContactNo;
 	private String Gst;
 	private String Pan;
-	private String TypeOfService;
+	private List<String> TypeOfService;
 	private String AccountManager;
 	private String VendorName;
 	private String PanNo;
