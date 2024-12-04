@@ -51,7 +51,6 @@ public class PurchaseMasterController {
 	@Autowired
 	private PurchaseBOMService purchaseBOMService;
 	
-	
 	@EncryptResponse
 	@PostMapping("/addPurchase")
 	public ResponseEntity<?> addPurchase(@RequestBody PurchaseRequestDTO purchaseRequestDTO, HttpServletRequest request) {
@@ -94,11 +93,15 @@ public class PurchaseMasterController {
 	        purchaseMaster.setRejectionReason(purchaseRequestDTO.getRejectionReason());
 	        purchaseMaster.setPoApproveDate(purchaseRequestDTO.getPoApproveDate());
 
-	        // Handle status (Approved or Rejected)
+	        // Handle status (Approved, Rejected, Pending, PoApproved)
 	        String status = purchaseRequestDTO.getStatus();
 	        if ("Approved".equalsIgnoreCase(status)) {
 	            purchaseMaster.setStatus("Approved");
 	            purchaseMaster.setApproveDate(new Date());
+	        } else if ("Rejected".equalsIgnoreCase(status)) {
+	            purchaseMaster.setStatus("Rejected");
+	        } else if ("PoApproved".equalsIgnoreCase(status)) {
+	            purchaseMaster.setStatus("PoApproved");
 	        } else {
 	            purchaseMaster.setStatus("Pending");
 	        }
@@ -157,7 +160,6 @@ public class PurchaseMasterController {
 	        // Prepare final response map
 	        statusMap.put("clientName", purchaseMaster.getClientName());
 	        statusMap.put("description", purchaseMaster.getDescription());
-	        statusMap.put("poNo", purchaseMaster.getPoNo());
 	        statusMap.put("prAmount", purchaseMaster.getPrAmount());
 	        statusMap.put("prDate", purchaseMaster.getPrDate());
 	        statusMap.put("prNo", purchaseMaster.getPrNo());
@@ -165,9 +167,19 @@ public class PurchaseMasterController {
 	        statusMap.put("requestorName", purchaseMaster.getRequestorName());
 	        statusMap.put("status", purchaseMaster.getStatus());
 	        statusMap.put("vendor", purchaseMaster.getVendor());
-	        statusMap.put("approveDate", purchaseMaster.getApproveDate());
-	        statusMap.put("poApproveDate", purchaseMaster.getPoApproveDate());
 	        statusMap.put("bom", bomList);
+
+	        // Handle status-specific fields for response
+	        if ("Pending".equalsIgnoreCase(status)) {
+	            // Do not include approveDate, poNo, rejectionReason, poApproveDate
+	        } else if ("Rejected".equalsIgnoreCase(status)) {
+	            statusMap.put("rejectionReason", purchaseMaster.getRejectionReason());
+	        } else if ("Approved".equalsIgnoreCase(status)) {
+	            statusMap.put("approveDate", purchaseMaster.getApproveDate());
+	        } else if ("PoApproved".equalsIgnoreCase(status)) {
+	            statusMap.put("poNo", purchaseMaster.getPoNo());
+	            statusMap.put("poApproveDate", purchaseMaster.getPoApproveDate());
+	        }
 
 	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
 
@@ -177,6 +189,133 @@ public class PurchaseMasterController {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
+	
+//	@EncryptResponse
+//	@PostMapping("/addPurchase")
+//	public ResponseEntity<?> addPurchase(@RequestBody PurchaseRequestDTO purchaseRequestDTO, HttpServletRequest request) {
+//	    String methodName = request.getRequestURI();
+//
+//	    Map<String, Object> statusMap = new HashMap<>();
+//	    List<Map<String, Object>> bomList = new ArrayList<>();
+//
+//	    try {
+//	        // Validate required parameters
+//	        if (UtilValidate.isEmpty(purchaseRequestDTO.getClientName()) ||
+//	                UtilValidate.isEmpty(purchaseRequestDTO.getProjectName()) ||
+//	                UtilValidate.isEmpty(purchaseRequestDTO.getVendor()) ||
+//	                UtilValidate.isEmpty(purchaseRequestDTO.getRequestorName()) ||
+//	                UtilValidate.isEmpty(purchaseRequestDTO.getDescription()) ||
+//	                UtilValidate.isEmpty(purchaseRequestDTO.getPrNo()) ||
+//	                UtilValidate.isEmpty(purchaseRequestDTO.getPrAmount()) ||
+//	                UtilValidate.isEmpty(purchaseRequestDTO.getStatus()) ||
+//	                purchaseRequestDTO.getPrDate() == null ||
+//	                purchaseRequestDTO.getApproveDate() == null ||
+//	                UtilValidate.isEmpty(purchaseRequestDTO.getPoNo()) ||
+//	                purchaseRequestDTO.getPoApproveDate() == null) {
+//	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+//	        }
+//
+//	        // Create and populate PurchaseMasterEntity
+//	        PurchaseMasterEntity purchaseMaster = new PurchaseMasterEntity();
+//	        purchaseMaster.setClientName(purchaseRequestDTO.getClientName());
+//	        purchaseMaster.setProjectName(purchaseRequestDTO.getProjectName());
+//	        purchaseMaster.setVendor(purchaseRequestDTO.getVendor());
+//	        purchaseMaster.setRequestorName(purchaseRequestDTO.getRequestorName());
+//	        purchaseMaster.setDescription(purchaseRequestDTO.getDescription());
+//	        purchaseMaster.setPrNo(purchaseRequestDTO.getPrNo());
+//	        purchaseMaster.setPrDate(purchaseRequestDTO.getPrDate());
+//	        purchaseMaster.setPrAmount(purchaseRequestDTO.getPrAmount());
+//	        purchaseMaster.setStatus(purchaseRequestDTO.getStatus());
+//	        purchaseMaster.setApproveDate(purchaseRequestDTO.getApproveDate());
+//	        purchaseMaster.setPoNo(purchaseRequestDTO.getPoNo());
+//	        purchaseMaster.setPrFor(purchaseRequestDTO.getPrFor());
+//	        purchaseMaster.setRejectionReason(purchaseRequestDTO.getRejectionReason());
+//	        purchaseMaster.setPoApproveDate(purchaseRequestDTO.getPoApproveDate());
+//
+//	        // Handle status (Approved or Rejected)
+//	        String status = purchaseRequestDTO.getStatus();
+//	        if ("Approved".equalsIgnoreCase(status)) {
+//	            purchaseMaster.setStatus("Approved");
+//	            purchaseMaster.setApproveDate(new Date());
+//	        } else {
+//	            purchaseMaster.setStatus("Pending");
+//	        }
+//
+//	        // Save PurchaseMasterEntity
+//	        purchaseMaster = purchaseMasterService.save(purchaseMaster);
+//
+//	        // Process and save BOM items
+//	        for (PurchaseBOMMasterEntity purchaseBOMDTO : purchaseRequestDTO.getBom()) {
+//	            if (UtilValidate.isEmpty(purchaseBOMDTO.getBomDescription()) ||
+//	                    UtilValidate.isEmpty(purchaseBOMDTO.getService()) ||
+//	                    purchaseBOMDTO.getStartDate() == null ||
+//	                    purchaseBOMDTO.getEndDate() == null ||
+//	                    UtilValidate.isEmpty(purchaseBOMDTO.getRenewable()) ||
+//	                    UtilValidate.isEmpty(purchaseBOMDTO.getRateUnit()) ||
+//	                    UtilValidate.isEmpty(purchaseBOMDTO.getGstRate()) ||
+//	                    UtilValidate.isEmpty(purchaseBOMDTO.getQuantity()) ||
+//	                    UtilValidate.isEmpty(purchaseBOMDTO.getAmountExclGst()) ||
+//	                    UtilValidate.isEmpty(purchaseBOMDTO.getAmountInclGst())) {
+//	                return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+//	            }
+//
+//	            PurchaseBOMMasterEntity purchaseBOM = new PurchaseBOMMasterEntity();
+//	            purchaseBOM.setBomDescription(purchaseBOMDTO.getBomDescription());
+//	            purchaseBOM.setPurchaseId(purchaseMaster.getId().toString());
+//	            purchaseBOM.setService(purchaseBOMDTO.getService());
+//	            purchaseBOM.setStartDate(purchaseBOMDTO.getStartDate());
+//	            purchaseBOM.setEndDate(purchaseBOMDTO.getEndDate());
+//	            purchaseBOM.setRenewable(purchaseBOMDTO.getRenewable());
+//	            purchaseBOM.setRateUnit(purchaseBOMDTO.getRateUnit());
+//	            purchaseBOM.setQuantity(purchaseBOMDTO.getQuantity());
+//	            purchaseBOM.setGstRate(purchaseBOMDTO.getGstRate());
+//	            purchaseBOM.setAmountExclGst(purchaseBOMDTO.getAmountExclGst());
+//	            purchaseBOM.setAmountInclGst(purchaseBOMDTO.getAmountInclGst());
+//	            purchaseBOM.setUom(purchaseBOMDTO.getUom());
+//
+//	            purchaseBOM = purchaseBOMService.save(purchaseBOM);
+//
+//	            // Build BOM response map
+//	            Map<String, Object> bomResponseMap = new HashMap<>();
+//	            bomResponseMap.put("amountExclGst", purchaseBOM.getAmountExclGst());
+//	            bomResponseMap.put("amountInclGst", purchaseBOM.getAmountInclGst());
+//	            bomResponseMap.put("bomDescription", purchaseBOM.getBomDescription());
+//	            bomResponseMap.put("endDate", purchaseBOM.getEndDate());
+//	            bomResponseMap.put("gstRate", purchaseBOM.getGstRate());
+//	            bomResponseMap.put("quantity", purchaseBOM.getQuantity());
+//	            bomResponseMap.put("rateUnit", purchaseBOM.getRateUnit());
+//	            bomResponseMap.put("renewable", purchaseBOM.getRenewable());
+//	            bomResponseMap.put("service", purchaseBOM.getService());
+//	            bomResponseMap.put("startDate", purchaseBOM.getStartDate());
+//	            bomResponseMap.put("uom", purchaseBOM.getUom());
+//
+//	            bomList.add(bomResponseMap);
+//	        }
+//
+//	        // Prepare final response map
+//	        statusMap.put("clientName", purchaseMaster.getClientName());
+//	        statusMap.put("description", purchaseMaster.getDescription());
+//	        statusMap.put("poNo", purchaseMaster.getPoNo());
+//	        statusMap.put("prAmount", purchaseMaster.getPrAmount());
+//	        statusMap.put("prDate", purchaseMaster.getPrDate());
+//	        statusMap.put("prNo", purchaseMaster.getPrNo());
+//	        statusMap.put("projectName", purchaseMaster.getProjectName());
+//	        statusMap.put("requestorName", purchaseMaster.getRequestorName());
+//	        statusMap.put("status", purchaseMaster.getStatus());
+//	        statusMap.put("vendor", purchaseMaster.getVendor());
+//	        statusMap.put("approveDate", purchaseMaster.getApproveDate());
+//	        statusMap.put("poApproveDate", purchaseMaster.getPoApproveDate());
+//	        statusMap.put("bom", bomList);
+//
+//	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+//
+//	    } catch (Exception ex) {
+//	        statusMap.put("error", env.getProperty("common.api.error"));
+//	        statusMap.put("message", ex.getMessage());
+//	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
 
 
 
