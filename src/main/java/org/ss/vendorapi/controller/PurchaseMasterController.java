@@ -69,10 +69,7 @@ public class PurchaseMasterController {
 	                UtilValidate.isEmpty(purchaseRequestDTO.getPrNo()) ||
 	                UtilValidate.isEmpty(purchaseRequestDTO.getPrAmount()) ||
 	                UtilValidate.isEmpty(purchaseRequestDTO.getStatus()) ||
-	                purchaseRequestDTO.getPrDate() == null ||
-	                purchaseRequestDTO.getApproveDate() == null ||
-	                UtilValidate.isEmpty(purchaseRequestDTO.getPoNo()) ||
-	                purchaseRequestDTO.getPoApproveDate() == null) {
+	                purchaseRequestDTO.getPrDate() == null) {
 	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
 	        }
 
@@ -87,23 +84,31 @@ public class PurchaseMasterController {
 	        purchaseMaster.setPrDate(purchaseRequestDTO.getPrDate());
 	        purchaseMaster.setPrAmount(purchaseRequestDTO.getPrAmount());
 	        purchaseMaster.setStatus(purchaseRequestDTO.getStatus());
-	        purchaseMaster.setApproveDate(purchaseRequestDTO.getApproveDate());
-	        purchaseMaster.setPoNo(purchaseRequestDTO.getPoNo());
 	        purchaseMaster.setPrFor(purchaseRequestDTO.getPrFor());
 	        purchaseMaster.setRejectionReason(purchaseRequestDTO.getRejectionReason());
-	        purchaseMaster.setPoApproveDate(purchaseRequestDTO.getPoApproveDate());
 
 	        // Handle status (Approved, Rejected, Pending, PoApproved)
 	        String status = purchaseRequestDTO.getStatus();
 	        if ("Approved".equalsIgnoreCase(status)) {
 	            purchaseMaster.setStatus("Approved");
 	            purchaseMaster.setApproveDate(new Date());
+	            purchaseMaster.setPoNo(null); // Clear PO fields if status is "Approved"
+	            purchaseMaster.setPoApproveDate(null);
 	        } else if ("Rejected".equalsIgnoreCase(status)) {
 	            purchaseMaster.setStatus("Rejected");
+	            purchaseMaster.setApproveDate(null); // Clear approval fields if status is "Rejected"
+	            purchaseMaster.setPoNo(null);
+	            purchaseMaster.setPoApproveDate(null);
 	        } else if ("PoApproved".equalsIgnoreCase(status)) {
 	            purchaseMaster.setStatus("PoApproved");
+	            purchaseMaster.setApproveDate(new Date());
+	            purchaseMaster.setPoNo(purchaseRequestDTO.getPoNo()); // Set PO fields if status is "PoApproved"
+	            purchaseMaster.setPoApproveDate(purchaseRequestDTO.getPoApproveDate());
 	        } else {
 	            purchaseMaster.setStatus("Pending");
+	            purchaseMaster.setApproveDate(null);
+	            purchaseMaster.setPoNo(null);
+	            purchaseMaster.setPoApproveDate(null);
 	        }
 
 	        // Save PurchaseMasterEntity
@@ -177,6 +182,7 @@ public class PurchaseMasterController {
 	        } else if ("Approved".equalsIgnoreCase(status)) {
 	            statusMap.put("approveDate", purchaseMaster.getApproveDate());
 	        } else if ("PoApproved".equalsIgnoreCase(status)) {
+	            statusMap.put("approveDate", purchaseMaster.getApproveDate());
 	            statusMap.put("poNo", purchaseMaster.getPoNo());
 	            statusMap.put("poApproveDate", purchaseMaster.getPoApproveDate());
 	        }
@@ -189,6 +195,8 @@ public class PurchaseMasterController {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
+
 
 	
 //	@EncryptResponse
