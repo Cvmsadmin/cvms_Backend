@@ -111,7 +111,4 @@ public class ProjectMasterEntity extends ParentEntity implements Serializable{
 	private String contractPrice;
 
 	
-	
-
-	
 }

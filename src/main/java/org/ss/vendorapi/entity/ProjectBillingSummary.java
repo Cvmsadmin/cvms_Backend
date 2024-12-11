@@ -14,15 +14,21 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter@Setter@NoArgsConstructor@AllArgsConstructor
+@Data
+@NoArgsConstructor@AllArgsConstructor
 @Where(clause="ACTIVE=1")
 @Entity
 @Table(name = "project_billing_summary")
+//@SuppressWarnings("serial")
 
+
+@Builder
 public class ProjectBillingSummary extends ParentEntity implements Serializable{
 	
 	
@@ -39,8 +45,8 @@ public class ProjectBillingSummary extends ParentEntity implements Serializable{
 	@Column(name = "project_name")
 	private String projectName;
 	
-	@Column(name = "total_billable_amount")
-	private String totalBillableAmount;
+	@Column(name = "contract_price")
+	private String contractPrice;
 	
 	@Column(name = "total_received_amount")
 	private String totalReceivedAmount;

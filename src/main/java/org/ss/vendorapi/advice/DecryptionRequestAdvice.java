@@ -25,7 +25,7 @@ public class DecryptionRequestAdvice extends OncePerRequestFilter {
     @Value("${spring.security.aes.responseKey}")
     private String secretKey;
 
-    @Value("${spring.security.enable.encryption}")
+    @Value("${spring.security.enable.encryption}")	
     private String isEncryption;
 
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

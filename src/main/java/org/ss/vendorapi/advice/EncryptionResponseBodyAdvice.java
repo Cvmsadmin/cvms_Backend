@@ -36,9 +36,9 @@ public class EncryptionResponseBodyAdvice implements ResponseBodyAdvice<Object> 
 		// Return true to indicate that this advice should be applied to all controller
 		// methods
 		if("true".equals(isEncryption)) {
-			if (returnType.getMethod().isAnnotationPresent(EncryptResponse.class)) {
+//			if (returnType.getMethod().isAnnotationPresent(EncryptResponse.class)) {
 				return true;
-			}
+//			}
 		}
 		
 		return false;

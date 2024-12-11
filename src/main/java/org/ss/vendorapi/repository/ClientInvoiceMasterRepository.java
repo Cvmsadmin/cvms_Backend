@@ -1,5 +1,7 @@
 package org.ss.vendorapi.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +15,8 @@ public interface ClientInvoiceMasterRepository extends JpaRepository<ClientInvoi
 	
 	@Query(value = "SELECT * FROM client_invoice_master WHERE invoice_no = :invoiceNo", nativeQuery = true)
     ClientInvoiceMasterEntity findByInvoiceNoNative(@Param("invoiceNo") String invoiceNo);
+	
+	ClientInvoiceMasterEntity findByClientId(String clientId);
 
 
 }

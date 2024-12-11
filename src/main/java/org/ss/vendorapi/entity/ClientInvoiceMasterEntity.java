@@ -18,11 +18,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-@NoArgsConstructor @Setter @Getter @AllArgsConstructor
+@Data 
+@NoArgsConstructor @AllArgsConstructor
 @Entity
 @Where(clause="ACTIVE=1")
 @Table(name = "client_invoice_master")
