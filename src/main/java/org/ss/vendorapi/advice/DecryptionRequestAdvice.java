@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.ss.vendorapi.config.AESDecryptionService;
+import org.ss.vendorapi.config.AESEncryptionService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.wrapper.MultiReadHttpServletRequestWrapper;
 
@@ -27,6 +28,9 @@ public class DecryptionRequestAdvice extends OncePerRequestFilter {
 
     @Value("${spring.security.enable.encryption}")	
     private String isEncryption;
+    
+    @Autowired
+    private AESEncryptionService aesEncryptionService;
 
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -69,6 +73,9 @@ public class DecryptionRequestAdvice extends OncePerRequestFilter {
         try {
         	String decryptedData = encryptedData;
         	if (encryptedData.contains("_cdata")) {
+        		
+        		String encr = aesEncryptionService.encrypt(secretKey, encryptedData);
+        		System.out.println("Hello :: " + encr);
     			String encryptedData1 =  CommonUtils.convertJsonStringToJsonObject(encryptedData).get("_cdata").asText();
     			decryptedData = aesDecryptionService.decrypt(secretKey, encryptedData1);
     		}     	
