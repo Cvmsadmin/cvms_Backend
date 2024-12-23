@@ -2,6 +2,8 @@ package org.ss.vendorapi.entity;
  
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -33,28 +35,21 @@ public class FileUploadRequestModal extends ParentEntity implements Serializable
     private Long documentId;
  
     @Column(nullable = false)
-
+    @NotNull
     private String applicantId;
  
     @Enumerated(EnumType.STRING)
-
     @Column(nullable = false)
-
     private DocumentType documentType;
  
     @Column(nullable = false)
-
     private String documentPath;
-
- 
-   
-
+    
     public enum DocumentType {
 
         CM, VM, DWA, NDA, PAN, GST_CERTIFICATE, PO, MAF, E_WAY_BILL, INVOICE_UPLOAD,
 
         DELIVERY_ACCEPTANCE, PROPOSAL_UPLOAD, MISCELLANEOUS, AGREEMENT, RFP, BOM, BOQ, NIT, FRS, ROCS
- 
     }
  
 	public String getDocumentPath(String string) {

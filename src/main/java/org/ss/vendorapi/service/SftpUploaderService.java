@@ -31,7 +31,7 @@ public class SftpUploaderService {
      * @since 04-Feb-2024 {@summary IT REFERS TO file upload }
      */
     
-    
+
  
     public String uploadFileToServer(MultipartFile file, String baseDir, String clientName, String newFileName) {
         return uploadFileToServer(file, baseDir, clientName, "ERP");
@@ -72,6 +72,10 @@ public class SftpUploaderService {
         channelSftp.put(inputStream, fullPath + "/" + newFileName);
         return "File uploaded successfully to: " + fullPath + "/" + newFileName;
     }
+        } catch (SftpException se) {
+            // Handle specific SFTP exceptions (e.g., permission issues)
+            se.printStackTrace();
+            return "SFTP Error: " + se.getMessage();
  
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,11 +131,7 @@ public class SftpUploaderService {
             session.disconnect();
         }
     }
-    
-
-
-
-   
+      
 }
  
  

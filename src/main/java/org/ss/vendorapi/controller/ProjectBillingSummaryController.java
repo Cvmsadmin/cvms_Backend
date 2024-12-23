@@ -85,51 +85,37 @@ public class ProjectBillingSummaryController {
 		    		Object[] objArr;   
 		    		ResponseEntity<?> retTransRespObj;  
 		    		Map<String, Object> statusMap;   
-		    		   
-		    	      String projectId = null;
-		    	      
+//		    		 String projectId, projectClientId, projectName, address, city, state, contactPerson, contactNo, email, contractPrice, 
+//		               invoiceId, invoiceClientName, invoiceNo, invoiceDate, invoiceDescription, invoiceAmountIncluGst, status;
+		       	    	     
 		    		for(Object obj: resultList) {    
 		    			objArr = (Object[]) obj; 
-		    		if(UtilValidate.isNotEmpty(objArr)) {    
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[0], blank); 
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[1], blank);
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[2], blank);
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[3], blank);
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[4], blank); 
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[5], blank);
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[6], blank);
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[7], blank);
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[8], blank); 
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[9], blank);
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[10], blank);
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[11], blank);
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[12], blank); 
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[13], blank);
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[14], blank);
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[15], blank);
-		    			projectId = CommonUtils.checkForEmptyAndReturn(objArr[16], blank);
-		    			System.out.println(projectId);
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().id(CommonUtils.checkForEmptyAndReturn(objArr[0], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().client_id(CommonUtils.checkForEmptyAndReturn(objArr[1], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().project_name(CommonUtils.checkForEmptyAndReturn(objArr[2], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().address(CommonUtils.checkForEmptyAndReturn(objArr[3], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().city(CommonUtils.checkForEmptyAndReturn(objArr[4], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().state(CommonUtils.checkForEmptyAndReturn(objArr[5], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().contact_person(CommonUtils.checkForEmptyAndReturn(objArr[6], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().contact_no(CommonUtils.checkForEmptyAndReturn(objArr[7], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().email(CommonUtils.checkForEmptyAndReturn(objArr[8], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().contract_price(CommonUtils.checkForEmptyAndReturn(objArr[9], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().id(CommonUtils.checkForEmptyAndReturn(objArr[10], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().client_name(CommonUtils.checkForEmptyAndReturn(objArr[11], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().invoice_no(CommonUtils.checkForEmptyAndReturn(objArr[12], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().invoice_date(CommonUtils.checkForEmptyAndReturn(objArr[13], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().invoice_description(CommonUtils.checkForEmptyAndReturn(objArr[14], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().invoice_amount_inclu_gst(CommonUtils.checkForEmptyAndReturn(objArr[15], blank)).build());
-//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().status(CommonUtils.checkForEmptyAndReturn(objArr[16], blank)).build());
-		    					    			
-		    			//discomId = CommonUtils.checkForEmptyAndReturn(objArr[1], blank);     
-		    			//pgErrorDetail = CommonUtils.checkForEmptyAndReturn(objArr[2], blank);   
-		    			orderId = CommonUtils.checkForEmptyAndReturn(objArr[3], blank);
+		    		if(UtilValidate.isNotEmpty(objArr)) {   
+//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder()
+//		                        .Id(CommonUtils.checkForEmptyAndReturn(objArr[0], blank))
+//		                        .clientId(CommonUtils.checkForEmptyAndReturn(objArr[1], blank))
+//		                        .projectName(CommonUtils.checkForEmptyAndReturn(objArr[2], blank))
+//		                        .address(CommonUtils.checkForEmptyAndReturn(objArr[3], blank))
+//		                        .city(CommonUtils.checkForEmptyAndReturn(objArr[4], blank))
+//		                        .state(CommonUtils.checkForEmptyAndReturn(objArr[5], blank))
+//		                        .contactPerson(CommonUtils.checkForEmptyAndReturn(objArr[6], blank))
+//		                        .contactNo(CommonUtils.checkForEmptyAndReturn(objArr[7], blank))
+//		                        .email(CommonUtils.checkForEmptyAndReturn(objArr[8], blank))
+//		                        .contractPrice(CommonUtils.checkForEmptyAndReturn(objArr[9], blank))
+//		                        .invoiceId(CommonUtils.checkForEmptyAndReturn(objArr[10], blank))
+//		                        .invoiceClientName(CommonUtils.checkForEmptyAndReturn(objArr[11], blank))
+//		                        .invoiceNo(CommonUtils.checkForEmptyAndReturn(objArr[12], blank))
+//		                        .invoiceDate(CommonUtils.checkForEmptyAndReturn(objArr[13], blank))
+//		                        .invoiceDescription(CommonUtils.checkForEmptyAndReturn(objArr[14], blank))
+//		                        .invoiceAmountIncluGst(CommonUtils.checkForEmptyAndReturn(objArr[15], blank))
+//		                        .status(CommonUtils.checkForEmptyAndReturn(objArr[16], blank))
+//		                        .build());
+		    		
+//		    			listOfProjectBillingSummary.add(ProjectBillingSummary.builder().id(CommonUtils.checkForEmptyAndReturn(objArr[0], blank))..build());
+		    			
+//		    			//discomId = CommonUtils.checkForEmptyAndReturn(objArr[1], blank);     
+//		    			//pgErrorDetail = CommonUtils.checkForEmptyAndReturn(objArr[2], blank);   
+//		    			orderId = CommonUtils.checkForEmptyAndReturn(objArr[3], blank);
 		    		}
 	 
 		    		}

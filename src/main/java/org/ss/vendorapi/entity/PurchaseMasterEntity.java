@@ -78,7 +78,4 @@ public class PurchaseMasterEntity extends ParentEntity implements Serializable{
 	@Column(name = "po_approve_Date")
 	private Date poApproveDate;
 
-
-
-
 }
