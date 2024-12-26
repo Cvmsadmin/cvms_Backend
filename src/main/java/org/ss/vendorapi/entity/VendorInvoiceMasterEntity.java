@@ -130,6 +130,21 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
     @OneToMany(mappedBy = "vendorInvoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<InvoiceDescriptionValue> descriptionValues;
     
+    
+
+//    @Column(name = "tds_on_gst_Per")
+//	private String tdsOnGst;
+//
+//	public String getTdsOnGst() {	
+//		return tdsOnGst;
+//	}
+//
+//
+//	public void setTdsOnGst(String tdsOnGst) {
+//	    this.tdsOnGst = tdsOnGst;
+//	}
+
+    
  
 
  

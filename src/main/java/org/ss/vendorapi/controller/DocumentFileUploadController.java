@@ -2,6 +2,7 @@ package org.ss.vendorapi.controller;
  
 import java.security.Policy.Parameters;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -442,7 +443,6 @@ public class DocumentFileUploadController {
 //            return uploadStatus;
 //        }
 //    }
-        
     
     @GetMapping("/downloadVendor")
     public ResponseEntity<Object> downloadVendorFile(@RequestParam("vendorName") String vendorName,
@@ -474,26 +474,70 @@ public class DocumentFileUploadController {
                                  .body(errorResponse);
         }
 
-        // Determine the content type based on the file extension
-        String contentType = "application/octet-stream"; // Default content type
-        if (fileName.endsWith(".pdf")) {
-            contentType = "application/pdf";
-        } else if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
-            contentType = "text/html";
-        } else if (fileName.endsWith(".xls")) {
-            contentType = "application/vnd.ms-excel"; // For BIFF .xls files
-        } else if (fileName.endsWith(".xlsx")) {
-            contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"; // For .xlsx files
-        } else if (fileName.endsWith(".csv")) {
-            contentType = "text/csv"; // For CSV files
-        }
+        // Base64 encode the file content
+        String base64EncodedFile = Base64.getEncoder().encodeToString(fileContent);
 
-        // Return the file content as bytecode in the response body
+        // Create the response body with the base64 string
+        java.util.Map<String, String> successResponse = new HashMap<>();
+        successResponse.put("fileName", fileName);
+        successResponse.put("fileContent", base64EncodedFile);
+
         return ResponseEntity.ok()
-        		.contentType(MediaType.APPLICATION_OCTET_STREAM)  // Always return as raw bytes
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-                .body(fileContent);
+                             .contentType(MediaType.APPLICATION_JSON)
+                             .body(successResponse);
     }
+        
+    
+//    @GetMapping("/downloadVendor")
+//    public ResponseEntity<Object> downloadVendorFile(@RequestParam("vendorName") String vendorName,
+//                                                     @RequestParam("fileName") String fileName) {
+//
+//        String remoteFilePath = "/opt/cvmsdocuments/vendor/" + vendorName + "/ERP/" + fileName;
+//
+//        byte[] fileContent;
+//        try {
+//            // Attempt to download the file content
+//            fileContent = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            // Return JSON response when there's an error
+//            java.util.Map<String, String> errorResponse = new HashMap<>();
+//            errorResponse.put("error", e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                                 .contentType(MediaType.APPLICATION_JSON)
+//                                 .body(errorResponse);
+//        }
+//
+//        // Check if the file content is null or empty
+//        if (fileContent == null || fileContent.length == 0) {
+//            // Return a message indicating no file was found
+//            java.util.Map<String, String> errorResponse = new HashMap<>();
+//            errorResponse.put("message", "Error: The requested file does not exist or is empty.");
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                                 .contentType(MediaType.APPLICATION_JSON)
+//                                 .body(errorResponse);
+//        }
+//
+//        // Determine the content type based on the file extension
+//        String contentType = "application/octet-stream"; // Default content type
+//        if (fileName.endsWith(".pdf")) {
+//            contentType = "application/pdf";
+//        } else if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
+//            contentType = "text/html";
+//        } else if (fileName.endsWith(".xls")) {
+//            contentType = "application/vnd.ms-excel"; // For BIFF .xls files
+//        } else if (fileName.endsWith(".xlsx")) {
+//            contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"; // For .xlsx files
+//        } else if (fileName.endsWith(".csv")) {
+//            contentType = "text/csv"; // For CSV files
+//        }
+//
+//        // Return the file content as bytecode in the response body
+//        return ResponseEntity.ok()
+//        		.contentType(MediaType.APPLICATION_OCTET_STREAM)  // Always return as raw bytes
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+//                .body(fileContent);
+//    }
 
 
     
@@ -553,7 +597,6 @@ public class DocumentFileUploadController {
 //    }
 
  
-    
     @GetMapping("/downloadClientDoc")
     public ResponseEntity<Object> downloadFile(@RequestParam("clientName") String clientName,
                                                @RequestParam("projectName") String projectName,
@@ -570,7 +613,6 @@ public class DocumentFileUploadController {
             e.printStackTrace();
             // Return JSON response for internal error
             java.util.Map<String, String> errorResponse = new HashMap<>();
-           
             errorResponse.put("error", e.getMessage());  // Include the exception message if necessary
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .contentType(MediaType.APPLICATION_JSON)
@@ -587,24 +629,123 @@ public class DocumentFileUploadController {
                                  .body(errorResponse);
         }
 
-        // Determine the content type based on the file extension
-        String contentType = "application/octet-stream"; // Default content type
-        if (fileName.endsWith(".pdf")) {
-            contentType = "application/pdf";
-        } else if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
-            contentType = "text/html";
-        } else if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
-            contentType = "application/vnd.ms-excel"; // For .xls and .xlsx
-        } else if (fileName.endsWith(".csv")) {
-            contentType = "text/csv"; // For CSV files
-        }
+        // Encode file content to Base64
+        String base64EncodedFile = Base64.getEncoder().encodeToString(fileContent);
 
-        // Return the file content with the correct content type
+        // Return Base64-encoded file content in the response body
+        java.util.Map<String, Object> response = new HashMap<>();
+        response.put("fileName", fileName);
+        response.put("fileContent", base64EncodedFile);
+
         return ResponseEntity.ok()
-        		.contentType(MediaType.APPLICATION_OCTET_STREAM)  // Always return as raw bytes
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-                .body(fileContent);
+                             .contentType(MediaType.APPLICATION_JSON)
+                             .body(response);
     }
+//    @GetMapping("/downloadClientDoc")
+//    public ResponseEntity<Object> downloadFile(@RequestParam("clientName") String clientName,
+//                                               @RequestParam("projectName") String projectName,
+//                                               @RequestParam("fileName") String fileName) {
+//
+//        // Construct the remote file path
+//        String remoteFilePath = "/opt/cvmsdocuments/client/" + clientName + "/" + projectName + "/" + fileName;
+//
+//        byte[] fileContent;
+//        try {
+//            // Retrieve the file from the server
+//            fileContent = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            // Return JSON response for internal error
+//            java.util.Map<String, String> errorResponse = new HashMap<>();
+//           
+//            errorResponse.put("error", e.getMessage());  // Include the exception message if necessary
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                                 .contentType(MediaType.APPLICATION_JSON)
+//                                 .body(errorResponse);
+//        }
+//
+//        // Check if file content is empty or null
+//        if (fileContent == null || fileContent.length == 0) {
+//            // Return JSON response for file not found
+//            java.util.Map<String, String> errorResponse = new HashMap<>();
+//            errorResponse.put("message", "Error: There are no documents in the folder.");
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                                 .contentType(MediaType.APPLICATION_JSON)
+//                                 .body(errorResponse);
+//        }
+//
+//        // Determine the content type based on the file extension
+//        String contentType = "application/octet-stream"; // Default content type
+//        if (fileName.endsWith(".pdf")) {
+//            contentType = "application/pdf";
+//        } else if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
+//            contentType = "text/html";
+//        } else if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
+//            contentType = "application/vnd.ms-excel"; // For .xls and .xlsx
+//        } else if (fileName.endsWith(".csv")) {
+//            contentType = "text/csv"; // For CSV files
+//        }
+//
+//        // Return the file content with the correct content type
+//        return ResponseEntity.ok()
+//        		.contentType(MediaType.APPLICATION_OCTET_STREAM)  // Always return as raw bytes
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+//                .body(fileContent);
+//    }
+    
+//    @GetMapping("/downloadClientDocsByClientName")
+//    public ResponseEntity<Object> downloadClientFileByClientName(
+//            @RequestParam("clientName") String clientName,
+//            @RequestParam("fileName") String fileName) {
+//
+//        // Construct the remote file path
+//        String remoteFilePath = "/opt/cvmsdocuments/client/" + clientName + "/ERP/" + fileName;
+//
+//        byte[] fileContent;
+//        try {
+//            // Retrieve the file content from the server
+//            fileContent = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            // Return JSON response in case of error
+//            Map<String, String> errorResponse = new HashMap<>();
+//            errorResponse.put("error", e.getMessage()); // Include exception message
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                                 .contentType(MediaType.APPLICATION_JSON)
+//                                 .body(errorResponse);
+//        }
+//
+//        // Check if the file content is null or empty
+//        if (fileContent == null || fileContent.length == 0) {
+//            // Return error response if the file is not found or is empty
+//            Map<String, String> errorResponse = new HashMap<>();
+//            errorResponse.put("message", "Error: The requested file does not exist or is empty.");
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                                 .contentType(MediaType.APPLICATION_JSON)
+//                                 .body(errorResponse);
+//        }
+//
+//        // Determine the content type based on the file extension
+//        String contentType = "application/octet-stream"; // Default content type
+//        if (fileName.endsWith(".pdf")) {
+//            contentType = "application/pdf";
+//        } else if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
+//            contentType = "text/html";
+//        } else if (fileName.endsWith(".xls")) {
+//            contentType = "application/vnd.ms-excel"; // For BIFF .xls files
+//        } else if (fileName.endsWith(".xlsx")) {
+//            contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"; // For .xlsx files
+//        } else if (fileName.endsWith(".csv")) {
+//            contentType = "text/csv"; // For CSV files
+//        }
+//
+//        // Return the file content with the correct content type and download header
+//        return ResponseEntity.ok()
+////                             .contentType(MediaType.parseMediaType(contentType))
+//        		             .contentType(MediaType.APPLICATION_OCTET_STREAM)  // Always return as raw bytes
+//                             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+//                             .body(fileContent);
+//    }
     
     @GetMapping("/downloadClientDocsByClientName")
     public ResponseEntity<Object> downloadClientFileByClientName(
@@ -638,27 +779,37 @@ public class DocumentFileUploadController {
                                  .body(errorResponse);
         }
 
-        // Determine the content type based on the file extension
-        String contentType = "application/octet-stream"; // Default content type
-        if (fileName.endsWith(".pdf")) {
-            contentType = "application/pdf";
-        } else if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
-            contentType = "text/html";
-        } else if (fileName.endsWith(".xls")) {
-            contentType = "application/vnd.ms-excel"; // For BIFF .xls files
-        } else if (fileName.endsWith(".xlsx")) {
-            contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"; // For .xlsx files
-        } else if (fileName.endsWith(".csv")) {
-            contentType = "text/csv"; // For CSV files
-        }
+        // Encode the file content into Base64
+        String base64EncodedFile = Base64.getEncoder().encodeToString(fileContent);
 
-        // Return the file content with the correct content type and download header
+        // Create the response
+        Map<String, Object> response = new HashMap<>();
+        response.put("fileName", fileName);
+        response.put("fileType", getFileType(fileName));  // Optional: Include the file type (MIME type)
+        response.put("imageByte", base64EncodedFile);   // The base64 string of the file content
+
         return ResponseEntity.ok()
-//                             .contentType(MediaType.parseMediaType(contentType))
-        		             .contentType(MediaType.APPLICATION_OCTET_STREAM)  // Always return as raw bytes
-                             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-                             .body(fileContent);
+                             .contentType(MediaType.APPLICATION_JSON)
+                             .body(response);
     }
+
+    // Helper method to determine the file type (MIME type) based on file extension
+    private String getFileType(String fileName) {
+        if (fileName.endsWith(".pdf")) {
+            return "application/pdf";
+        } else if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
+            return "text/html";
+        } else if (fileName.endsWith(".xls")) {
+            return "application/vnd.ms-excel";
+        } else if (fileName.endsWith(".xlsx")) {
+            return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        } else if (fileName.endsWith(".csv")) {
+            return "text/csv";
+        } else {
+            return "application/octet-stream";  // Default MIME type
+        }
+    }
+
 
 
 
@@ -692,9 +843,6 @@ public class DocumentFileUploadController {
 //                .body(fileContent);
 //    }
     
-    
-   
-    
     @GetMapping("/downloadSalesOpportunityDoc")
     public ResponseEntity<Object> downloadSalesOpportunityFile(@RequestParam("customerName") String customerName,
                                                                 @RequestParam("srNo") String srNo,
@@ -711,7 +859,6 @@ public class DocumentFileUploadController {
             e.printStackTrace();
             // Return JSON response for internal error
             java.util.Map<String, String> errorResponse = new HashMap<>();
-            
             errorResponse.put("error", e.getMessage());  // Include exception message if needed
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .contentType(MediaType.APPLICATION_JSON)
@@ -728,25 +875,73 @@ public class DocumentFileUploadController {
                                  .body(errorResponse);
         }
 
-        // Determine the content type based on the file extension
-        String contentType = "application/octet-stream"; // Default content type
-        if (fileName.endsWith(".pdf")) {
-            contentType = "application/pdf";
-        } else if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
-            contentType = "text/html";
-        } else if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
-            contentType = "application/vnd.ms-excel"; // For .xls and .xlsx
-        } else if (fileName.endsWith(".csv")) {
-            contentType = "text/csv"; // For CSV files
-        }
+        // Encode the file content as a base64 string
+        String base64EncodedFile = Base64.getEncoder().encodeToString(fileContent);
 
-        // Return the file content with the correct content type
+        // Prepare the JSON response
+        java.util.Map<String, Object> response = new HashMap<>();
+        response.put("fileName", fileName);
+        response.put("fileContent", base64EncodedFile);
+
+        // Return the base64-encoded file content as part of a JSON response
         return ResponseEntity.ok()
-//                .contentType(MediaType.parseMediaType(contentType))
-        		.contentType(MediaType.APPLICATION_OCTET_STREAM)  // Always return as raw bytes
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-                .body(fileContent);
+                             .contentType(MediaType.APPLICATION_JSON)
+                             .body(response);
     }
+   
+    
+//    @GetMapping("/downloadSalesOpportunityDoc")
+//    public ResponseEntity<Object> downloadSalesOpportunityFile(@RequestParam("customerName") String customerName,
+//                                                                @RequestParam("srNo") String srNo,
+//                                                                @RequestParam("fileName") String fileName) {
+//
+//        // Construct the remote file path for Sales/Opportunity
+//        String remoteFilePath = "/opt/cvmsdocuments/sales_opportunity/" + customerName + "/" + srNo + "/" + fileName;
+//
+//        byte[] fileContent;
+//        try {
+//            // Retrieve the file from the server
+//            fileContent = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            // Return JSON response for internal error
+//            java.util.Map<String, String> errorResponse = new HashMap<>();
+//            
+//            errorResponse.put("error", e.getMessage());  // Include exception message if needed
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                                 .contentType(MediaType.APPLICATION_JSON)
+//                                 .body(errorResponse);
+//        }
+//
+//        // Check if file content is empty or null
+//        if (fileContent == null || fileContent.length == 0) {
+//            // Return JSON response for file not found
+//            java.util.Map<String, String> errorResponse = new HashMap<>();
+//            errorResponse.put("message", "Error: There are no documents in the folder.");
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                                 .contentType(MediaType.APPLICATION_JSON)
+//                                 .body(errorResponse);
+//        }
+//
+//        // Determine the content type based on the file extension
+//        String contentType = "application/octet-stream"; // Default content type
+//        if (fileName.endsWith(".pdf")) {
+//            contentType = "application/pdf";
+//        } else if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
+//            contentType = "text/html";
+//        } else if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
+//            contentType = "application/vnd.ms-excel"; // For .xls and .xlsx
+//        } else if (fileName.endsWith(".csv")) {
+//            contentType = "text/csv"; // For CSV files
+//        }
+//
+//        // Return the file content with the correct content type
+//        return ResponseEntity.ok()
+////                .contentType(MediaType.parseMediaType(contentType))
+//        		.contentType(MediaType.APPLICATION_OCTET_STREAM)  // Always return as raw bytes
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+//                .body(fileContent);
+//    }
 
     
 //    @GetMapping("/downloadSalesOpportunityDoc")

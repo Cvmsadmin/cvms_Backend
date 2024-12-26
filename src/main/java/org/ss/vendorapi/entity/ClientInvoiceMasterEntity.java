@@ -127,6 +127,8 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	@Column(name = "total_payment_received")
 	private String totalPaymentReceived;
 
+	private String tdsOnGst;
+
 	public Object getBillableState() {
 	    // Determine the billable state based on the status or other logic
 	    if ("Completed".equalsIgnoreCase(this.status)) {
@@ -138,6 +140,16 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	    } else {
 	        return "Unknown";
 	    }
+	}
+
+	public void setBillableState(Object object) {
+		
+		
+	}
+
+	public String getTdsOnGst() {
+		
+		return this.tdsOnGst;
 	}
 
 
