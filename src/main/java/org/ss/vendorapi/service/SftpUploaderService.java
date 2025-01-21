@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.ss.vendorapi.config.SftpConfig;
@@ -20,17 +21,9 @@ public class SftpUploaderService {
  
     @Autowired
     private SftpConfig sftpConfig;
- 
-    /**
-     * <h1>Infinite Computer Solutions</h1>
-     * <p>
-     * WSS-BESCOM
-     * </p>
-     *
-     * @author Jaydeep Pal
-     * @since 04-Feb-2024 {@summary IT REFERS TO file upload }
-     */
     
+//    @Value("${sftp.privateKeyPath}")
+//    private String privateKeyPath;
 
  
     public String uploadFileToServer(MultipartFile file, String baseDir, String clientName, String newFileName) {
@@ -44,6 +37,10 @@ public class SftpUploaderService {
         try {
             // creating SFTP session
             JSch jsch = new JSch();
+            
+            // Load private key for authentication
+//            jsch.addIdentity(privateKeyPath);
+            
             session = jsch.getSession(sftpConfig.getUsername(), sftpConfig.getHost(), sftpConfig.getPort());
             session.setPassword(sftpConfig.getPassword());
  
@@ -61,7 +58,7 @@ public class SftpUploaderService {
  
             // Ensure directory exists
             ensureDirectoryExists(channelSftp, fullPath);
-// 
+            
 //            try (InputStream inputStream = file.getInputStream()) {
 //                channelSftp.put(inputStream, fullPath + "/" + file.getOriginalFilename());
 //                return "File uploaded successfully to: " + fullPath;
@@ -112,6 +109,9 @@ public class SftpUploaderService {
         JSch jsch = new JSch();
         Session session = jsch.getSession(sftpConfig.getUsername(), sftpConfig.getHost(), sftpConfig.getPort());
         session.setPassword(sftpConfig.getPassword());
+        
+     // Load private key for authentication
+//        jsch.addIdentity(privateKeyPath);
  
         // Avoid asking for key confirmation
         session.setConfig("StrictHostKeyChecking", "no");
@@ -131,6 +131,8 @@ public class SftpUploaderService {
             session.disconnect();
         }
     }
+
+
       
 }
  

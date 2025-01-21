@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
+import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.entity.DescriptionAndBaseValue;
 import org.ss.vendorapi.entity.InvoiceDescriptionValue;
 import org.ss.vendorapi.entity.SalesOpportunityMasterEntity;
@@ -201,7 +202,7 @@ public class VendorInvoiceMasterController {
 	        vendorInvoiceMaster.setInvoiceInclusiveOfGst(vendorInvoiceDTO.getInvoiceInclusiveOfGst());
 	        vendorInvoiceMaster.setTdsBaseValue(vendorInvoiceDTO.getTdsBaseValue());
 	        vendorInvoiceMaster.setTdsPer(vendorInvoiceDTO.getTdsPer());
-	        vendorInvoiceMaster.setTdsOnGstPer(vendorInvoiceDTO.getTdsOnGst());
+	        vendorInvoiceMaster.setTdsOnGst(vendorInvoiceDTO.getTdsOnGst());
 	        vendorInvoiceMaster.setIgstOnTds(vendorInvoiceDTO.getIgstOnTds());
 	        vendorInvoiceMaster.setCgstOnTds(vendorInvoiceDTO.getCgstOnTds());
 	        vendorInvoiceMaster.setSgstOnTds(vendorInvoiceDTO.getSgstOnTds());
@@ -483,6 +484,18 @@ public class VendorInvoiceMasterController {
 	                VendorInvioceMasterDTO dto = new VendorInvioceMasterDTO();
 	                BeanUtils.copyProperties(invoice, dto);
 
+	                // Get client info
+	                if (invoice.getClientName() != null) {
+	                    ClientMasterEntity client = vendorInvoiceMasterService.findClientById(Long.parseLong(invoice.getClientName()));
+	                    if (client != null) {
+	                        dto.setClientId(client.getId());
+	                        dto.setClientName(client.getClientName());
+	                    } else {
+	                        dto.setClientId(null); // Default to null if client is not found
+	                        dto.setClientName("Unknown");
+	                    }
+	                }
+
 	                // Map nested descriptionsAndBaseValues from descriptionValues
 	                if (invoice.getDescriptionValues() != null && !invoice.getDescriptionValues().isEmpty()) {
 	                    List<DescriptionAndBaseValue> descriptionAndBaseValues = invoice.getDescriptionValues().stream()
@@ -514,6 +527,7 @@ public class VendorInvoiceMasterController {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
 	
 //	@EncryptResponse
 //	@PutMapping("/updateVendorInvoiceMaster")
@@ -578,7 +592,7 @@ public class VendorInvoiceMasterController {
 	            vendorInvoiceMasterDTO.getInvoiceDate() == null ||
 	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceNo()) ||
 	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getPoNo()) ||
-	            vendorInvoiceMasterDTO.getInvoiceDueDate() == null ||
+//	            vendorInvoiceMasterDTO.getInvoiceDueDate() == null ||
 	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceDescription()) ||
 	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getGstPer()) ||
 	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceAmountExcluGst()) ||
@@ -613,7 +627,7 @@ public class VendorInvoiceMasterController {
 	        vendorInvoiceEntity.setInvoiceInclusiveOfGst(vendorInvoiceMasterDTO.getInvoiceInclusiveOfGst() != null ? vendorInvoiceMasterDTO.getInvoiceInclusiveOfGst() : vendorInvoiceEntity.getInvoiceInclusiveOfGst());
 	        vendorInvoiceEntity.setTdsBaseValue(vendorInvoiceMasterDTO.getTdsBaseValue() != null ? vendorInvoiceMasterDTO.getTdsBaseValue() : vendorInvoiceEntity.getTdsBaseValue());
 	        vendorInvoiceEntity.setTdsPer(vendorInvoiceMasterDTO.getTdsPer() != null ? vendorInvoiceMasterDTO.getTdsPer() : vendorInvoiceEntity.getTdsPer());
-//	        vendorInvoiceEntity.setTdsOnGst(vendorInvoiceMasterDTO.getTdsOnGst() != null ? vendorInvoiceMasterDTO.getTdsOnGst() : vendorInvoiceEntity.getTdsOnGst());
+	        vendorInvoiceEntity.setTdsOnGst(vendorInvoiceMasterDTO.getTdsOnGst() != null ? vendorInvoiceMasterDTO.getTdsOnGst() : vendorInvoiceEntity.getTdsOnGst());
 	        vendorInvoiceEntity.setIgstOnTds(vendorInvoiceMasterDTO.getIgstOnTds() != null ? vendorInvoiceMasterDTO.getIgstOnTds() : vendorInvoiceEntity.getIgstOnTds());
 	        vendorInvoiceEntity.setCgstOnTds(vendorInvoiceMasterDTO.getCgstOnTds() != null ? vendorInvoiceMasterDTO.getCgstOnTds() : vendorInvoiceEntity.getCgstOnTds());
 	        vendorInvoiceEntity.setSgstOnTds(vendorInvoiceMasterDTO.getSgstOnTds() != null ? vendorInvoiceMasterDTO.getSgstOnTds() : vendorInvoiceEntity.getSgstOnTds());
@@ -728,20 +742,6 @@ public class VendorInvoiceMasterController {
 	    }
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
 	
 	}

@@ -35,138 +35,97 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-    @Column(name = "vendor_name")
-    private String vendorName;
+	  @Column(name = "vendor_name")
+	    private String vendorName;
 
-    @Column(name = "client_name")
-    private String clientName;
+	    @Column(name = "client_name")
+	    private String clientName;
 
-    @Column(name = "project_name")
-    private String projectName;
+	    @Column(name = "project_name")
+	    private String projectName;
 
-    @JsonFormat(pattern="dd/MM/yyyy")
-    @Column(name = "invoice_date")
-    private Date invoiceDate;
+	    @JsonFormat(pattern = "dd/MM/yyyy")
+	    @Column(name = "invoice_date")
+	    private Date invoiceDate;
 
-    @Column(name = "invoice_no")
-    private String invoiceNo;
+	    @Column(name = "invoice_no")
+	    private String invoiceNo;
 
-    @Column(name = "purchase_order_no")
-    private String poNo;
+	    @Column(name = "purchase_order_no")
+	    private String poNo;
 
-    @JsonFormat(pattern="dd/MM/yyyy")
-    @Column(name = "invoice_due_date")
-    private Date invoiceDueDate;
+	    @JsonFormat(pattern = "dd/MM/yyyy")
+	    @Column(name = "invoice_due_date")
+	    private Date invoiceDueDate;
 
-    @Column(name = "invoice_description")
-    private String invoiceDescription;
+	    @Column(name = "invoice_description")
+	    private String invoiceDescription;
 
-    @Column(name = "gst_per")
-    private String gstPer;
+	    @Column(name = "gst_per")
+	    private String gstPer;
 
-    @Column(name = "invoice_amount_exclu_gst")
-    private String invoiceAmountExcluGst;
+	    @Column(name = "invoice_amount_exclu_gst")
+	    private String invoiceAmountExcluGst;
 
-    @Column(name = "invoice_amount_inclu_gst")
-    private String invoiceAmountIncluGst;
+	    @Column(name = "invoice_amount_inclu_gst")
+	    private String invoiceAmountIncluGst;
 
-    @Column(name = "status")
-    private String status;
+	    @Column(name = "status")
+	    private String status;
 
-    // New fields added
-    @Column(name = "invoice_base_value")
-    private String invoiceBaseValue;
+	    // New fields added from the JSON structure
+	    @Column(name = "invoice_base_value")
+	    private String invoiceBaseValue;
 
-    @Column(name = "gst_base_value")
-    private String gstBaseValue;
+	    @Column(name = "gst_base_value")
+	    private String gstBaseValue;
 
-    @Column(name = "invoice_inclusive_of_gst")
-    private String invoiceInclusiveOfGst;
-    
-    @Column(name = "tds_Per")
-	private String tdsPer;
-    
+	    @Column(name = "invoice_inclusive_of_gst")
+	    private String invoiceInclusiveOfGst;
 
-    @Column(name = "tds_base_value")
-    private String tdsBaseValue;
-    
-    @Column(name = "tds_on_gst_Per")
-	private String tdsOnGstPer;
-    
-    @Column(name = "igst_on_tds")
-    private String igstOnTds;
+	    @Column(name = "tds_per")
+	    private String tdsPer;
 
-    @Column(name = "cgst_on_tds")
-    private String cgstOnTds;
+	    @Column(name = "tds_base_value")
+	    private String tdsBaseValue;
 
-    @Column(name = "sgst_on_tds")
-    private String sgstOnTds;
+	    @Column(name = "tds_on_gst")
+	    private String tdsOnGst;
 
-    @Column(name = "total_tds_deducted")
-    private String totalTdsDeducted;
+	    @Column(name = "igst_on_tds")
+	    private String igstOnTds;
 
-    @Column(name = "balance")
-    private String balance;
+	    @Column(name = "cgst_on_tds")
+	    private String cgstOnTds;
 
-    @Column(name = "penalty")
-    private String penalty;
+	    @Column(name = "sgst_on_tds")
+	    private String sgstOnTds;
 
-    @Column(name = "penalty_deduction_on_base")
-    private String penaltyDeductionOnBase;
+	    @Column(name = "total_tds_deducted")
+	    private String totalTdsDeducted;
 
-    @Column(name = "gst_on_penalty")
-    private String gstOnPenalty;
+	    @Column(name = "balance")
+	    private String balance;
 
-    @Column(name = "total_penalty_deduction")
-    private String totalPenaltyDeduction;
+	    @Column(name = "penalty")
+	    private String penalty;
 
-    @Column(name = "credit_note")
-    private String creditNote;
-    
-    @Column(name = "total_payment_received")
-    private String totalPaymentReceived;
-    
-    
-    @OneToMany(mappedBy = "vendorInvoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<InvoiceDescriptionValue> descriptionValues;
-    
-    
+	    @Column(name = "penalty_deduction_on_base")
+	    private String penaltyDeductionOnBase;
 
-//    @Column(name = "tds_on_gst_Per")
-//	private String tdsOnGst;
-//
-//	public String getTdsOnGst() {	
-//		return tdsOnGst;
-//	}
-//
-//
-//	public void setTdsOnGst(String tdsOnGst) {
-//	    this.tdsOnGst = tdsOnGst;
-//	}
+	    @Column(name = "gst_on_penalty")
+	    private String gstOnPenalty;
 
-    
- 
+	    @Column(name = "total_penalty_deduction")
+	    private String totalPenaltyDeduction;
 
- 
-}
-    
+	    @Column(name = "credit_note")
+	    private String creditNote;
 
+	    @Column(name = "total_payment_received")
+	    private String totalPaymentReceived;
 
+	    @OneToMany(mappedBy = "vendorInvoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	    private List<InvoiceDescriptionValue> descriptionValues;
 
-//    @Column(name = "invoice_upload")
-//    private byte[] invoiceUpload;
-//
-//    @Column(name = "po")
-//    private byte[] po;
-//
-//    @Column(name = "delivery_acceptance")
-//    private byte[] deliveryAcceptance;
-//
-//    @Column(name = "e_way_bill")
-//    private byte[] eWayBill;
-//
-//    @Column(name = "miscellaneous")
-//    private byte[] miscellaneous;
-
-	
-
+	}

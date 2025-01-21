@@ -6,7 +6,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.entity.VendorInvoiceMasterEntity;
+import org.ss.vendorapi.repository.ClientMasterRepository;
 import org.ss.vendorapi.repository.VendorInvoiceMasterRepository;
 
 @Service
@@ -14,6 +16,9 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
 
 	@Autowired 
 	private VendorInvoiceMasterRepository vendorinviceMasterRepository;
+	
+	@Autowired
+    private ClientMasterRepository clientMasterRepository; 
 
 
 
@@ -55,6 +60,10 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
         return vendorinviceMasterRepository.findByInvoiceNo(invoiceNo);
     }
 
+	@Override
+    public ClientMasterEntity findClientById(Long clientId) {
+        return clientMasterRepository.findById(clientId).orElse(null); // Handle if not found
+    }
 
 
 

@@ -17,6 +17,12 @@ public interface ClientMasterRepository extends JpaRepository<ClientMasterEntity
 	public List<ClientMasterEntity> findByAccountManagerId(String accountManagerId);
 	
 //	Optional<ClientMasterEntity> findByClientName(String clientName);
+	
+	ClientMasterEntity findByClientName(String clientName);
+	
+
+	
+//	ClientMasterEntity findById(Long id);
 
 
 }

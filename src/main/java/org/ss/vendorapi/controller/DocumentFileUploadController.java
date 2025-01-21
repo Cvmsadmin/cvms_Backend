@@ -23,6 +23,7 @@ import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.FileUploadRequestModal;
 import org.ss.vendorapi.entity.FileUploadRequestModal.DocumentType;
 import org.ss.vendorapi.repository.DocumentUploadRepository;
+//import org.ss.vendorapi.service.SftpService;
 import org.ss.vendorapi.service.SftpUploaderService;
  
 @CrossOrigin(origins = "*")
@@ -36,7 +37,7 @@ public class DocumentFileUploadController {
     @Autowired
     private DocumentUploadRepository documentUploadRepository;
     
-//    @EncryptResponse
+    @EncryptResponse
     @PostMapping("/uploadClientDocs")
     public ResponseEntity<?> uploadFiles(
             @RequestParam("files") List<MultipartFile> files,
@@ -45,43 +46,78 @@ public class DocumentFileUploadController {
             @RequestParam("documentTypes") List<DocumentType> documentTypes,
             @RequestParam("applicantId") String applicantId) {
 
+        Map<String, Object> response = new HashMap<>();
         List<String> uploadResults = new ArrayList<>();
-        Map<String, Object> statusMap = new HashMap<>();
+
+        // Validate input
         if (files.size() != documentTypes.size()) {
-            uploadResults.add("Error: The number of files and document types must match.");
-            statusMap.put("statusMsg", "Error: The number of files and document types must match.");
-            statusMap.put("status", "SUCCESS");
-            return new ResponseEntity<>(statusMap,HttpStatus.OK);
+            response.put("status", "FAIL");
+            response.put("statusMsg", "The number of files and document types must match.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
+        boolean allUploadsSuccessful = true;
+
+        // Process each file
         for (int i = 0; i < files.size(); i++) {
             MultipartFile file = files.get(i);
             DocumentType documentType = documentTypes.get(i);
 
             if (file.isEmpty()) {
                 uploadResults.add("File is empty for document type: " + documentType);
+                allUploadsSuccessful = false;
                 continue;
             }
 
-            String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
-            String uploadStatus = sftpUploaderService.uploadFileToServer(file, "/opt/cvmsdocuments/client", clientName, projectName, newFileName);
+            String newFileName = documentType.name() + getFileExtension1(file.getOriginalFilename());
+            String remotePath = "/opt/cvmsdocuments/client/" + clientName + "/" + projectName + "/" + newFileName;
 
-            if (uploadStatus.startsWith("File uploaded successfully")) {
-                FileUploadRequestModal fileUploadRequest = new FileUploadRequestModal();
-                fileUploadRequest.setApplicantId(applicantId);
-                fileUploadRequest.setDocumentType(documentType);
-                fileUploadRequest.setDocumentPath("/opt/cvmsdocuments/client" + "/" + clientName + "/" + projectName + "/" + newFileName);
+            try {
+                // Upload file to SFTP with newFileName
+                String uploadStatus = sftpUploaderService.uploadFileToServer(file, "/opt/cvmsdocuments/client", clientName, projectName, newFileName);
+                
+                // Save file info to database
+                FileUploadRequestModal fileRecord = new FileUploadRequestModal();
+                fileRecord.setApplicantId(applicantId);
+                fileRecord.setDocumentType(documentType);
+                fileRecord.setDocumentPath(remotePath);
+                documentUploadRepository.save(fileRecord);
 
-                documentUploadRepository.save(fileUploadRequest);
                 uploadResults.add("File uploaded successfully for document type: " + documentType);
-            } else {
-                uploadResults.add("File upload failed for document type: " + documentType);
+            } catch (Exception e) {
+                uploadResults.add("File upload failed for document type: " + documentType + ". Error: " + e.getMessage());
+                allUploadsSuccessful = false;
             }
+
         }
-        statusMap.put("statusMsg", "Error: The number of files and document types must match.");
-        statusMap.put("status", "SUCCESS");
-        return new ResponseEntity<>(statusMap,HttpStatus.OK);
+
+        // Build response
+        if (allUploadsSuccessful) {
+            response.put("status", "SUCCESS");
+            
+            response.put("statusMsg", "All files uploaded successfully.");
+        } else {
+            response.put("status", "FAIL");
+            response.put("statusMsg", "Some files failed to upload.");
+        }
+        response.put("details", uploadResults);
+
+        return new ResponseEntity<>(response, allUploadsSuccessful ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    /**
+     * Helper method to get file extension.
+     *
+     * @param fileName the original file name
+     * @return file extension including the dot (e.g., ".pdf"), or an empty string if none
+     */
+    private String getFileExtension1(String fileName) {
+        if (fileName == null || fileName.lastIndexOf('.') == -1) {
+            return "";
+        }
+        return fileName.substring(fileName.lastIndexOf('.'));
+    }
+
     
     
     @EncryptResponse
@@ -112,7 +148,7 @@ public class DocumentFileUploadController {
             }
 
             // Generate the new file name based on the document type and file extension
-            String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+            String newFileName = documentType.name() + getFileExtension1(file.getOriginalFilename());
 
             // Upload the file to the server, specifying "ERP" as the default project
             String uploadStatus = sftpUploaderService.uploadFileToServer(file, "/opt/cvmsdocuments/client", clientName, "ERP", newFileName);
@@ -134,9 +170,6 @@ public class DocumentFileUploadController {
         }
         return uploadResults;
     }
-
-
-    
     
     
     @EncryptResponse
@@ -164,7 +197,7 @@ public class DocumentFileUploadController {
                 continue;
             }
 
-            String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+            String newFileName = documentType.name() + getFileExtension1(file.getOriginalFilename());
             String baseDir = "/opt/cvmsdocuments/vendor";
             String uploadStatus = sftpUploaderService.uploadFileToServer(file, baseDir, vendorName, "ERP", newFileName);
 
@@ -318,7 +351,7 @@ public class DocumentFileUploadController {
             }
 
             // Create a new file name based on document type and timestamp
-            String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+            String newFileName = documentType.name() + getFileExtension1(file.getOriginalFilename());
 
             // Upload the file to the server
             String uploadStatus = sftpUploaderService.uploadFileToServer(file, baseDir, customerName, srNo, newFileName);
@@ -444,6 +477,7 @@ public class DocumentFileUploadController {
 //        }
 //    }
     
+    
     @GetMapping("/downloadVendor")
     public ResponseEntity<Object> downloadVendorFile(@RequestParam("vendorName") String vendorName,
                                                      @RequestParam("fileName") String fileName) {
@@ -454,9 +488,27 @@ public class DocumentFileUploadController {
         try {
             // Attempt to download the file content
             fileContent = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+        } catch (com.jcraft.jsch.SftpException e) {
+            e.printStackTrace();
+            // Check if the error is due to file not being found
+            if (e.getMessage().contains("No such file")) {
+                // Return a custom error message for file not found
+                java.util.Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("message", "No file content available for the selected document.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                     .contentType(MediaType.APPLICATION_JSON)
+                                     .body(errorResponse);
+            } else {
+                // Return a generic error for other exceptions
+                java.util.Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                     .contentType(MediaType.APPLICATION_JSON)
+                                     .body(errorResponse);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            // Return JSON response when there's an error
+            // Handle unexpected exceptions
             java.util.Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -468,7 +520,7 @@ public class DocumentFileUploadController {
         if (fileContent == null || fileContent.length == 0) {
             // Return a message indicating no file was found
             java.util.Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Error: The requested file does not exist or is empty.");
+            errorResponse.put("message", "No file content available for the selected document.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                  .contentType(MediaType.APPLICATION_JSON)
                                  .body(errorResponse);
@@ -486,6 +538,55 @@ public class DocumentFileUploadController {
                              .contentType(MediaType.APPLICATION_JSON)
                              .body(successResponse);
     }
+
+    
+    
+    
+    
+    
+    
+//    @GetMapping("/downloadVendor")
+//    public ResponseEntity<Object> downloadVendorFile(@RequestParam("vendorName") String vendorName,
+//                                                     @RequestParam("fileName") String fileName) {
+//
+//        String remoteFilePath = "/opt/cvmsdocuments/vendor/" + vendorName + "/ERP/" + fileName;
+//
+//        byte[] fileContent;
+//        try {
+//            // Attempt to download the file content
+//            fileContent = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            // Return JSON response when there's an error
+//            java.util.Map<String, String> errorResponse = new HashMap<>();
+//            errorResponse.put("error", e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                                 .contentType(MediaType.APPLICATION_JSON)
+//                                 .body(errorResponse);
+//        }
+//
+//        // Check if the file content is null or empty
+//        if (fileContent == null || fileContent.length == 0) {
+//            // Return a message indicating no file was found
+//            java.util.Map<String, String> errorResponse = new HashMap<>();
+//            errorResponse.put("message", "Error: The requested file does not exist or is empty.");
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                                 .contentType(MediaType.APPLICATION_JSON)
+//                                 .body(errorResponse);
+//        }
+//
+//        // Base64 encode the file content
+//        String base64EncodedFile = Base64.getEncoder().encodeToString(fileContent);
+//
+//        // Create the response body with the base64 string
+//        java.util.Map<String, String> successResponse = new HashMap<>();
+//        successResponse.put("fileName", fileName);
+//        successResponse.put("fileContent", base64EncodedFile);
+//
+//        return ResponseEntity.ok()
+//                             .contentType(MediaType.APPLICATION_JSON)
+//                             .body(successResponse);
+//    }
         
     
 //    @GetMapping("/downloadVendor")
@@ -607,13 +708,31 @@ public class DocumentFileUploadController {
 
         byte[] fileContent;
         try {
-            // Retrieve the file from the server
+            // Attempt to retrieve the file from the server
             fileContent = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+        } catch (com.jcraft.jsch.SftpException e) {
+            e.printStackTrace();
+            // Check if the error is because of file not found
+            if (e.getMessage().contains("No such file")) {
+                // Return a custom error message when the file doesn't exist
+                java.util.Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("message", "No file content available for the selected document.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                     .contentType(MediaType.APPLICATION_JSON)
+                                     .body(errorResponse);
+            } else {
+                // For any other SFTP-related errors, return the exception message
+                java.util.Map<String, String> errorResponse = new HashMap<>();
+                errorResponse.put("error", e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                     .contentType(MediaType.APPLICATION_JSON)
+                                     .body(errorResponse);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            // Return JSON response for internal error
+            // Handle other unexpected errors and return a generic message
             java.util.Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", e.getMessage());  // Include the exception message if necessary
+            errorResponse.put("error", "An unexpected error occurred: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .contentType(MediaType.APPLICATION_JSON)
                                  .body(errorResponse);
@@ -621,9 +740,9 @@ public class DocumentFileUploadController {
 
         // Check if file content is empty or null
         if (fileContent == null || fileContent.length == 0) {
-            // Return JSON response for file not found
+            // Return JSON response indicating no file content
             java.util.Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Error: There are no documents in the folder.");
+            errorResponse.put("message", "No file content available for the selected document.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                  .contentType(MediaType.APPLICATION_JSON)
                                  .body(errorResponse);
@@ -641,6 +760,7 @@ public class DocumentFileUploadController {
                              .contentType(MediaType.APPLICATION_JSON)
                              .body(response);
     }
+
 //    @GetMapping("/downloadClientDoc")
 //    public ResponseEntity<Object> downloadFile(@RequestParam("clientName") String clientName,
 //                                               @RequestParam("projectName") String projectName,
@@ -761,9 +881,16 @@ public class DocumentFileUploadController {
             fileContent = sftpUploaderService.downloadFileFromServer(remoteFilePath);
         } catch (Exception e) {
             e.printStackTrace();
+            // Check for specific exception indicating file not found
+            String errorMessage = e.getMessage();
+            // You can customize this to be more specific based on your exception handling
+            if (errorMessage != null && errorMessage.contains("No such file")) {
+                errorMessage = "No file content available for the selected document."; // Custom message
+            }
+
             // Return JSON response in case of error
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", e.getMessage()); // Include exception message
+            errorResponse.put("error", errorMessage); // Include the error message
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .contentType(MediaType.APPLICATION_JSON)
                                  .body(errorResponse);
@@ -773,7 +900,7 @@ public class DocumentFileUploadController {
         if (fileContent == null || fileContent.length == 0) {
             // Return error response if the file is not found or is empty
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Error: The requested file does not exist or is empty.");
+            errorResponse.put("message", "No file content available for the selected document.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                  .contentType(MediaType.APPLICATION_JSON)
                                  .body(errorResponse);
@@ -809,6 +936,7 @@ public class DocumentFileUploadController {
             return "application/octet-stream";  // Default MIME type
         }
     }
+
 
 
 

@@ -2,14 +2,19 @@ package org.ss.vendorapi.repository;
 
 import java.util.List;
 
+//import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.ss.vendorapi.entity.ProjectBillingSummary;
+import org.ss.vendorapi.entity.ProjectPaymentSummary;
 
 @Repository
-public interface ProjectBillingSummaryRepository extends JpaRepository<ProjectBillingSummary, Long> {
+public interface ProjectBillingSummaryRepository extends JpaRepository<ProjectPaymentSummary, Long> {
+
+	@Query("SELECT p FROM ProjectPaymentSummary p")
+	List<ProjectPaymentSummary> findAllProjectPaymentSummary();
 	
 	
 	

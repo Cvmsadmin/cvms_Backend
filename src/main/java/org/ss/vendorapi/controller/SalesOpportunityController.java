@@ -46,105 +46,109 @@ public class SalesOpportunityController {
 
 	@EncryptResponse
 	@PostMapping("/SalesCreated")
-	public ResponseEntity<?>createSales(@RequestBody SalesOpportunityDTO salesDTO,HttpServletRequest request){
-		String methodName = request.getRequestURI();
-//		logger.logMethodStart(methodName);
-		Map<String,Object> statusMap=new HashMap<>();
-		try {
-			if(UtilValidate.isEmpty(salesDTO.getSrNumber())|| 
-					UtilValidate.isEmpty(salesDTO.getNameOfCustomer())||
-					UtilValidate.isEmpty(salesDTO.getGeography())||
-					UtilValidate.isEmpty(salesDTO.getRfpNumber())||
-					UtilValidate.isEmpty(salesDTO.getEprocId())||
-					UtilValidate.isEmpty(salesDTO.getRfpTitle())||
-					UtilValidate.isEmpty(salesDTO.getModeOfSelection())||
-					UtilValidate.isEmpty(salesDTO.getModeOfSubmission())||
-					UtilValidate.isEmpty(salesDTO.getProjectDuration())||
-					UtilValidate.isEmpty(salesDTO.getEstimatedProjectValue())||
-					UtilValidate.isEmpty(salesDTO.getExpectedOEMs())||
-					UtilValidate.isEmpty(salesDTO.getJvConsortiumSubContractors())||
-					UtilValidate.isEmpty(salesDTO.getExpectedCompetitors())||
-					UtilValidate.isEmpty(salesDTO.getConsultant())||
-					UtilValidate.isEmpty(salesDTO.getSalesSPOC())||
-					UtilValidate.isEmpty(salesDTO.getRemarksStatus())||
-					salesDTO.getRfpPublished()==null||
-					salesDTO.getPreBidQueries()==null||
-					salesDTO.getPreBidMeeting()==null||
-					salesDTO.getSubmissionEndDate()==null||
-					salesDTO.getSubmissionOfBGHardCopy()==null||
-					salesDTO.getOpeningDate()==null||
-					salesDTO.getDateOfPresentation()==null||
-					UtilValidate.isEmpty(salesDTO.getEmdAmount())||
-					UtilValidate.isEmpty(salesDTO.getModeOfEMD())||
-					UtilValidate.isEmpty(salesDTO.getTenderDocFee())||
-					UtilValidate.isEmpty(salesDTO.getTenderProcessingFee())||
-					UtilValidate.isEmpty(salesDTO.getPortalCharges())||
-					
-					UtilValidate.isEmpty(salesDTO.getApprovalForBidParticipation())||
-					UtilValidate.isEmpty(salesDTO.getCurrentStatus())){
+	public ResponseEntity<?> createSales(@RequestBody SalesOpportunityDTO salesDTO, HttpServletRequest request) {
+	    String methodName = request.getRequestURI();
+	    Map<String, Object> statusMap = new HashMap<>();
+	    
+	    try {
+	        // Validate mandatory fields
+	        if (UtilValidate.isEmpty(salesDTO.getNameOfCustomer()) ||
+	            UtilValidate.isEmpty(salesDTO.getGeography()) ||
+	            UtilValidate.isEmpty(salesDTO.getRfpNumber()) ||
+	            UtilValidate.isEmpty(salesDTO.getEprocId()) ||
+	            UtilValidate.isEmpty(salesDTO.getRfpTitle()) ||
+	            UtilValidate.isEmpty(salesDTO.getModeOfSelection()) ||
+	            UtilValidate.isEmpty(salesDTO.getModeOfSubmission()) ||
+	            UtilValidate.isEmpty(salesDTO.getProjectDuration()) ||
+	            UtilValidate.isEmpty(salesDTO.getEstimatedProjectValue()) ||
+	            UtilValidate.isEmpty(salesDTO.getExpectedOEMs()) ||
+	            UtilValidate.isEmpty(salesDTO.getJvConsortiumSubContractors()) ||
+	            UtilValidate.isEmpty(salesDTO.getExpectedCompetitors()) ||
+	            UtilValidate.isEmpty(salesDTO.getConsultant()) ||
+	            UtilValidate.isEmpty(salesDTO.getSalesSPOC()) ||
+	            UtilValidate.isEmpty(salesDTO.getRemarksStatus()) ||
+	            salesDTO.getRfpPublished() == null ||
+	            salesDTO.getPreBidQueries() == null ||
+	            salesDTO.getPreBidMeeting() == null ||
+	            salesDTO.getSubmissionEndDate() == null ||
+	            salesDTO.getSubmissionOfBGHardCopy() == null ||
+	            salesDTO.getOpeningDate() == null ||
+	            salesDTO.getDateOfPresentation() == null ||
+	            UtilValidate.isEmpty(salesDTO.getEmdAmount()) ||
+	            UtilValidate.isEmpty(salesDTO.getModeOfEMD()) ||
+	            UtilValidate.isEmpty(salesDTO.getTenderDocFee()) ||
+	            UtilValidate.isEmpty(salesDTO.getTenderProcessingFee()) ||
+	            UtilValidate.isEmpty(salesDTO.getPortalCharges()) ||
+	            UtilValidate.isEmpty(salesDTO.getApprovalForBidParticipation())) {
 
-				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+	        }
 
-			}
+	        // Map fields to entity
+	        SalesOpportunityMasterEntity salesOpportunityMaster = new SalesOpportunityMasterEntity();
+	        salesOpportunityMaster.setNameOfCustomer(salesDTO.getNameOfCustomer());
+	        salesOpportunityMaster.setGeography(salesDTO.getGeography());
+	        salesOpportunityMaster.setRfpNumber(salesDTO.getRfpNumber());
+	        salesOpportunityMaster.setEProcId(salesDTO.getEprocId());
+	        salesOpportunityMaster.setRfpTitle(salesDTO.getRfpTitle());
+	        salesOpportunityMaster.setModeOfSelection(salesDTO.getModeOfSelection());
+	        salesOpportunityMaster.setModeOfSubmission(salesDTO.getModeOfSubmission());
+	        salesOpportunityMaster.setProjectDuration(salesDTO.getProjectDuration());
+	        salesOpportunityMaster.setEstimatedProjectValue(salesDTO.getEstimatedProjectValue());
+	        salesOpportunityMaster.setExpectedOEMs(salesDTO.getExpectedOEMs());
+	        salesOpportunityMaster.setJvConsortiumSubContractors(salesDTO.getJvConsortiumSubContractors());
+	        salesOpportunityMaster.setExpectedCompetitors(salesDTO.getExpectedCompetitors());
+	        salesOpportunityMaster.setConsultant(salesDTO.getConsultant());
+	        salesOpportunityMaster.setSalesSPOC(salesDTO.getSalesSPOC());
+	        salesOpportunityMaster.setRemarksStatus(salesDTO.getRemarksStatus());
+	        salesOpportunityMaster.setRfpPublished(salesDTO.getRfpPublished());
+	        salesOpportunityMaster.setPreBidQueries(salesDTO.getPreBidQueries());
+	        salesOpportunityMaster.setPreBidMeeting(salesDTO.getPreBidMeeting());
+	        salesOpportunityMaster.setSubmissionEndDate(salesDTO.getSubmissionEndDate());
+	        salesOpportunityMaster.setSubmissionOfBGHardCopy(salesDTO.getSubmissionOfBGHardCopy());
+	        salesOpportunityMaster.setOpeningDate(salesDTO.getOpeningDate());
+	        salesOpportunityMaster.setDateOfPresentation(salesDTO.getDateOfPresentation());
+	        salesOpportunityMaster.setEmdAmount(salesDTO.getEmdAmount());
+	        salesOpportunityMaster.setModeOfEMD(salesDTO.getModeOfEMD());
+	        salesOpportunityMaster.setTenderDocFee(salesDTO.getTenderDocFee());
+	        salesOpportunityMaster.setTenderProcessingFee(salesDTO.getTenderProcessingFee());
+	        salesOpportunityMaster.setPortalCharges(salesDTO.getPortalCharges());
+	        salesOpportunityMaster.setApprovalForBidParticipation(salesDTO.getApprovalForBidParticipation());
 
-			SalesOpportunityMasterEntity salesOpportunityMaster=new SalesOpportunityMasterEntity();
+	        // Dynamic currentStatus handling
+	        if ("Approved".equalsIgnoreCase(salesDTO.getApprovalForBidParticipation())) {
+	            // Use the value provided in the DTO for Approved cases
+	            salesOpportunityMaster.setCurrentStatus(salesDTO.getCurrentStatus());
+	        } else {
+	            // For Rejected or Pending, set to an empty string
+	            salesOpportunityMaster.setCurrentStatus("");
+	        }
 
-			salesOpportunityMaster.setSrNumber(salesDTO.getSrNumber());
-			salesOpportunityMaster.setNameOfCustomer(salesDTO.getNameOfCustomer());
-			salesOpportunityMaster.setGeography(salesDTO.getGeography());
-			salesOpportunityMaster.setRfpNumber(salesDTO.getRfpNumber());
-			salesOpportunityMaster.setEProcId(salesDTO.getEprocId());
-			salesOpportunityMaster.setRfpTitle(salesDTO.getRfpTitle());
+	        // Save the entity
+	        salesOpportunityMaster = salesOpportunityService.save(salesOpportunityMaster);
 
-			salesOpportunityMaster.setModeOfSelection(salesDTO.getModeOfSelection());
-			salesOpportunityMaster.setModeOfSubmission(salesDTO.getModeOfSubmission());
-			salesOpportunityMaster.setProjectDuration(salesDTO.getProjectDuration());
-			salesOpportunityMaster.setEstimatedProjectValue(salesDTO.getEstimatedProjectValue());
-			salesOpportunityMaster.setExpectedOEMs(salesDTO.getExpectedOEMs());
-			salesOpportunityMaster.setSubmissionOfBGHardCopy(salesDTO.getSubmissionOfBGHardCopy());
-			salesOpportunityMaster.setJvConsortiumSubContractors(salesDTO.getJvConsortiumSubContractors());
-			salesOpportunityMaster.setExpectedCompetitors(salesDTO.getExpectedCompetitors());
-			salesOpportunityMaster.setConsultant(salesDTO.getConsultant());
-			salesOpportunityMaster.setSalesSPOC(salesDTO.getSalesSPOC());
-			salesOpportunityMaster.setRemarksStatus(salesDTO.getRemarksStatus());
-
-			salesOpportunityMaster.setRfpPublished(salesDTO.getRfpPublished());
-			salesOpportunityMaster.setPreBidQueries(salesDTO.getPreBidQueries());
-			salesOpportunityMaster.setPreBidMeeting(salesDTO.getPreBidMeeting());
-			salesOpportunityMaster.setSubmissionEndDate(salesDTO.getSubmissionEndDate());
-			salesOpportunityMaster.setOpeningDate(salesDTO.getOpeningDate());
-			salesOpportunityMaster.setDateOfPresentation(salesDTO.getDateOfPresentation());
-			salesOpportunityMaster.setEmdAmount(salesDTO.getEmdAmount());
-			salesOpportunityMaster.setModeOfEMD(salesDTO.getModeOfEMD());
-			salesOpportunityMaster.setTenderDocFee(salesDTO.getTenderDocFee());
-			salesOpportunityMaster.setTenderProcessingFee(salesDTO.getTenderProcessingFee());
-			salesOpportunityMaster.setPortalCharges(salesDTO.getPortalCharges());
-			
-			salesOpportunityMaster.setApprovalForBidParticipation(salesDTO.getApprovalForBidParticipation());
-			salesOpportunityMaster.setCurrentStatus(salesDTO.getCurrentStatus());
-
-			salesOpportunityMaster=salesOpportunityService.save(salesOpportunityMaster);
-
-
-			if(salesOpportunityMaster!=null) {
-				statusMap.put("statusMsg", "Sales Created" );
-				statusMap.put("status", Constants.SUCCESS);
-				statusMap.put("statusCode", "RU_200");
-				return new ResponseEntity<>(statusMap,HttpStatus.OK);
-			}else {
-				statusMap.put(Parameters.statusMsg,"Sales Not Created" );
-				statusMap.put(Parameters.status, Constants.FAIL);
-				statusMap.put(Parameters.statusCode, "RU_301");
-				return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
-			}
-		}catch(Exception ex) {
-
-			statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
-			statusMap.put(Parameters.statusCode, Constants.SVD_USR);
-			statusMap.put(Parameters.status, Constants.FAIL);
-			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);	
-		}
+	        // Prepare response
+	        if (salesOpportunityMaster != null) {
+	            statusMap.put("statusMsg", "Sales Created");
+	            statusMap.put("status", Constants.SUCCESS);
+	            statusMap.put("statusCode", "RU_200");
+	            statusMap.put("currentStatus", salesOpportunityMaster.getCurrentStatus());
+	            return new ResponseEntity<>(statusMap, HttpStatus.OK);
+	        } else {
+	            statusMap.put(Parameters.statusMsg, "Sales Not Created");
+	            statusMap.put(Parameters.status, Constants.FAIL);
+	            statusMap.put(Parameters.statusCode, "RU_301");
+	            return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
+	        }
+	    } catch (Exception ex) {
+	        statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
+	        statusMap.put(Parameters.statusCode, Constants.SVD_USR);
+	        statusMap.put(Parameters.status, Constants.FAIL);
+	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
+
+
 	
 		
 

@@ -33,5 +33,4 @@ public class FeatureMasterEntity extends ParentEntity implements Serializable  {
 	private String url;
 	
 
-
 }

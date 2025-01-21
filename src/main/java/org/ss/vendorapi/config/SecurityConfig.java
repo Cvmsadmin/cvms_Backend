@@ -149,83 +149,45 @@ public class SecurityConfig {
 //        return (web) -> web.ignoring()
 
 //        		.anyRequest();
-
 //    }
 
 
 ////	@Bean
-
 //	public JavaMailSender getJavaMailSender() {
-
-//
-
-//		
-
 //      mailSender.setHost("smtp.office365.com");
-
 //      mailSender.setPort(587);
-
 //      mailSender.setUsername("CVMSADMIN@INFINITE.COM");
-
 //      mailSender.setPassword("Admin@cvms");
-
-//
-
 //      Properties props = mailSender.getJavaMailProperties();
-
 //      props.put("mail.transport.protocol", "smtp");
-
 //      props.put("mail.debug", "true");
-
 //      props.put("mail.smtp.auth", "true");
-
 //      props.put("mail.smtp.starttls.enable", "true"); // Ensure TLS is enabled
-
 //      props.put("mail.smtp.from", "CVMSADMIN@INFINITE.COM"); // Set the "from" address
-
-//
-
 //      return mailSender;
-
 //  }
 
 	@Bean
-
 	public JavaMailSender getJavaMailSender() {
-
 
 	    JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
-//	    mailSender.setHost("10.20.0.1");
-
 	    mailSender.setHost("smtp.office365.com");
-
 	    mailSender.setPort(587);
-
 	    mailSender.setUsername("CVMSADMIN@INFINITE.COM");
-
 	    mailSender.setPassword("Admin@cvms");
- 
 	    Properties props = mailSender.getJavaMailProperties();
-
 	    props.put("mail.transport.protocol", "smtp");
-
 	    props.put("mail.smtp.auth", "true");
-
 	    props.put("mail.smtp.starttls.enable", "true"); // Enable TLS
-
 	    props.put("mail.smtp.from", "CVMSADMIN@INFINITE.COM");
 
 	    // Add timeouts
 
 	    props.put("mail.smtp.connectiontimeout", "10000"); // 5 seconds
-
 	    props.put("mail.smtp.timeout", "10000"); // 5 seconds
-
 	    props.put("mail.smtp.writetimeout", "10000"); // 5 seconds
-
-	    props.put("mail.debug", "true"); // Enable debug output
- 
+	    props.put("mail.debug", "true"); // Enable debug output 
 	    return mailSender;
 
 	}

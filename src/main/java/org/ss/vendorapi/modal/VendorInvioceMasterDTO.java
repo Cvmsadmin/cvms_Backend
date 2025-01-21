@@ -15,6 +15,7 @@ public class VendorInvioceMasterDTO {
 //	private String vendorId;
 	private Long id;
 	private String vendorName;
+	private Long clientId;
 	private String clientName;
 	private String projectName;
 	@JsonFormat(pattern="dd/MM/yyyy")

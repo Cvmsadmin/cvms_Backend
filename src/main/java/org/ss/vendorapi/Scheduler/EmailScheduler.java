@@ -19,7 +19,7 @@ public class EmailScheduler {
 	private UserCreationRepository creationUserRepository;
 
 	
-	@Scheduled(fixedRate = 60 * 1000) // Schedule every 1 minute
+	@Scheduled(fixedRate = 30 * 1000) // Schedule every 1 minute
     public void sendNotificationsForUpcomingEvents() {
         // Fetch users who need to be notified
         List<UserMasterEntity> users = creationUserRepository.findAll(); // Modify with criteria if needed

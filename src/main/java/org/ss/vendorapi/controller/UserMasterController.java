@@ -109,10 +109,12 @@ public class UserMasterController{
 	                UtilValidate.isEmpty(userMasterMEntity.getPhysicalLocation())) {
 	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
 	        }
+	        	        
 
 	        // Check if user with the same email or phone already exists
 	        if (userCreationService.existsByEmail(userMasterMEntity.getEmail()) || 
-	                userCreationService.existsByPhone(userMasterMEntity.getPhone())) {
+	                userCreationService.existsByPhone(userMasterMEntity.getPhone()) ||
+	        	    userCreationService.existsByEmployeeId(userMasterMEntity.getEmployeeId())) {
 	            statusMap.put(Parameters.statusMsg, StatusMessageConstants.USER_ALREADY_REGISTERED);
 	            statusMap.put(Parameters.status, Constants.FAIL);
 	            statusMap.put(Parameters.statusCode, "RU_302");

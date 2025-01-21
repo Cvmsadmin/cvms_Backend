@@ -6,5 +6,7 @@ import org.ss.vendorapi.entity.SalesOpportunityMasterEntity;
 
 @Repository
 public interface SalesOpportunityRepository extends JpaRepository<SalesOpportunityMasterEntity,Long>{
+	
+//	SalesOpportunityMasterEntity save1(SalesOpportunityMasterEntity entity);
 
 }

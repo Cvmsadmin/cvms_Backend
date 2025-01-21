@@ -23,8 +23,10 @@ import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.ClientDescriptionAndBaseValue;
 import org.ss.vendorapi.entity.ClientInvoiceDescriptionValue;
 import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
+import org.ss.vendorapi.entity.ClientMasterEntity;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.ClientInvoiceMasterDTO;
+import org.ss.vendorapi.repository.ClientMasterRepository;
 import org.ss.vendorapi.service.ClientInvoiceDescriptionValueService;
 import org.ss.vendorapi.service.ClientInvoiceMasterService;
 import org.ss.vendorapi.service.DataValidationService;
@@ -55,6 +57,9 @@ public class ClientInvoiceMasterController {
 
 	@Autowired 
 	private ClientInvoiceMasterService clientInvoiceService;
+	
+	@Autowired
+	private ClientMasterRepository clientMasterRepository;
 	
 //	@Autowired
 //	private ClientInvoiceDescriptionValue clientInvoiceDescriptionValue;
@@ -393,6 +398,68 @@ public class ClientInvoiceMasterController {
 
 
 	@EncryptResponse
+//	@GetMapping("/getAllClientInvoices")
+//	public ResponseEntity<?> getAllClientInvoices() {
+//	    try {
+//	        // Fetch all client invoices
+//	        List<ClientInvoiceMasterEntity> clientInvoices = clientInvoiceService.findAll();
+//
+//	        // Map entities to response structure
+//	        List<Map<String, Object>> responseList = clientInvoices.stream().map(invoice -> {
+//	            Map<String, Object> invoiceMap = new HashMap<>();
+//	            
+//	            invoiceMap.put("id", invoice.getId());
+//	            
+//	            invoiceMap.put("clientName", invoice.getClientName());
+//	            invoiceMap.put("projectName", invoice.getProjectName());
+//	            invoiceMap.put("discom", invoice.getDiscom());
+//	            invoiceMap.put("invoiceDate", invoice.getInvoiceDate());
+//	            invoiceMap.put("invoiceNo", invoice.getInvoiceNo());
+//	            invoiceMap.put("invoiceDescription", invoice.getInvoiceDescription());
+//	            invoiceMap.put("invoiceDueDate", invoice.getInvoiceDueDate());
+//	            invoiceMap.put("invoiceAmountExcluGst", invoice.getInvoiceAmountExcluGst());
+//	            invoiceMap.put("gstPer", invoice.getGstPer());
+//	            invoiceMap.put("gstAmount", invoice.getGstAmount());
+//	            invoiceMap.put("invoiceAmountIncluGst", invoice.getInvoiceAmountIncluGst());
+//	            invoiceMap.put("status", invoice.getStatus());
+//	            invoiceMap.put("invoiceBaseValue", invoice.getInvoiceBaseValue());
+//	            invoiceMap.put("gstBaseValue", invoice.getGstBaseValue());
+//	            invoiceMap.put("invoiceInclusiveOfGst", invoice.getInvoiceInclusiveOfGst());
+//	            invoiceMap.put("tdsper", invoice.getTdsPer());
+//	            invoiceMap.put("tdsBaseValue", invoice.getTdsBaseValue());
+//	            invoiceMap.put("tdsOnGst", invoice.getTdsOnGstPer());
+//	            invoiceMap.put("billableState", invoice.getBillableState());
+//	            invoiceMap.put("cgstOnTds", invoice.getCgstOnTds());
+//	            invoiceMap.put("sgstOnTds", invoice.getSgstOnTds());
+//	            invoiceMap.put("igstOnTds", invoice.getIgstOnTds());
+//	            invoiceMap.put("totalTdsDeducted", invoice.getTotalTdsDeducted());
+//	            invoiceMap.put("balance", invoice.getBalance());
+//	            invoiceMap.put("penalty", invoice.getPenalty());
+//	            invoiceMap.put("penaltyDeductionOnBase", invoice.getPenaltyDeductionOnBase());
+//	            invoiceMap.put("gstOnPenalty", invoice.getGstOnPenalty());
+//	            invoiceMap.put("totalPenaltyDeduction", invoice.getTotalPenaltyDeduction());
+//	            invoiceMap.put("creditNote", invoice.getCreditNote());
+//	            invoiceMap.put("totalPaymentReceived", invoice.getTotalPaymentReceived());
+//
+//	            // Map nested descriptions
+//	            List<ClientInvoiceDescriptionValue> descriptions = clientInvoiceDescriptionValueService.findByClientInvoice(invoice);
+//	            List<Map<String, Object>> descriptionList = descriptions.stream().map(desc -> {
+//	                Map<String, Object> descMap = new HashMap<>();
+//	                descMap.put("itemDescription", desc.getItemDescription());
+//	                descMap.put("baseValue", desc.getBaseValue());
+//	                return descMap;
+//	            }).toList();
+//
+//	            invoiceMap.put("descriptionsAndBaseValues", descriptionList);
+//	            return invoiceMap;
+//	        }).toList();
+//
+//	        return new ResponseEntity<>(responseList, HttpStatus.OK);
+//	    } catch (Exception ex) {
+//	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+	
 	@GetMapping("/getAllClientInvoices")
 	public ResponseEntity<?> getAllClientInvoices() {
 	    try {
@@ -402,10 +469,20 @@ public class ClientInvoiceMasterController {
 	        // Map entities to response structure
 	        List<Map<String, Object>> responseList = clientInvoices.stream().map(invoice -> {
 	            Map<String, Object> invoiceMap = new HashMap<>();
-	            
+
 	            invoiceMap.put("id", invoice.getId());
 	            
-	            invoiceMap.put("clientName", invoice.getClientName());
+	            // Fetch client details from ClientMasterEntity using clientId
+	            Optional<ClientMasterEntity> clientMasterEntity = clientMasterRepository.findById(Long.parseLong(invoice.getClientName()));
+	            if (clientMasterEntity != null) {
+	                invoiceMap.put("clientName", clientMasterEntity.get().getClientName()); // clientName from ClientMasterEntity
+	                invoiceMap.put("clientId", clientMasterEntity.get().getId());  // clientId added
+	            } else {
+	                invoiceMap.put("clientName", "Not found");
+	                invoiceMap.put("clientId", "Not found");
+	            }
+
+	            // Add other invoice details
 	            invoiceMap.put("projectName", invoice.getProjectName());
 	            invoiceMap.put("discom", invoice.getDiscom());
 	            invoiceMap.put("invoiceDate", invoice.getInvoiceDate());
@@ -454,6 +531,7 @@ public class ClientInvoiceMasterController {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
 
 	
 //	@EncryptResponse

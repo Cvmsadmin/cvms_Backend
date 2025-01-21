@@ -15,5 +15,6 @@ public interface UserCreationService {
 //	public UserMasterEntity findByEmail(String email);
 	public Optional<UserMasterEntity> findByEmail(String email);
 	public UserMasterEntity findById(Long id);
+	public boolean existsByEmployeeId(String employeeId);
 	
 }

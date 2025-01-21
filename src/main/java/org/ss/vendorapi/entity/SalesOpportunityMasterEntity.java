@@ -3,12 +3,16 @@ package org.ss.vendorapi.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Where;
 
+import jakarta.annotation.Generated;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,6 +32,8 @@ public class SalesOpportunityMasterEntity extends ParentEntity implements Serial
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
+
+	@Column(name = "sr_number", unique = true, nullable = false)
 	private String srNumber;
 	private String nameOfCustomer;
 	private String geography;
@@ -62,6 +68,13 @@ public class SalesOpportunityMasterEntity extends ParentEntity implements Serial
 	private String approvalForBidParticipation;
 	private String currentStatus;
 
+	
+	@PrePersist
+    private void generateSrNumber() {
+        if (this.srNumber == null) {
+            this.srNumber = "SR-" + System.currentTimeMillis(); 
+        }
+    }
 	
 	
 		

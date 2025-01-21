@@ -20,5 +20,8 @@ public interface UserCreationRepository extends JpaRepository<UserMasterEntity, 
 
 	Optional<UserMasterEntity> findByEmail(String email);
 
+
+	boolean existsByEmployeeId(String employeeId);
+
 	
 }

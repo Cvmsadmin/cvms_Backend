@@ -16,10 +16,17 @@ public class SalesOpportunityServiceImpl implements SalesOpportunityService {
     
     @Override
     public SalesOpportunityMasterEntity save(SalesOpportunityMasterEntity salesOpportunityMaster) {
+    	if (salesOpportunityMaster.getSrNumber() == null || salesOpportunityMaster.getSrNumber().isEmpty()) {
+            salesOpportunityMaster.setSrNumber("SR-" + System.currentTimeMillis());
+        }
         salesOpportunityMaster.setActive(1);
         salesOpportunityMaster.setCreateDate(new java.sql.Date(new Date().getTime()));
         return salesOpportunityRepository.save(salesOpportunityMaster);
     }
+//        salesOpportunityMaster.setActive(1);
+//        salesOpportunityMaster.setCreateDate(new java.sql.Date(new Date().getTime()));
+//        return salesOpportunityRepository.save(salesOpportunityMaster);
+//    }
 
     @Override
     public SalesOpportunityMasterEntity update(SalesOpportunityMasterEntity salesOpportunityMaster) {
@@ -36,5 +43,7 @@ public class SalesOpportunityServiceImpl implements SalesOpportunityService {
     public SalesOpportunityMasterEntity findById(Long id) {
         return salesOpportunityRepository.findById(id).orElse(null);
     }
+    
+
 
 }

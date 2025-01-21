@@ -1,5 +1,6 @@
 package org.ss.vendorapi.controller;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -146,45 +147,91 @@ public class LoginController {
 
 				ObjectMapper objectMapper = new ObjectMapper();
 				objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-				List<FeatureDTO> featureDTOList = features.stream()
-				    .map(feature -> {
-				        try {
-				            // Convert FeatureMasterEntity to FeatureDTO
-				            return objectMapper.convertValue(feature, FeatureDTO.class);
-				        } catch (IllegalArgumentException e) {
-				            // Handle conversion failure (log the error, return null, or other handling logic)
-				            System.err.println("Failed to map entity to FeatureDTO: " + e.getMessage());
-				            return null; // Handle the error (e.g., skip the entity)
-				        }
-				    })
-				    .filter(Objects::nonNull) // Filter out any null values from failed conversions
-				    .collect(Collectors.toList());
 				
-				response = JwtResponse.builder().urls(featureDTOList).accessToken(token).refreshToken(refreshToken.getToken())
-						.id(userMasterEntity.getId().toString()).username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
-				
-				/** END ::: GET RESOURCES ::: 9, September 2024 */
+				 // Sort features by their ID in ascending order
+	            List<FeatureMasterEntity> sortedFeatures = features.stream()
+	                    .sorted(Comparator.comparing(FeatureMasterEntity::getId))
+	                    .collect(Collectors.toList());
 
-				statusMap.put(Parameters.status, Constants.SUCCESS);
-				statusMap.put(Parameters.statusCode, "LOGIN_200");
-				statusMap.put("response", response);
+	            // Convert sorted features to DTOs
+	            List<FeatureDTO> featureDTOList = sortedFeatures.stream()
+	                    .map(feature -> {
+	                        try {
+	                            return objectMapper.convertValue(feature, FeatureDTO.class);
+	                        } catch (IllegalArgumentException e) {
+	                            System.err.println("Failed to map entity to FeatureDTO: " + e.getMessage());
+	                            return null;
+	                        }
+	                    })
+	                    .filter(Objects::nonNull)
+	                    .collect(Collectors.toList());
 
-				return new ResponseEntity<>(statusMap, HttpStatus.OK);
-			} else {
-				statusMap.put(Parameters.statusMsg, "Please enter a valid email or password.");
-				statusMap.put(Parameters.status, Constants.FAIL);
-				statusMap.put(Parameters.statusCode, "LOGIN_201");
-				return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
-			}
-		} catch (Exception ex) {
-			// if (logger.isErrorLoggingEnabled()) {
-			// logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName,
-			// "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage());
-			// }
-			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	            response = JwtResponse.builder()
+	                    .urls(featureDTOList)
+	                    .accessToken(token)
+	                    .refreshToken(refreshToken.getToken())
+	                    .id(userMasterEntity.getId().toString())
+	                    .username(userDetails.getUsername().split("_")[0])
+	                    .status(Constants.SUCCESS)
+	                    .build();
+
+	            /** END ::: GET RESOURCES */
+
+	            statusMap.put(Parameters.status, Constants.SUCCESS);
+	            statusMap.put(Parameters.statusCode, "LOGIN_200");
+	            statusMap.put("response", response);
+
+	            return new ResponseEntity<>(statusMap, HttpStatus.OK);
+	        } else {
+	            statusMap.put(Parameters.statusMsg, "Please enter a valid email or password.");
+	            statusMap.put(Parameters.status, Constants.FAIL);
+	            statusMap.put(Parameters.statusCode, "LOGIN_201");
+	            return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
+	        }
+	    } catch (Exception ex) {
+	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
+//	***********************************************************************************************************************
+
+//				List<FeatureDTO> featureDTOList = features.stream()
+//				    .map(feature -> {
+//				        try {
+//				            // Convert FeatureMasterEntity to FeatureDTO
+//				            return objectMapper.convertValue(feature, FeatureDTO.class);
+//				        } catch (IllegalArgumentException e) {
+//				            // Handle conversion failure (log the error, return null, or other handling logic)
+//				            System.err.println("Failed to map entity to FeatureDTO: " + e.getMessage());
+//				            return null; // Handle the error (e.g., skip the entity)
+//				        }
+//				    })
+//				    .filter(Objects::nonNull) // Filter out any null values from failed conversions
+//				    .collect(Collectors.toList());
+//				
+//				response = JwtResponse.builder().urls(featureDTOList).accessToken(token).refreshToken(refreshToken.getToken())
+//						.id(userMasterEntity.getId().toString()).username(userDetails.getUsername().split("_")[0]).status(Constants.SUCCESS).build();
+//				
+//				/** END ::: GET RESOURCES ::: 9, September 2024 */
+//
+//				statusMap.put(Parameters.status, Constants.SUCCESS);
+//				statusMap.put(Parameters.statusCode, "LOGIN_200");
+//				statusMap.put("response", response);
+//
+//				return new ResponseEntity<>(statusMap, HttpStatus.OK);
+//			} else {
+//				statusMap.put(Parameters.statusMsg, "Please enter a valid email or password.");
+//				statusMap.put(Parameters.status, Constants.FAIL);
+//				statusMap.put(Parameters.statusCode, "LOGIN_201");
+//				return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
+//			}
+//		} catch (Exception ex) {
+//			// if (logger.isErrorLoggingEnabled()) {
+//			// logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName,
+//			// "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage());
+//			// }
+//			return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//	}
 
 	@PostMapping("/adminLogin")
 	public ResponseEntity<?> loginAdmin(@RequestParam(required = false) String userId,

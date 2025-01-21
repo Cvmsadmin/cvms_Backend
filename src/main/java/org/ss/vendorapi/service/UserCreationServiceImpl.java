@@ -62,4 +62,10 @@ public class UserCreationServiceImpl implements UserCreationService{
 		return creationUserRepository.findById(id).orElse(null);
 	}
 
+	@Override
+	public boolean existsByEmployeeId(String employeeId) {
+	
+		return creationUserRepository.existsByEmployeeId(employeeId);
+	}
+
 }

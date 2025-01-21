@@ -346,24 +346,15 @@ public class ClientMasterController {
 			clientEntity.setCity(addClientMEntity.getCity()!=null?addClientMEntity.getCity():clientEntity.getCity());
 			clientEntity.setState(addClientMEntity.getState()!=null?addClientMEntity.getState():clientEntity.getState());
 			clientEntity.setPincode(addClientMEntity.getPinCode()!=null?addClientMEntity.getPinCode():clientEntity.getPincode());
-
 			clientEntity.setDistrict(addClientMEntity.getDistrict()!=null?addClientMEntity.getDistrict():clientEntity.getDistrict());
-
 			clientEntity.setContactPerson(addClientMEntity.getContactPerson()!=null? addClientMEntity.getContactPerson():clientEntity.getContactPerson());
-
 			clientEntity.setContactNo(addClientMEntity.getContactNo()!=null? addClientMEntity.getContactNo():clientEntity.getContactNo());
-
 			clientEntity.setEmail(addClientMEntity.getEmail()!=null?addClientMEntity. getEmail():clientEntity.getEmail());
-
 			clientEntity.setGst(addClientMEntity.getGst()!=null?addClientMEntity.getGst():clientEntity.getGst());
-
 			clientEntity.setPan(addClientMEntity.getPan()!=null?addClientMEntity.getPan():clientEntity.getPan());
-
 			clientEntity.setTypeOfService(addClientMEntity.getTypeOfService().get(0)!=null?addClientMEntity.getTypeOfService().get(0):clientEntity.getTypeOfService());
-
 			clientEntity.setAccountManagerId(addClientMEntity.getAccountManager()!=null?addClientMEntity.getAccountManager():clientEntity.getAccountManagerId());
-
-			clientEntity.setClientName(addClientMEntity.getClientName()!=null?addClientMEntity.getClientName():clientEntity.getClientName());
+//			clientEntity.setClientName(addClientMEntity.getClientName()!=null?addClientMEntity.getClientName():clientEntity.getClientName());
 
 			clientMasterService.update(clientEntity);
 
