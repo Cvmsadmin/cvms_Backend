@@ -494,7 +494,7 @@ public class DocumentFileUploadController {
             if (e.getMessage().contains("No such file")) {
                 // Return a custom error message for file not found
                 java.util.Map<String, String> errorResponse = new HashMap<>();
-                errorResponse.put("message", "No file content available for the selected document.");
+                errorResponse.put("message", "The selected document is not available.");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                      .contentType(MediaType.APPLICATION_JSON)
                                      .body(errorResponse);
@@ -520,7 +520,7 @@ public class DocumentFileUploadController {
         if (fileContent == null || fileContent.length == 0) {
             // Return a message indicating no file was found
             java.util.Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "No file content available for the selected document.");
+            errorResponse.put("message", "The selected document is not available.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                  .contentType(MediaType.APPLICATION_JSON)
                                  .body(errorResponse);
@@ -716,7 +716,7 @@ public class DocumentFileUploadController {
             if (e.getMessage().contains("No such file")) {
                 // Return a custom error message when the file doesn't exist
                 java.util.Map<String, String> errorResponse = new HashMap<>();
-                errorResponse.put("message", "No file content available for the selected document.");
+                errorResponse.put("message", "The selected document is not available.");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                      .contentType(MediaType.APPLICATION_JSON)
                                      .body(errorResponse);
@@ -742,7 +742,7 @@ public class DocumentFileUploadController {
         if (fileContent == null || fileContent.length == 0) {
             // Return JSON response indicating no file content
             java.util.Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "No file content available for the selected document.");
+            errorResponse.put("message", "The selected document is not available.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                  .contentType(MediaType.APPLICATION_JSON)
                                  .body(errorResponse);
@@ -885,7 +885,7 @@ public class DocumentFileUploadController {
             String errorMessage = e.getMessage();
             // You can customize this to be more specific based on your exception handling
             if (errorMessage != null && errorMessage.contains("No such file")) {
-                errorMessage = "No file content available for the selected document."; // Custom message
+                errorMessage = "The selected document is not available."; // Custom message
             }
 
             // Return JSON response in case of error
@@ -900,7 +900,7 @@ public class DocumentFileUploadController {
         if (fileContent == null || fileContent.length == 0) {
             // Return error response if the file is not found or is empty
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "No file content available for the selected document.");
+            errorResponse.put("message", "The selected document is not available.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                  .contentType(MediaType.APPLICATION_JSON)
                                  .body(errorResponse);
@@ -986,8 +986,15 @@ public class DocumentFileUploadController {
         } catch (Exception e) {
             e.printStackTrace();
             // Return JSON response for internal error
-            java.util.Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", e.getMessage());  // Include exception message if needed
+            String errorMessage = e.getMessage();
+            if (errorMessage != null && errorMessage.contains("No such file")) {
+                errorMessage = "No file content available for the selected document."; // Custom message
+            }
+
+            // Create a JSON error response
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", errorMessage);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .contentType(MediaType.APPLICATION_JSON)
                                  .body(errorResponse);
@@ -996,26 +1003,27 @@ public class DocumentFileUploadController {
         // Check if file content is empty or null
         if (fileContent == null || fileContent.length == 0) {
             // Return JSON response for file not found
-            java.util.Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Error: There are no documents in the folder.");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "No file content available for the selected document.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                  .contentType(MediaType.APPLICATION_JSON)
                                  .body(errorResponse);
         }
 
-        // Encode the file content as a base64 string
+        // Encode the file content as a Base64 string
         String base64EncodedFile = Base64.getEncoder().encodeToString(fileContent);
 
         // Prepare the JSON response
-        java.util.Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         response.put("fileName", fileName);
         response.put("fileContent", base64EncodedFile);
 
-        // Return the base64-encoded file content as part of a JSON response
+        // Return the Base64-encoded file content as part of a JSON response
         return ResponseEntity.ok()
                              .contentType(MediaType.APPLICATION_JSON)
                              .body(response);
     }
+
    
     
 //    @GetMapping("/downloadSalesOpportunityDoc")

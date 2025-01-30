@@ -143,8 +143,7 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	}
 
 	public void setBillableState(Object object) {
-		
-		
+				
 	}
 
 	public String getTdsOnGst() {

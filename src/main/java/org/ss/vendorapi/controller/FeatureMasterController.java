@@ -30,34 +30,77 @@ public class FeatureMasterController {
 	@Autowired
 	private FeatureMasterService featureMasterService;
 
-
 	@EncryptResponse
 	@PostMapping("/saveFeature")
-	public ResponseEntity<?> roleFeature(@RequestBody FeatureMasterEntity roleFeatureMaster){
-		Map<String, Object> statusMap=new HashMap<String, Object>();
-		try {
+	public ResponseEntity<?> roleFeature(@RequestBody FeatureMasterEntity roleFeatureMaster) {
+	    Map<String, Object> statusMap = new HashMap<>();
+	    try {
+	        // Validate featureName
+	        if (UtilValidate.isEmpty(roleFeatureMaster.getFeatureName())) {
+	            return CommonUtils.createResponse(Constants.FAIL, "Feature Name is missing", HttpStatus.EXPECTATION_FAILED);
+	        }
 
-			if(UtilValidate.isEmpty(roleFeatureMaster.getFeatureName())){
-				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
-			}
-			if(roleFeatureMaster.getSubMenu().equals("N")) {
-				roleFeatureMaster.setParent(-1l);
-			}
-			roleFeatureMaster=featureMasterService.save(roleFeatureMaster);
+	        // Validate subMenu
+	        if (UtilValidate.isEmpty(roleFeatureMaster.getSubMenu())) {
+	            return CommonUtils.createResponse(Constants.FAIL, "Sub Menu value is missing", HttpStatus.EXPECTATION_FAILED);
+	        }
 
-			statusMap.put("RoleFeatureMaster",roleFeatureMaster);
-			statusMap.put("status", "SUCCESS");
-			statusMap.put("statusCode", "RME_200");
-			statusMap.put("statusMessage", "SUCCESSFULLY SAVED"); 
-			return new ResponseEntity<>(statusMap,HttpStatus.OK);
-		}catch(Exception ex) {
-			ex.printStackTrace();
-			statusMap.put("status", "FAILED");
-			statusMap.put("statusCode", "RME_301");
-			statusMap.put("statusMessage", "FAILED TO CREATD"); 
-			return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
-		}
+	        // Validate url
+	        if (UtilValidate.isEmpty(roleFeatureMaster.getUrl())) {
+	            return CommonUtils.createResponse(Constants.FAIL, "URL is missing", HttpStatus.EXPECTATION_FAILED);
+	        }
+
+	        // Handle parent field based on subMenu
+	        if (roleFeatureMaster.getSubMenu().equals("N")) {
+	            roleFeatureMaster.setParent(-1L);
+	        }
+
+	        // Save the feature
+	        roleFeatureMaster = featureMasterService.save(roleFeatureMaster);
+
+	        // Prepare response
+	        statusMap.put("RoleFeatureMaster", roleFeatureMaster);
+	        statusMap.put("status", "SUCCESS");
+	        statusMap.put("statusCode", "RME_200");
+	        statusMap.put("statusMessage", "Successfully saved");
+	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+	    } catch (Exception ex) {
+	        ex.printStackTrace();
+	        statusMap.put("status", "FAILED");
+	        statusMap.put("statusCode", "RME_301");
+	        statusMap.put("statusMessage", "Failed to create");
+	        return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
+	    }
 	}
+
+
+//	@EncryptResponse
+//	@PostMapping("/saveFeature")
+//	public ResponseEntity<?> roleFeature(@RequestBody FeatureMasterEntity roleFeatureMaster){
+//		Map<String, Object> statusMap=new HashMap<String, Object>();
+//		try {
+//
+//			if(UtilValidate.isEmpty(roleFeatureMaster.getFeatureName())){
+//				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+//			}
+//			if(roleFeatureMaster.getSubMenu().equals("N")) {
+//				roleFeatureMaster.setParent(-1l);
+//			}
+//			roleFeatureMaster=featureMasterService.save(roleFeatureMaster);
+//
+//			statusMap.put("RoleFeatureMaster",roleFeatureMaster);
+//			statusMap.put("status", "SUCCESS");
+//			statusMap.put("statusCode", "RME_200");
+//			statusMap.put("statusMessage", "SUCCESSFULLY SAVED"); 
+//			return new ResponseEntity<>(statusMap,HttpStatus.OK);
+//		}catch(Exception ex) {
+//			ex.printStackTrace();
+//			statusMap.put("status", "FAILED");
+//			statusMap.put("statusCode", "RME_301");
+//			statusMap.put("statusMessage", "FAILED TO CREATD"); 
+//			return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
+//		}
+//	}
 
 	@EncryptResponse
 	@GetMapping("/getMainFeatures")

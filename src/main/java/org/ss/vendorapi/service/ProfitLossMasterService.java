@@ -13,4 +13,5 @@ public interface ProfitLossMasterService {
 	public ProfitLossMasterEntity update(ProfitLossMasterEntity profitLossMasterEntity);
     public ProfitLossMasterEntity findById(Long id);
     public List<ProfitLossMasterEntity> findByWhere(String where);
+	public List<ProfitLossMasterEntity> findByProjectId(int projectId);
 }

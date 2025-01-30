@@ -20,37 +20,26 @@ public class ProfitLossMasterServiceImpl implements ProfitLossMasterService{
 
 	@PersistenceContext
 	private EntityManager entityManager;
-
-	
 	
 	@Override
 	public ProfitLossMasterEntity save(ProfitLossMasterEntity profitLossMasterEntity) {
 		return profitLossMasterRepository.save(profitLossMasterEntity);
 	}
 
-
-
 	@Override
 	public List<ProfitLossMasterEntity> findAll() {
 				return profitLossMasterRepository.findAll();
 	}
-
-
 
 	@Override
 	public ProfitLossMasterEntity update(ProfitLossMasterEntity profitLossMasterEntity) {
 		return profitLossMasterRepository.save(profitLossMasterEntity);
 	}
 
-
-
 	@Override
 	public ProfitLossMasterEntity findById(Long id) {
 		return profitLossMasterRepository.findById(id).orElse(null);
 	}
-
-
-
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -66,4 +55,9 @@ public class ProfitLossMasterServiceImpl implements ProfitLossMasterService{
 		}
 		return list;
 	}
+
+		public List<ProfitLossMasterEntity> findByProjectId(int projectId) {
+		    return profitLossMasterRepository.findByProjectId(projectId);
+		}
+
 }

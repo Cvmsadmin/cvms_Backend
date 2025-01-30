@@ -32,7 +32,6 @@ public class ProjectMasterEntity extends ParentEntity implements Serializable{
 	@Column(name="id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	
 	@Column(name = "client_id")
 	private String clientId;
@@ -109,6 +108,5 @@ public class ProjectMasterEntity extends ParentEntity implements Serializable{
 
 	@Column(name = "contract_price")
 	private String contractPrice;
-
 	
 }

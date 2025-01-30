@@ -18,5 +18,4 @@ public interface ClientInvoiceMasterRepository extends JpaRepository<ClientInvoi
 	
 	ClientInvoiceMasterEntity findByClientId(String clientId);
 
-
 }

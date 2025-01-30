@@ -2,25 +2,19 @@ package org.ss.vendorapi.modal;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 public class ProfitLossRequestDTO {
-    private List<ProfitLossMasterDTO> profitLoss;
-    private String clientName;
-    private String projectName;
-    
-    public List<ProfitLossMasterDTO> getProfitLoss() {
-        return profitLoss;
-    }
-
-    public void setProfitLoss(List<ProfitLossMasterDTO> profitLoss) {
-        this.profitLoss = profitLoss;
-    }
-    
-    // Any other fields and methods
+	
+	 private ClientDTO clientName;
+	 private ProjectDTO projectName;	  
+	 private List<ProfitLossMasterDTO> formFields; // List for form fields
+ 
 }
 
 
