@@ -284,6 +284,118 @@ public class ProfiLossMasterController {
 //    ************************************************************************************************************************************************************************
 //    *****************************************************get api ***********************************************************************************************************
  
+    @EncryptResponse
+    @GetMapping("/getAllProfitLossSumbyMID")
+    public ResponseEntity<?> getAllProfitLossSum(@RequestParam("id") Long userId) {
+        Map<String, Object> statusMap = new HashMap<>();
+        try {
+            // Fetch the user (manager) by ID
+            UserMasterEntity userMasterEntity = userMasterService.findById(userId);
+            if (userMasterEntity == null) {
+                statusMap.put(Parameters.status, Constants.FAIL);
+                statusMap.put(Parameters.statusCode, "RU_404");
+                statusMap.put(Parameters.statusMsg, "User not found");
+                return new ResponseEntity<>(statusMap, HttpStatus.NOT_FOUND);
+            }
+
+            List<ProfitLossMasterEntity> records = null;
+
+            // Role-based filtering
+            if (RoleConstants.ACCOUNT_MANAGER.equals(userMasterEntity.getRole())) {
+                List<ClientMasterEntity> clients = clientMasterService.findByAccountManagerId(userId.toString());
+                
+                String clientIds = clients.stream()
+                    .map(client -> "'" + client.getId() + "'") // Assuming 'getId()' gets the client ID
+                    .collect(Collectors.joining(","));
+                
+                String where = "o.clientId IN (" + clientIds + ")";
+                records = profitLossMasterService.findByWhere(where);
+                
+            } else if (RoleConstants.PROJECT_MANAGER.equals(userMasterEntity.getRole())) {
+                List<ProjectMasterEntity> projects = projectMasterService.findByWhere("o.projectManager='" + userId.toString() + "'");
+                
+                String projectIds = projects.stream()
+                    .map(project -> "'" + project.getId() + "'")
+                    .collect(Collectors.joining(","));
+                
+                String where = "o.projectId IN (" + projectIds + ")";
+                records = profitLossMasterService.findByWhere(where);
+                
+            } else if (RoleConstants.ADMINISTRATION.equals(userMasterEntity.getRole())) {
+                records = profitLossMasterService.findAll();
+            } else {
+                statusMap.put(Parameters.status, Constants.FAIL);
+                statusMap.put(Parameters.statusCode, "RU_404");
+                statusMap.put(Parameters.statusMsg, "Role not recognized");
+                return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
+            }
+
+            // Grouping data by projectName
+            Map<String, Map<String, Object>> groupedByProject = new HashMap<>();
+
+            for (ProfitLossMasterEntity record : records) {
+                String projectName = record.getProjectName();
+                
+                if (!groupedByProject.containsKey(projectName)) {
+                    Map<String, Object> responseMap = new HashMap<>();
+                    responseMap.put("id", record.getId());
+                    responseMap.put("clientId", record.getClientId());
+                    responseMap.put("clientName", record.getClientName());
+                    responseMap.put("projectId", record.getProjectId());
+                    responseMap.put("projectName", record.getProjectName());
+                    responseMap.put("description", record.getDescription());
+                    responseMap.put("gstPercent", record.getGstPercent());
+                    responseMap.put("clientBillIncludeGst", parseDoubleSafe(record.getClientBillIncludeGst()));
+                    responseMap.put("clientGstAmount", parseDoubleSafe(record.getClientGstAmount()));
+                    responseMap.put("clientBillExcludeGst", parseDoubleSafe(record.getClientBillExcludeGst()));
+                    responseMap.put("vendorBillIncludeGst", parseDoubleSafe(record.getVendorBillIncludeGst()));
+                    responseMap.put("vendorGstAmount", parseDoubleSafe(record.getVendorGstAmount()));
+                    responseMap.put("vendorBillExcludeGst", parseDoubleSafe(record.getVendorBillExcludeGst()));
+                    responseMap.put("margin", parseDoubleSafe(record.getMargin()));
+                    responseMap.put("marginPercent", calculateMarginPercent(parseDoubleSafe(record.getMargin()), parseDoubleSafe(record.getClientBillExcludeGst())));
+                    responseMap.put("srNo", record.getSrNo());
+                    groupedByProject.put(projectName, responseMap);
+                } else {
+                    Map<String, Object> existingMap = groupedByProject.get(projectName);
+                    double updatedMargin = (double) existingMap.get("margin") + parseDoubleSafe(record.getMargin());
+                    double updatedClientBillExcludeGst = (double) existingMap.get("clientBillExcludeGst") + parseDoubleSafe(record.getClientBillExcludeGst());
+                    
+                    existingMap.put("clientBillIncludeGst", (double) existingMap.get("clientBillIncludeGst") + parseDoubleSafe(record.getClientBillIncludeGst()));
+                    existingMap.put("clientGstAmount", (double) existingMap.get("clientGstAmount") + parseDoubleSafe(record.getClientGstAmount()));
+                    existingMap.put("clientBillExcludeGst", updatedClientBillExcludeGst);
+                    existingMap.put("vendorBillIncludeGst", (double) existingMap.get("vendorBillIncludeGst") + parseDoubleSafe(record.getVendorBillIncludeGst()));
+                    existingMap.put("vendorGstAmount", (double) existingMap.get("vendorGstAmount") + parseDoubleSafe(record.getVendorGstAmount()));
+                    existingMap.put("vendorBillExcludeGst", (double) existingMap.get("vendorBillExcludeGst") + parseDoubleSafe(record.getVendorBillExcludeGst()));
+                    existingMap.put("margin", updatedMargin);
+                    existingMap.put("marginPercent", calculateMarginPercent(updatedMargin, updatedClientBillExcludeGst));
+                }
+            }
+            
+            // Return the response
+            return new ResponseEntity<>(new ArrayList<>(groupedByProject.values()), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+//    /**
+//     * Safely parses a string to double, returns 0.0 if parsing fails.
+//     */
+//    private double parseDoubleSafe(String value) {
+//        try {
+//            return value != null ? Double.parseDouble(value) : 0.0;
+//        } catch (NumberFormatException e) {
+//            return 0.0;
+//        }
+//    }
+//
+//    /**
+//     * Calculates the margin percentage.
+//     */
+//    private double calculateMarginPercent(double margin, double clientBillExcludeGst) {
+//        return clientBillExcludeGst != 0 ? (margin / clientBillExcludeGst) * 100 : 0.0;
+//    }
+
     
     @EncryptResponse
     @GetMapping("/getAllProfitLossByManager")    
@@ -416,6 +528,9 @@ public class ProfiLossMasterController {
     private double calculateMarginPercent(double margin, double clientBillExcludeGst) {
         return clientBillExcludeGst != 0 ? (margin / clientBillExcludeGst) * 100 : 0.0;
     }
+    
+    
+    
     
     @EncryptResponse
     @GetMapping("/getProfitLossByProjectId")

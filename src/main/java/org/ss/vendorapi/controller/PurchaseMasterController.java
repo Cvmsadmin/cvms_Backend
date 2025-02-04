@@ -187,7 +187,10 @@ public class PurchaseMasterController {
 	            statusMap.put("poApproveDate", purchaseMaster.getPoApproveDate());
 	        }
 
-	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+	        Map<String, String> response = new HashMap<>();
+	        response.put("message", "Purchase created successfully");
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+
 
 	    } catch (Exception ex) {
 	        statusMap.put("error", env.getProperty("common.api.error"));

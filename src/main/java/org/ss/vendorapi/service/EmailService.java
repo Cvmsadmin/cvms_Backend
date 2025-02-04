@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class EmailService {
 	
 	   @Autowired
-	    private JavaMailSender mailSender; // Remove static modifier
+	    private JavaMailSender mailSender; 
 
 	    public void sendEmail(String to, String subject, String text) throws MessagingException { 
 	        SimpleMailMessage message = new SimpleMailMessage();

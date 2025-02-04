@@ -1,100 +1,102 @@
 package org.ss.vendorapi.Scheduler;
 
 import java.util.List;
-
+import java.text.NumberFormat;
+import java.util.Locale;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.ss.vendorapi.entity.UserMasterEntity;
-import org.ss.vendorapi.repository.UserCreationRepository;
+import org.ss.vendorapi.entity.EmailNotificationView;
+import org.ss.vendorapi.repository.EmailNotificationViewRepository;
 import org.ss.vendorapi.service.EmailService;
 
 @Component
 public class EmailScheduler {
-	
-	@Autowired
+
+    @Autowired
     private EmailService emailService;
-	
-	@Autowired 
-	private UserCreationRepository creationUserRepository;
 
-	
-	@Scheduled(fixedRate = 30 * 1000) // Schedule every 1 minute
+    @Autowired
+    private EmailNotificationViewRepository emailNotificationViewRepository;
+
+    //@Scheduled(cron = "*/10 * * * * *") // Runs every 10 seconds for testing
+    //@Scheduled(cron = "0 0 9 */3 * *")// Runs every 3 days at 9 AM
     public void sendNotificationsForUpcomingEvents() {
-        // Fetch users who need to be notified
-        List<UserMasterEntity> users = creationUserRepository.findAll(); // Modify with criteria if needed
+        System.out.println("Email Scheduler Running...");
 
-        // Prepare and send emails
-        for (UserMasterEntity user : users) {
-            if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-                String to = user.getEmail();
-                String subject = "Upcoming Event Notification";
-                String body = generateEmailBody(user.getFirstName(), user.getLastName(), "Project Name", "2024-12-01");
+        // Fetch pending email notifications from the view
+        List<EmailNotificationView> pendingNotifications = emailNotificationViewRepository.findPendingEmailRecipients();
 
-                try {
-                    emailService.sendEmail(to, subject, body);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        if (pendingNotifications.isEmpty()) {
+            System.out.println("No pending email notifications.");
+            return;
+        }
+
+        for (EmailNotificationView notification : pendingNotifications) {
+            String to = notification.getEmail();
+            String subject;
+            String body;
+
+            // Check if the current date is before or after the due date
+            LocalDate dueDate = LocalDate.parse(notification.getT_date(), DateTimeFormatter.ofPattern("dd-MM-yy"));
+            LocalDate currentDate = LocalDate.now();
+
+            if (!currentDate.isAfter(dueDate)) {
+                // Send email for due milestone payment
+                subject = "Milestone Payment Due – " + notification.getClient_name() + " – " + notification.getProject_name();
+                body = generateEmailBodyForDue(notification);
+            } else {
+                // Send email for overdue milestone payment
+                subject = "Overdue Milestone Payment – " + notification.getClient_name()+ " – " + notification.getProject_name();
+                body = generateEmailBodyForOverdue(notification);
+            }
+
+            try {
+                emailService.sendEmail(to, subject, body);
+                System.out.println("Email sent to: " + to);
+            } catch (Exception e) {
+                System.err.println("Error sending email to: " + to + " - " + e.getMessage());
             }
         }
     }
 
-    private String generateEmailBody(String firstName, String lastName, String projectName, String dueDate) {
+    private String generateEmailBodyForDue(EmailNotificationView notification) {
         return String.format(
-            "Dear %s %s,\n\n" +
-            "This is a reminder that an event for %s is scheduled to occur on %s.\n\n" +
+            "Hi %s,\n\n" +
+            "Please note that the following milestone payment is now due from %s:\n\n" +
+            "• Project: %s\n" +
+            "• Milestone: %s\n" +
+            "• Amount: ₹%s\n" +
+            "• Due Date: %s\n\n" +
+            "Kindly proceed with the necessary steps to ensure payment is received as per the agreed terms.\n\n" +
             "Thanks,\nCVMS Admin",
-            firstName, lastName, projectName, dueDate
+            notification.getAccount_manager(),
+            notification.getClient_name(),
+            notification.getProject_name(),
+            notification.getMilestone(),
+            notification.getPending_payment_for_milestone(),
+            notification.getT_date()
         );
-	
     }
+
+    private String generateEmailBodyForOverdue(EmailNotificationView notification) {
+        return String.format(
+            "Hi %s,\n\n" +
+            "Please note that the following milestone payment is now overdue from %s:\n\n" +
+            "• Project: %s\n" +
+            "• Milestone: %s\n" +
+            "• Amount: ₹%s\n" +
+            "• Due Date: %s\n\n" +
+            "Kindly proceed with the necessary steps to ensure payment is received as per the agreed terms.\n\n" +
+            "Thanks,\nCVMS Admin",
+            notification.getAccount_manager(),
+            notification.getClient_name(),
+            notification.getProject_name(),
+            notification.getMilestone(),
+            notification.getPending_payment_for_milestone(),
+            notification.getT_date()
+        );
     }
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	 // Schedule the task every 15 days (fixedRate is in milliseconds)
-//    @Scheduled(fixedRate = 15 * 24 * 60 * 60 * 1000) // 15 days
-//    public void sendScheduledEmails() {
-//        // Fetch recipient data dynamically (e.g., from a database)
-//        String to = "example@domain.com"; // Replace with dynamic data
-//        String subject = "Vendor Invoice Due Notification";
-//        String body = generateEmailBody("John Doe", "Jane Smith", "Vendor ABC", "Project X", "2024-12-15");
-//
-//        try {
-//            emailService.sendEmail(to, subject, body);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    // Method to generate email body with dynamic data
-//    private String generateEmailBody(String projectManager, String accountManager, 
-//                                     String vendorName, String projectName, String dueDate) {
-//        return String.format(
-//            "Dear %s & %s,\n\n" +
-//            "The invoice for %s toward %s is due on %s.\n\n" +
-//            "Thanks,\nCVMS Admin",
-//            projectManager, accountManager, vendorName, projectName, dueDate
-//        );
-//    }
-
-
-	
-		
-
-
+}

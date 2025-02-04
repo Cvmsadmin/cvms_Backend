@@ -1,5 +1,7 @@
 package org.ss.vendorapi.controller;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -709,6 +711,8 @@ public class VendorInvoiceMasterController {
 	@GetMapping("/getVendorInvoice/{invoiceNo}")
 	public ResponseEntity<?> getVendorInvoiceByInvoiceNo(@PathVariable("invoiceNo") String invoiceNo) {
 	    try {
+	    	// Decode the invoice number to handle URL encoding
+	        String decodedInvoiceNo = URLDecoder.decode(invoiceNo, StandardCharsets.UTF_8);
 	        // Fetch the invoice by invoiceNo
 	        Optional<VendorInvoiceMasterEntity> invoiceOptional = vendorInvoiceMasterService.findByInvoiceNo(invoiceNo);
 

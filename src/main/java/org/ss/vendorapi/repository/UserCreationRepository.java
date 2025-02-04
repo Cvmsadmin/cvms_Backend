@@ -14,12 +14,9 @@ public interface UserCreationRepository extends JpaRepository<UserMasterEntity, 
 	boolean existsByEmail(String email);
 //	public boolean existsByEmail(String email);
 
-
 	boolean existsByPhone(String phone);
 
-
 	Optional<UserMasterEntity> findByEmail(String email);
-
 
 	boolean existsByEmployeeId(String employeeId);
 

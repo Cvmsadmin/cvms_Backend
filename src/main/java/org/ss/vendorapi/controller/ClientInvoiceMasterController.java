@@ -43,9 +43,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("v2/api")
 public class ClientInvoiceMasterController {
 
-
-
-
+	
 	private static final Class<?> CLASS_NAME = UserMasterController.class;
 //	private static UPPCLLogger logger = UPPCLLogger.getInstance(UPPCLLogger.MODULE_REGISTRATION,CLASS_NAME.toString());
 
@@ -70,8 +68,7 @@ public class ClientInvoiceMasterController {
 	@EncryptResponse
 	@PostMapping("/addClientInvoices")
 	public ResponseEntity<?> addClientInvoices(@RequestBody ClientInvoiceMasterDTO clientInvoiceDTO, HttpServletRequest request) {
-	    Map<String, Object> responseMap = new HashMap<>();
-	    
+	    Map<String, Object> responseMap = new HashMap<>();	    
 	    try {
 	        // Validate mandatory fields if status is not "completed"
 	        if (!"completed".equalsIgnoreCase(clientInvoiceDTO.getStatus()) && (
@@ -165,12 +162,6 @@ public class ClientInvoiceMasterController {
 	    }
 	}
 
-
-
-
-		
-	
-	
 	
 //	@EncryptResponse
 //	@PostMapping("/addClientInvoices")

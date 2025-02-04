@@ -516,6 +516,14 @@ public class CommonUtils {
         return ALLOWED_FILE_TYPES.contains(contentType);
     }
 
+    public static ResponseEntity<?> createResponse(String status, Map<String, Object> responseBody, HttpStatus httpStatus) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", status);
+        response.put("data", responseBody);
+        return new ResponseEntity<>(response, httpStatus);
+    }
+
+
 
     
 }
