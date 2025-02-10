@@ -32,6 +32,8 @@ public class EmailNotificationView {
 	  private String t_date;
 	  private String pending_payment_for_milestone;
 	  private String mail_date;
+	  private String milestone_duration;
+	  private String start_date;
 	public String getClient_name() {
 		return client_name;
 	}
@@ -79,6 +81,18 @@ public class EmailNotificationView {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public String getMilestone_duration() {
+		return milestone_duration;
+	}
+	public void setMilestone_duration(String milestone_duration) {
+		this.milestone_duration = milestone_duration;
+	}
+	public String getStart_date() {
+		return start_date;
+	}
+	public void setStart_date(String start_date) {
+		this.start_date = start_date;
 	}
 	  
 

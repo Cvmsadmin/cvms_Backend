@@ -21,6 +21,7 @@ import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.SalesOpportunityMasterEntity;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.SalesOpportunityDTO;
+import org.ss.vendorapi.service.EmailService;
 import org.ss.vendorapi.service.SalesOpportunityService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
@@ -40,6 +41,12 @@ public class SalesOpportunityController {
 
 	@Autowired 
 	private Environment env;
+	
+//	@Autowired
+//	private CommonUtils commonUtils;
+	
+	@Autowired
+	private EmailService emailService;
 
 	@Autowired
 	private SalesOpportunityService salesOpportunityService;
@@ -126,6 +133,32 @@ public class SalesOpportunityController {
 
 	        // Save the entity
 	        salesOpportunityMaster = salesOpportunityService.save(salesOpportunityMaster);
+	        
+	        String formattedAmount = CommonUtils.formatAmountInIndianStyle(salesDTO.getEstimatedProjectValue());
+
+	        
+	        // Send email notification
+	        String emailBody = "Dear Sir,\n\n" +
+	                "We have identified a new opportunity and are actively working towards it. Please find the key details below:\n" +
+	                "Prospect Client: " + salesDTO.getNameOfCustomer() + "\n" +
+	                "RFP No: " + salesDTO.getRfpNumber() + "\n" +
+	                "Mode of Selection: " + salesDTO.getModeOfSelection() + "\n" +
+	                "Project Value: " + salesDTO.getEstimatedProjectValue() + "\n" +
+	                "Geography: " + salesDTO.getGeography() + "\n" +
+	                "e-Proc ID: " + salesDTO.getEprocId() + "\n" +
+	                "RFP Title: " + salesDTO.getRfpTitle() + "\n" +
+	                "Mode of Submission: " + salesDTO.getModeOfSubmission() + "\n" +
+	                "Project Duration: " + salesDTO.getProjectDuration() + "\n" +
+	                "Estimated Project Value: " + salesDTO.getEstimatedProjectValue() + "\n" +
+	                "Expected OEMs: " + salesDTO.getExpectedOEMs() + "\n" +
+	                "JV/Consortium/Sub-Contractors: " + salesDTO.getJvConsortiumSubContractors() + "\n" +
+	                "Expected Competitors: " + salesDTO.getExpectedCompetitors() + "\n" +
+	                "Consultant (If any): " + salesDTO.getConsultant() + "\n" +
+	                "Sales SPOC: " + salesDTO.getSalesSPOC() + "\n\n" +
+	                "We kindly request your approval to proceed with this opportunity. Please let us know if any additional information is required.\n\n" +
+	                "Best regards,\n\nCVMS Admin";
+
+	        emailService.sendEmail("amit.rawat2@infinite.com", "New Sales Opportunity Identified", emailBody);
 
 	        // Prepare response
 	        if (salesOpportunityMaster != null) {
@@ -147,7 +180,8 @@ public class SalesOpportunityController {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
-
+	
+	
 
 	
 		

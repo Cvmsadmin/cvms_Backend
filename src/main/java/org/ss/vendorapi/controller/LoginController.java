@@ -326,14 +326,20 @@ public class LoginController {
 	    if (user == null) {
 	        return CommonUtils.createResponse(Constants.FAIL, "Invalid email or phone number", HttpStatus.BAD_REQUEST);
 	    }
+	    
+	    String firstName = user.getFirstName(); 
 
 	    // Generate OTP and store with expiration (e.g., 2 minutes)
 	    String otp = otpService.generateOtpForEmail(email);
 
 	    try {
 	        // Send OTP to the user's email
-	        emailSenderService.sendEmail(email, "OTP for Password Reset", 
-	                                     "Your OTP for password reset is: " + otp);
+	        emailSenderService.sendEmail(email, "Password Reset Request – OTP for Verification", 
+	        		                       "Dear " + (firstName != null ? firstName : "") + ",\r\n"
+	                                     + "\nWe received a request to reset your password. Please use the OTP below to proceed with the password reset:\r\n"
+	                                     + "\nYour OTP for password reset is: " + otp +" \n\nFor security reasons, this OTP is valid for a limited time. Please do not share it with anyone.\r\n"
+	                                     		+ "\nIf you did not request a password reset, please ignore this email. "+"\n\nBest regards,\r\n"
+	                                     				+ "CVMS Admin");
 
 	        // If no exception, OTP email was successfully sent
 	        return CommonUtils.createResponse(Constants.SUCCESS, "OTP sent to your email", HttpStatus.OK);

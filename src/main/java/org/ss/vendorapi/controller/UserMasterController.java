@@ -148,7 +148,11 @@ public class UserMasterController{
 	            if (registerUserCreationEntityObj != null) {
 	                // Send an email with the user's details
 	                String subject = "Welcome to Our Service";
-	                String text = String.format("Dear %s,\n\nYour account has been created successfully.\n\nUsername: %s\nPassword: %s\n\nPlease keep your credentials safe.\n\nBest Regards,\nCVMSADMIN", 
+	                String text = String.format("Dear %s,\n\nWelcome to CVMS!\r\n"
+	                		+ " \r\n"
+	                		+ "Your account has been successfully created. Below are your login credentials:\n\nUsername: %s\nPassword: %s\n\nPlease keep your credentials safe and do not share them with anyone. For security reasons, we strongly recommend changing your password upon your first login.\r\n"
+	                		+ " \r\n"
+	                		+ "\n\nBest Regards,\nCVMS ADMIN", 
 	                        userMasterMEntity.getFirstName(), 
 	                        userMasterMEntity.getEmail(), 
 	                        generatedPassword);

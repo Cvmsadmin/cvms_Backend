@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
+import org.ss.vendorapi.modal.PayableInvoiceStatsDTO;
+//import org.ss.vendorapi.modal.ReceivableInvoiceStatsDTO;
 
 @Repository
 public interface ClientInvoiceMasterRepository extends JpaRepository<ClientInvoiceMasterEntity, Long>{
@@ -17,5 +19,13 @@ public interface ClientInvoiceMasterRepository extends JpaRepository<ClientInvoi
     ClientInvoiceMasterEntity findByInvoiceNoNative(@Param("invoiceNo") String invoiceNo);
 	
 	ClientInvoiceMasterEntity findByClientId(String clientId);
-
+	
+//	// JPQL query to get receivable invoice stats (count and sum)
+//	@Query("SELECT new org.ss.vendorapi.dto.ReceivableInvoiceStatsDTO(" +
+//		       "COUNT(cim), " +
+//		       "SUM(cim.invoiceAmountIncluGst)) " +
+//		       "FROM ClientInvoiceMaster cim " +
+//		       "WHERE cim.status = 'pending'")
+//		ReceivableInvoiceStatsDTO getReceivableInvoiceStats();
+//
 }

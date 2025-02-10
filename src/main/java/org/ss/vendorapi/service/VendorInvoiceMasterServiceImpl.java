@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.entity.VendorInvoiceMasterEntity;
+import org.ss.vendorapi.modal.PayableInvoiceStatsDTO;
 import org.ss.vendorapi.repository.ClientMasterRepository;
 import org.ss.vendorapi.repository.VendorInvoiceMasterRepository;
 
@@ -63,6 +64,11 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
 	@Override
     public ClientMasterEntity findClientById(Long clientId) {
         return clientMasterRepository.findById(clientId).orElse(null); // Handle if not found
+    }
+	
+	public PayableInvoiceStatsDTO getPayableInvoiceStats() {
+//        return vendorinviceMasterRepository.getPayableInvoiceStats();
+		return null;
     }
 
 

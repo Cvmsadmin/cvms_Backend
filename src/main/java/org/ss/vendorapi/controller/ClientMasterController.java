@@ -226,14 +226,6 @@ public class ClientMasterController {
 	}
 
 	
-	/**
-	 * @apiNote ::: 
-	 * @author Lata Bisht
-	 * @since 26 September, 2024
-	 * @param userId ::::: This is id of user from user_master
-	 * @return :: returning list of clients
-	 */
-	
 	@EncryptResponse
 	@GetMapping("/getAllClientByManager")
 	public ResponseEntity<?> getAllClientByManager(@RequestParam("id") Long userId) { 

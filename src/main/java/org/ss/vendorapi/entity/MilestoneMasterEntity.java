@@ -40,6 +40,10 @@ public class MilestoneMasterEntity extends ParentEntity implements Serializable{
 	private String gstAmount;
 	private String amountInclGst;
 	
+	private String status;  //new field
+	@JsonFormat(pattern="dd/MM/yyyy")
+	private Date completiondate;  //new field
+	
 }
 
 

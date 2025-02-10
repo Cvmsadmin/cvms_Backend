@@ -64,8 +64,6 @@ public class ProjectMasterController {
 	@Autowired
 	private ClientMasterService clientMasterService;
 
-
-
 	@EncryptResponse
 	@PostMapping("/addProject")
 	public ResponseEntity<?> addProject(@RequestBody ProjectRequestDTO projectRequestDTO, HttpServletRequest request) {
@@ -142,7 +140,9 @@ public class ProjectMasterController {
 						UtilValidate.isEmpty(milestoneMasterDto.getAmountExclGst())||
 						UtilValidate.isEmpty(milestoneMasterDto.getAmountInclGst())||
 						UtilValidate.isEmpty(milestoneMasterDto.getGstAmount())||
-						UtilValidate.isEmpty(milestoneMasterDto.getGstRate())) {
+						UtilValidate.isEmpty(milestoneMasterDto.getGstRate())||
+				        UtilValidate.isEmpty(milestoneMasterDto.getStatus()) ||  // Validate new field
+                        milestoneMasterDto.getCompletiondate() == null) { 
 					return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);		
 				}
 
@@ -156,6 +156,8 @@ public class ProjectMasterController {
 				milestoneMasterEntity.setAmountInclGst(milestoneMasterDto.getAmountInclGst());
 				milestoneMasterEntity.setGstRate(milestoneMasterDto.getGstRate());
 				milestoneMasterEntity.setGstAmount(milestoneMasterDto.getGstAmount());
+				milestoneMasterEntity.setStatus(milestoneMasterDto.getStatus());  
+	            milestoneMasterEntity.setCompletiondate(milestoneMasterDto.getCompletiondate()); 
 
 				try {
 

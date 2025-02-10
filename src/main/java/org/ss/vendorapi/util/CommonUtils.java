@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -522,8 +524,16 @@ public class CommonUtils {
         response.put("data", responseBody);
         return new ResponseEntity<>(response, httpStatus);
     }
-
-
-
     
+//    public static String formatAmountInIndianStyle(int amount) {
+//        NumberFormat indianFormat = NumberFormat.getInstance(new Locale("en", "IN"));
+//        return indianFormat.format(amount);
+//    }
+
+	public static String formatAmountInIndianStyle(String estimatedProjectValue) {
+		NumberFormat indianFormat = NumberFormat.getInstance(new Locale("en", "IN"));
+        return indianFormat.format("amount");
+		
+	}
+
 }

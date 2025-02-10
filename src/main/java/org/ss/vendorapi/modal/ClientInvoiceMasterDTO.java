@@ -40,7 +40,7 @@ public class ClientInvoiceMasterDTO {
 	private String penaltyDeductionOnBase;
 	private String gstOnPenalty;
 	private String totalPenaltyDeduction;
-	private String totalPaymentReceived;
+	private Double totalPaymentReceived;
 	private String tdsDeductionIncluGst;
 
 	private String TdsPer;
