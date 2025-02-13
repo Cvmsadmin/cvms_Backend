@@ -133,9 +133,6 @@ public class LoginController {
 
 				RefreshToken refreshToken = refreshTokenService.createRefreshTokenByEmail(userDetails.getUsername());
 
-				/** @Author Lata Bisht */
-				/** START ::: GET RESOURCES ::: 9, September August 2024 */
-
 				List<RoleResourceMasterEntity> roleResourceMasterEntityList=roleResourceMasterService.findByRole(userMasterEntity.getRole());	
 
 				String featureIdsString = roleResourceMasterEntityList.stream()
@@ -174,8 +171,6 @@ public class LoginController {
 	                    .username(userDetails.getUsername().split("_")[0])
 	                    .status(Constants.SUCCESS)
 	                    .build();
-
-	            /** END ::: GET RESOURCES */
 
 	            statusMap.put(Parameters.status, Constants.SUCCESS);
 	            statusMap.put(Parameters.statusCode, "LOGIN_200");

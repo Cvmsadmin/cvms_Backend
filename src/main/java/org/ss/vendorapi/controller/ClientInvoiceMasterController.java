@@ -30,6 +30,8 @@ import org.ss.vendorapi.repository.ClientMasterRepository;
 import org.ss.vendorapi.service.ClientInvoiceDescriptionValueService;
 import org.ss.vendorapi.service.ClientInvoiceMasterService;
 import org.ss.vendorapi.service.DataValidationService;
+import org.ss.vendorapi.service.EmailService;
+import org.ss.vendorapi.service.UserMasterService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
 import org.ss.vendorapi.util.Parameters;
@@ -59,6 +61,12 @@ public class ClientInvoiceMasterController {
 	@Autowired
 	private ClientMasterRepository clientMasterRepository;
 	
+	@Autowired
+	private EmailService emailService;
+	
+	
+//	@Autowired
+//	private UserMasterService userMasterService;
 //	@Autowired
 //	private ClientInvoiceDescriptionValue clientInvoiceDescriptionValue;
 	
@@ -107,6 +115,7 @@ public class ClientInvoiceMasterController {
 	        Optional.ofNullable(clientInvoiceDTO.getBalance()).ifPresent(clientInvoice::setBalance);
 	        Optional.ofNullable(clientInvoiceDTO.getCreditNote()).ifPresent(clientInvoice::setCreditNote);
 	        Optional.ofNullable(clientInvoiceDTO.getTotalPaymentReceived()).ifPresent(clientInvoice::setTotalPaymentReceived);
+	        Optional.ofNullable(clientInvoiceDTO.getMilestone()).ifPresent(clientInvoice::setMilestone);  // Set the milestone
 
 	        // Save ClientInvoiceMasterEntity
 	        clientInvoice = clientInvoiceService.save(clientInvoice);
@@ -154,6 +163,7 @@ public class ClientInvoiceMasterController {
 	        responseMap.put("totalPenaltyDeduction", clientInvoiceDTO.getTotalPenaltyDeduction());
 	        responseMap.put("creditNote", clientInvoiceDTO.getCreditNote());
 	        responseMap.put("totalPaymentReceived", clientInvoiceDTO.getTotalPaymentReceived());
+	        responseMap.put("milestone", clientInvoiceDTO.getMilestone());
 
 	        return new ResponseEntity<>(responseMap, HttpStatus.OK);
 
@@ -161,6 +171,28 @@ public class ClientInvoiceMasterController {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+	
+//    // Fetch authorized users (Account Manager, Management, Project Manager)
+//    List<String> authorizedEmails = clientInvoiceService.getAuthorizedEmailsForClientAndProject(clientInvoiceDTO.getClientName(), clientInvoiceDTO.getProjectName());
+//    
+//    // Prepare email details
+//    String subject = "New Invoice for Client: " + clientInvoiceDTO.getClientName() + " - Project: " + clientInvoiceDTO.getProjectName();
+//    String text = "<html><body>" +
+//                  "<h3>New Invoice Details</h3>" +
+//                  "<p><strong>Client Name:</strong> " + clientInvoiceDTO.getClientName() + "</p>" +
+//                  "<p><strong>Project Name:</strong> " + clientInvoiceDTO.getProjectName() + "</p>" +
+//                  "<p><strong>Invoice Number:</strong> " + clientInvoiceDTO.getInvoiceNo() + "</p>" +
+//                  "<p><strong>Invoice Date:</strong> " + clientInvoiceDTO.getInvoiceDate() + "</p>" +
+//                  "<p><strong>Due Date:</strong> " + clientInvoiceDTO.getInvoiceDueDate() + "</p>" +
+//                  "<p><strong>Total Amount (Excl. GST):</strong> " + clientInvoiceDTO.getInvoiceAmountExcluGst() + "</p>" +
+//                  "<p><strong>GST Amount:</strong> " + clientInvoiceDTO.getGstAmount() + "</p>" +
+//                  "<p><strong>Total Amount (Incl. GST):</strong> " + clientInvoiceDTO.getInvoiceAmountIncluGst() + "</p>" +
+//                  "</body></html>";
+//
+//    // Send email to authorized users
+//    for (String email : authorizedEmails) {
+//        emailService.sendEmail(email, subject, text);
+//    }
 
 	
 //	@EncryptResponse

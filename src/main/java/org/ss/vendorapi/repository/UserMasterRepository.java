@@ -2,6 +2,7 @@ package org.ss.vendorapi.repository;
 
 import java.util.List;
 
+import org.apache.catalina.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -26,6 +27,9 @@ public interface UserMasterRepository extends JpaRepository<UserMasterEntity, Lo
 	UserMasterEntity findByEmailAndPhone(String email, String phone);
 	
 	public List<UserMasterEntity> findByRole(String role);
+	
+	
+//	List<User> findUsersByclientNameAndprojectName(String clientName, String projectName, List<String> asList);
 	
 
 }

@@ -129,3 +129,4 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 	    private List<InvoiceDescriptionValue> descriptionValues;
 
 	}
+

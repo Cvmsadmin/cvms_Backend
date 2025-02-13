@@ -1,185 +1,197 @@
 package org.ss.vendorapi.Scheduler;
  
-import java.util.List;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.Locale;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
 import org.ss.vendorapi.entity.EmailNotificationView;
-import org.ss.vendorapi.modal.PayableInvoiceStatsDTO;
-//import org.ss.vendorapi.modal.ReceivableInvoiceStatsDTO;
-import org.ss.vendorapi.repository.ClientInvoiceMasterRepository;
-import org.ss.vendorapi.repository.ClientMasterRepository;
+import org.ss.vendorapi.entity.InvoiceSummaryView;
 import org.ss.vendorapi.repository.EmailNotificationViewRepository;
-import org.ss.vendorapi.repository.VendorInvoiceMasterRepository;
+import org.ss.vendorapi.repository.InvoiceSummaryViewRepository;
 import org.ss.vendorapi.service.EmailService;
- 
-@Component
-public class EmailScheduler {
- 
-    @Autowired
-    private EmailService emailService;
-    
-    @Autowired
-    private VendorInvoiceMasterRepository vendorInvoiceMasterRepository;
-
-    @Autowired
-    private ClientInvoiceMasterRepository clientInvoiceMasterRepository;
- 
-    @Autowired
-    private EmailNotificationViewRepository emailNotificationViewRepository;
- 
-    //@Scheduled(cron = "*/10 * * * * *") // Runs every 10 seconds for testing
-    //@Scheduled(cron = "0 0 9 */3 * *")// Runs every 3 days at 9 AM
-    public void sendNotificationsForUpcomingEvents() {
-        System.out.println("Email Scheduler Running...");
- 
-        // Fetch pending email notifications from the view
-        List<EmailNotificationView> pendingNotifications = emailNotificationViewRepository.findPendingEmailRecipients();
- 
-        if (pendingNotifications.isEmpty()) {
-            System.out.println("No pending email notifications.");
-            return;
-        }
- 
-        for (EmailNotificationView notification : pendingNotifications) {
-            String to = notification.getEmail();
-            String subject;
-            String body;
- 
-            // Check if the current date is before or after the due date
-            LocalDate dueDate = LocalDate.parse(notification.getT_date(), DateTimeFormatter.ofPattern("dd-MM-yy"));
-            LocalDate currentDate = LocalDate.now();
- 
-            if (!currentDate.isAfter(dueDate)) {
-                // Send email for due milestone payment
-                subject = "Milestone Payment Due – " + notification.getClient_name() + " – " + notification.getMilestone() ;
-                body = generateEmailBodyForDue(notification);
-            } else {
-                // Send email for overdue milestone payment
-                subject = "Overdue Milestone Payment – " + notification.getClient_name()+ " – " + notification.getProject_name();
-                body = generateEmailBodyForOverdue(notification);
+     
+    @Component
+    public class EmailScheduler {
+        @Autowired
+        private EmailService emailService;
+        
+        @Autowired
+        private EmailNotificationViewRepository emailNotificationViewRepository;
+        
+        @Autowired
+        private InvoiceSummaryViewRepository invoiceSummaryViewRepository;
+        
+        private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+     
+//        @Scheduled(cron = "*/10 * * * * *") // Runs every 10 seconds for testing
+        public void sendNotificationsForUpcomingEvents() {
+            System.out.println("Email Scheduler Running...");
+            List<EmailNotificationView> pendingNotifications = emailNotificationViewRepository.findPendingEmailRecipients();
+            if (pendingNotifications.isEmpty()) {
+                System.out.println("No pending email notifications.");
+                return;
             }
- 
-            try {
-                emailService.sendEmail(to, subject, body);
-                System.out.println("Email sent to: " + to);
-            } catch (Exception e) {
-                System.err.println("Error sending email to: " + to + " - " + e.getMessage());
+            for (EmailNotificationView notification : pendingNotifications) {
+                String to = notification.getEmail();
+                String subject;
+                String body;
+     
+                LocalDate dueDate = LocalDate.parse(notification.getT_date(), DateTimeFormatter.ofPattern("dd-MM-yy"));
+                String formattedDueDate = dueDate.format(DATE_FORMATTER);
+                LocalDate currentDate = LocalDate.now();
+     
+                if (!currentDate.isAfter(dueDate)) {
+                    subject = "Milestone Payment Due – " + notification.getClient_name() + " – " + notification.getMilestone();
+                    body = generateEmailBodyForDue(notification, formattedDueDate);
+                } else {
+                    subject = "Overdue Milestone Payment – " + notification.getClient_name() + " – " + notification.getMilestone();
+                    body = generateEmailBodyForOverdue(notification, formattedDueDate);
+                }
+     
+                try {
+                    emailService.sendEmail(to, subject, body);
+                    System.out.println("Email sent to: " + to);
+                } catch (Exception e) {
+                    System.err.println("Error sending email to: " + to + " - " + e.getMessage());
+                }
             }
         }
-    }
- 
-    private String generateEmailBodyForDue(EmailNotificationView notification) {
-        return String.format(
-            "Hi %s,\n\n" +
-            "Please note that the following milestone payment is now due from %s:\n\n" +
-            "• Project: %s\n" +
-            "• Milestone: %s\n" +
-            "• Amount (Incl. GST): ₹%s\n" +
-            "• Milestone Duration: %s\n" +
-            "• Start Date: %s\n" +
-            "• Due Date: %s\n\n" +
-            "Kindly proceed with the necessary steps to ensure payment is received as per the agreed terms.\n\n" +
-            "Thanks,\nCVMS Admin",
-            notification.getAccount_manager(),
-            notification.getClient_name(),
-            notification.getProject_name(),
-            notification.getMilestone(),
-            notification.getPending_payment_for_milestone(),
-            notification.getMilestone_duration(),
-            notification.getStart_date(),
-            notification.getT_date()
+     
+        private String generateEmailBodyForDue(EmailNotificationView notification, String formattedDueDate) {
+            String formattedAmount = formatCurrency(new BigDecimal(notification.getPending_payment_for_milestone()));
+     
+            return String.format(
+                "<html><body>" +
+                "<p>Hi %s,</p>" +
+                "<p>Please note that the following milestone payment is now due from <b>%s</b>:</p>" +
+                "<ul>" +
+                "<li>Project: <b>%s</b></li>" +
+                "<li>Milestone: <b>%s</b></li>" +
+                "<li>Amount (Incl. GST): <b>%s</b></li>" +
+                "<li>Milestone Duration: <b>%s</b></li>" +
+                "<li>Start Date: <b>%s</b></li>" +
+                "<li>Due Date: <b>%s</b></li>" +
+                "</ul>" +
+                "<p>Kindly proceed with the necessary steps to ensure payment is received as per the agreed terms.</p>" +
+                "<p>Thanks,<br><b>CVMS Admin</b></p>" +
+                "</body></html>",
+                notification.getAccount_manager(),
+                notification.getClient_name(),
+                notification.getProject_name(),
+                notification.getMilestone(),
+                formattedAmount,
+                notification.getMilestone_duration(),
+                LocalDate.parse(notification.getStart_date(), DateTimeFormatter.ofPattern("dd-MM-yy")).format(DATE_FORMATTER),
+                formattedDueDate
+            );
+        }
+     
+        private String generateEmailBodyForOverdue(EmailNotificationView notification, String formattedDueDate) {
+            String formattedAmount = formatCurrency(new BigDecimal(notification.getPending_payment_for_milestone()));
+     
+            return String.format(
+                "<html><body>" +
+                "<p>Hi %s,</p>" +
+                "<p>Please note that the following milestone payment is now <b>overdue</b> from <b>%s</b>:</p>" +
+                "<ul>" +
+                "<li>Project: <b>%s</b></li>" +
+                "<li>Milestone: <b>%s</b></li>" +
+                "<li>Amount (Incl. GST): <b>%s</b></li>" +
+                "<li>Milestone Duration: <b>%s</b></li>" +
+                "<li>Start Date: <b>%s</b></li>" +
+                "<li>Due Date: <b>%s</b></li>" +
+                "<li>Status: <b>%s</b></li>" +
+                "</ul>" +
+                "<p>Kindly proceed with the necessary steps to ensure payment is received as per the agreed terms.</p>" +
+                "<p>Thanks,<br><b>CVMS Admin</b></p>" +
+                "</body></html>",
+                notification.getAccount_manager(),
+                notification.getClient_name(),
+                notification.getProject_name(),
+                notification.getMilestone(),
+                formattedAmount,
+                notification.getMilestone_duration(),
+                LocalDate.parse(notification.getStart_date(), DateTimeFormatter.ofPattern("dd-MM-yy")).format(DATE_FORMATTER),
+                formattedDueDate,
+                notification.getStatus()
+            );
+        }
+        
+    // **************************************************************************************************************************************************************
+        
+//        @Scheduled(cron = "*/10 * * * * *") // Runs every 10 seconds for testing 
+        public void sendInvoiceSummaryEmail() {
+            System.out.println("Invoice Summary Scheduler Running...");
 
-        );
-    }
- 
-    private String generateEmailBodyForOverdue(EmailNotificationView notification) {
-        return String.format(
-            "Hi %s,\n\n" +
-            "Please note that the following milestone payment is now overdue from %s:\n\n" +
-            "• Project: %s\n" +
-            "• Milestone: %s\n" +
-            "• Amount: ₹%s\n" +
-            "• Due Date: %s\n\n" +
-            "Kindly proceed with the necessary steps to ensure payment is received as per the agreed terms.\n\n" +
-            "Thanks,\nCVMS Admin",
-            notification.getAccount_manager(),
-            notification.getClient_name(),
-            notification.getProject_name(),
-            notification.getMilestone(),
-            notification.getPending_payment_for_milestone(),
-            notification.getT_date()
-        );
-    }
-    
-    
-//  ***************************************************  Pending Invoice Summary **************************************************************
-    
-    
-       
-//    @Scheduled(cron = "*/10 * * * * *") // Runs every 10 seconds for testing
-//    public void sendInvoiceSummaryEmail() {
-//        System.out.println("Email Scheduler Running...");
-//
-//        // Fetch pending payable and receivable invoice statistics
-////        PayableInvoiceStatsDTO payableStats = vendorInvoiceMasterRepository.getPayableInvoiceStats();
-//        PayableInvoiceStatsDTO payableStats = null;
-////        ClientInvoiceMasterEntity receivableStats1 = clientInvoiceMasterRepository.getReceivableInvoiceStats();
-//        ReceivableInvoiceStatsDTO receivableStats = null; 
-//        // Format the invoice data
-//        String payableInvoiceCount = formatNumber(payableStats.getPayableInvoiceCount());
-//        String payableInvoiceAmount = formatCurrency(payableStats.getPayableInvoiceAmount());
-//        String receivableInvoiceCount = formatNumber(receivableStats.getReceivableInvoiceCount());
-//        String receivableInvoiceAmount = formatCurrency(receivableStats.getReceivableInvoiceAmount());
-//
-//        // Prepare the email body
-//        String emailBody = generateInvoiceSummaryEmailBody(payableInvoiceCount, payableInvoiceAmount, receivableInvoiceCount, receivableInvoiceAmount);
-//
-//        // Send the email (You can specify the recipient email address here)
-//        String subject = "Pending Invoice Summary";
-//        String recipientEmail = "amit.rawat2@infinite.com"; // Set the recipient email
-//
-//        try {
-//            emailService.sendEmail(recipientEmail, subject, emailBody);
-//            System.out.println("Invoice summary email sent to: " + recipientEmail);
-//        } catch (Exception e) {
-//            System.err.println("Error sending email to: " + recipientEmail + " - " + e.getMessage());
-//        }
-//    }
-    
+            // Fetch invoice summary data based on aging_bucket (directly from the entity)
+            List<InvoiceSummaryView> invoiceSummaries = invoiceSummaryViewRepository.findAll(); 
+            if (invoiceSummaries.isEmpty()) {
+                System.out.println("No invoice summary data found.");
+                return;
+            }
 
-//    private String generateInvoiceSummaryEmailBody(String payableInvoiceCount, String payableInvoiceAmount, 
-//                                                   String receivableInvoiceCount, String receivableInvoiceAmount) {
-//        return String.format(
-//            "Dear Sir,\n\n" +
-//            "Please find below the summary of both pending payable and receivable invoices:\n\n" +
-//            "Pending Payable Invoice Summary\n" +
-//            "Total Payable Invoices: %s\n" +
-//            "Total Payable Amount (Incl. GST): %s\n\n" +
-//            "Pending Receivable Invoice Summary\n" +
-//            "Total Receivable Invoices: %s\n" +
-//            "Total Receivable Amount (Incl. GST): %s\n\n" +
-//            "Best Regards,\n" +
-//            "CVMS Admins",
-//            payableInvoiceCount, payableInvoiceAmount, receivableInvoiceCount, receivableInvoiceAmount
-//        );
-//    }
+            // Hardcoded email recipients
+            String[] recipients = {"debidatta.das@infinite.com", "amit.rawat2@infinite.com"};
 
-    // Helper method to format numbers (for count)
-    private String formatNumber(Long number) {
-        return NumberFormat.getInstance().format(number);
-    }
+            // Build the email body with all the summaries
+            String subject = "Pending Invoice Summary – Payable";
+            String body = generateInvoiceSummaryBody(invoiceSummaries);
 
-    // Helper method to format currency
-    private String formatCurrency(BigDecimal bigDecimal) {
-        return NumberFormat.getCurrencyInstance(new Locale("en", "IN")).format(bigDecimal);
-    }
-       
-    
+            // Send the email to each recipient
+            for (String to : recipients) {
+                try {
+                    emailService.sendEmail(to, subject, body);
+                    System.out.println("Invoice summary email sent to: " + to);
+                } catch (Exception e) {
+                    System.err.println("Error sending email to: " + to + " - " + e.getMessage());
+                }
+            }
+        }
+
+        private String generateInvoiceSummaryBody(List<InvoiceSummaryView> invoiceSummaries) {
+            // Start the HTML content
+            StringBuilder tableContent = new StringBuilder();
+            tableContent.append("<html><body style='text-align: left;'>");
+            tableContent.append("<p>Dear Sir,</p>");
+            tableContent.append("<p>Please find below the summary of pending payable invoices:</p>");
+            tableContent.append("<table border='1' cellpadding='10' cellspacing='0' style='margin-left: 0; margin-right: auto; border-collapse: collapse;'>");
+            tableContent.append("<tr>");
+            tableContent.append("<th style='text-align: center; padding: 10px;'>Aging</th>");
+            tableContent.append("<th style='text-align: center; padding: 10px;'>Total Payable Invoices</th>");
+            tableContent.append("<th style='text-align: center; padding: 10px;'>Total Payable Amount (Incl. GST)</th>");
+            tableContent.append("</tr>");
+            
+            // Iterate over each invoice summary and append it to the table
+            for (InvoiceSummaryView summary : invoiceSummaries) {
+                String agingBucket = summary.getAging_bucket();
+                
+                if (agingBucket != null && !agingBucket.isEmpty()) {
+                    tableContent.append("<tr>");
+                    tableContent.append("<td style='text-align: center; padding: 10px;'>").append(agingBucket).append("</td>");
+                    tableContent.append("<td style='text-align: center; padding: 10px;'>").append(summary.getReceivable_invoice_count()).append("</td>");
+                    tableContent.append("<td style='text-align: center; padding: 10px;'>").append(formatCurrency(summary.getReceivable_invoice_amount())).append("</td>");
+                    tableContent.append("</tr>");
+                } else {
+                    System.err.println("Missing aging_bucket for invoice summary ID: " + summary.getId());
+                }
+            }
+            
+            // End the table and the email body
+            tableContent.append("</table>");
+            tableContent.append("<p>Best regards,<br><b>CVMS Admin</b></p>");
+            tableContent.append("</body></html>");
+            
+            return tableContent.toString();
+        }
+
+        private String formatCurrency(BigDecimal amount) {
+            NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+            return formatter.format(amount);
+        }
 }

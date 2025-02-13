@@ -1,13 +1,18 @@
 package org.ss.vendorapi.service;
 
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Arrays;
+import org.apache.catalina.User;
+//import org.apache.catalina.realm.JNDIRealm.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.exceptions.RequestNotFoundException;
 import org.ss.vendorapi.repository.UserMasterRepository;
+
+//import io.jsonwebtoken.lang.Arrays;
 
 @Service
 public class UserMasterServiceImpl implements UserMasterService {
@@ -201,4 +206,32 @@ public class UserMasterServiceImpl implements UserMasterService {
 	public void save(UserMasterEntity user) {
 		userMasterRepository.save(user);
 	}
+
+	
+	
+//	@Override
+//	public List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName) {
+//	    // Initialize an empty list to hold the authorized email addresses
+//	    List<String> authorizedEmails = new ArrayList<>();
+//
+//	    try {
+//	        // 1. Query the database for users with roles of Account Manager, Project Manager, and Management
+//	        // 2. Based on the given clientName and projectName
+//	        
+//	        // Assuming you have a repository or service to query the roles
+//	        List<org.apache.catalina.User> users = userMasterRepository.findUsersByclientNameAndprojectName(clientName, projectName, 
+//	              Arrays.asList("Account Manager", "Project Manager", "Management"));
+//
+//
+//	        // 3. Extract the emails of these users and add them to the authorizedEmails list
+//	        for (User user : users) {
+//	            authorizedEmails.add(((UserMasterEntity) user).getEmail());
+//	        }
+//	    } catch (Exception e) {
+//	        e.printStackTrace(); // Handle exceptions if necessary (e.g., logging)
+//	    }
+//
+//	    // Return the list of authorized emails
+//	    return authorizedEmails;
+//	}
 }

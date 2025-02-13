@@ -28,6 +28,7 @@ public class SalesOpportunityDTO {
 	private String salesSPOC;
 	private String remarksStatus;
 	
+	
 	@JsonFormat(pattern="dd/MM/yyyy")
 	private Date rfpPublished;
 	

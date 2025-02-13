@@ -1,6 +1,7 @@
 package org.ss.vendorapi.util;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -530,10 +531,27 @@ public class CommonUtils {
 //        return indianFormat.format(amount);
 //    }
 
-	public static String formatAmountInIndianStyle(String estimatedProjectValue) {
-		NumberFormat indianFormat = NumberFormat.getInstance(new Locale("en", "IN"));
-        return indianFormat.format("amount");
-		
-	}
+//	@SuppressWarnings("deprecation")
+//	public static String formatAmountInIndianStyle(String estimatedProjectValue) {
+//		NumberFormat indianFormat = NumberFormat.getInstance(new Locale("en", "IN"));
+//        return indianFormat.format("amount");
+//		
+//	}
+    
+//    @SuppressWarnings("deprecation")
+    public static String formatAmountInIndianStyle(BigDecimal estimatedProjectValue) {
+        try {
+            // Format the BigDecimal using Indian number style
+            NumberFormat indianFormat = NumberFormat.getInstance(new Locale("en", "IN"));
+            return indianFormat.format(estimatedProjectValue);
+        } catch (Exception e) {
+            // Return the original value as a string if there's an issue with formatting
+            return estimatedProjectValue.toString();
+        }
+    }
+
+
+
+
 
 }

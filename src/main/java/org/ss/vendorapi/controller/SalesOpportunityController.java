@@ -1,7 +1,12 @@
 package org.ss.vendorapi.controller;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +42,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("v2/api")
 public class SalesOpportunityController {
 	private static final Class<?> CLASS_NAME = UserMasterController.class;
+	private static final DateTimeFormatter DATE_FORMATTER = null;
 //	private static UPPCLLogger logger = UPPCLLogger.getInstance(UPPCLLogger.MODULE_REGISTRATION, CLASS_NAME.toString());
 
 	@Autowired 
@@ -50,6 +56,180 @@ public class SalesOpportunityController {
 
 	@Autowired
 	private SalesOpportunityService salesOpportunityService;
+	
+//	@EncryptResponse
+//	@PostMapping("/SalesCreated")
+//	public ResponseEntity<?> createSales(@RequestBody SalesOpportunityDTO salesDTO, HttpServletRequest request) {
+//	    String methodName = request.getRequestURI();
+//	    Map<String, Object> statusMap = new HashMap<>();
+//	    
+//	    try {
+//	        // Validate mandatory fields (you've already done this part)
+//	        if (UtilValidate.isEmpty(salesDTO.getNameOfCustomer()) ||
+//	            UtilValidate.isEmpty(salesDTO.getGeography()) ||
+//	            UtilValidate.isEmpty(salesDTO.getRfpNumber()) ||
+//	            UtilValidate.isEmpty(salesDTO.getEprocId()) ||
+//	            UtilValidate.isEmpty(salesDTO.getRfpTitle()) ||
+//	            UtilValidate.isEmpty(salesDTO.getModeOfSelection()) ||
+//	            UtilValidate.isEmpty(salesDTO.getModeOfSubmission()) ||
+//	            UtilValidate.isEmpty(salesDTO.getProjectDuration()) ||
+//	            UtilValidate.isEmpty(salesDTO.getEstimatedProjectValue()) ||
+//	            UtilValidate.isEmpty(salesDTO.getExpectedOEMs()) ||
+//	            UtilValidate.isEmpty(salesDTO.getJvConsortiumSubContractors()) ||
+//	            UtilValidate.isEmpty(salesDTO.getExpectedCompetitors()) ||
+//	            UtilValidate.isEmpty(salesDTO.getConsultant()) ||
+//	            UtilValidate.isEmpty(salesDTO.getSalesSPOC()) ||
+//	            UtilValidate.isEmpty(salesDTO.getRemarksStatus()) ||
+//	            salesDTO.getRfpPublished() == null ||
+//	            salesDTO.getPreBidQueries() == null ||
+//	            salesDTO.getPreBidMeeting() == null ||
+//	            salesDTO.getSubmissionEndDate() == null ||
+//	            salesDTO.getSubmissionOfBGHardCopy() == null ||
+//	            salesDTO.getOpeningDate() == null ||
+//	            salesDTO.getDateOfPresentation() == null ||
+//	            UtilValidate.isEmpty(salesDTO.getEmdAmount()) ||
+//	            UtilValidate.isEmpty(salesDTO.getModeOfEMD()) ||
+//	            UtilValidate.isEmpty(salesDTO.getTenderDocFee()) ||
+//	            UtilValidate.isEmpty(salesDTO.getTenderProcessingFee()) ||
+//	            UtilValidate.isEmpty(salesDTO.getPortalCharges()) ||
+//	            UtilValidate.isEmpty(salesDTO.getApprovalForBidParticipation())) {
+//
+//	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+//	        }
+//
+//	        // Map fields to entity (salesOpportunityMaster logic is the same)
+//	        SalesOpportunityMasterEntity salesOpportunityMaster = new SalesOpportunityMasterEntity();
+//	        salesOpportunityMaster.setNameOfCustomer(salesDTO.getNameOfCustomer());
+//	        salesOpportunityMaster.setGeography(salesDTO.getGeography());
+//	        salesOpportunityMaster.setRfpNumber(salesDTO.getRfpNumber());
+//	        salesOpportunityMaster.setEProcId(salesDTO.getEprocId());
+//	        salesOpportunityMaster.setRfpTitle(salesDTO.getRfpTitle());
+//	        salesOpportunityMaster.setModeOfSelection(salesDTO.getModeOfSelection());
+//	        salesOpportunityMaster.setModeOfSubmission(salesDTO.getModeOfSubmission());
+//	        salesOpportunityMaster.setProjectDuration(salesDTO.getProjectDuration());
+//	        salesOpportunityMaster.setEstimatedProjectValue(salesDTO.getEstimatedProjectValue());
+//	        salesOpportunityMaster.setExpectedOEMs(salesDTO.getExpectedOEMs());
+//	        salesOpportunityMaster.setJvConsortiumSubContractors(salesDTO.getJvConsortiumSubContractors());
+//	        salesOpportunityMaster.setExpectedCompetitors(salesDTO.getExpectedCompetitors());
+//	        salesOpportunityMaster.setConsultant(salesDTO.getConsultant());
+//	        salesOpportunityMaster.setSalesSPOC(salesDTO.getSalesSPOC());
+//	        salesOpportunityMaster.setRemarksStatus(salesDTO.getRemarksStatus());
+//	        salesOpportunityMaster.setRfpPublished(salesDTO.getRfpPublished());
+//	        salesOpportunityMaster.setPreBidQueries(salesDTO.getPreBidQueries());
+//	        salesOpportunityMaster.setPreBidMeeting(salesDTO.getPreBidMeeting());
+//	        salesOpportunityMaster.setSubmissionEndDate(salesDTO.getSubmissionEndDate());
+//	        salesOpportunityMaster.setSubmissionOfBGHardCopy(salesDTO.getSubmissionOfBGHardCopy());
+//	        salesOpportunityMaster.setOpeningDate(salesDTO.getOpeningDate());
+//	        salesOpportunityMaster.setDateOfPresentation(salesDTO.getDateOfPresentation());
+//	        salesOpportunityMaster.setEmdAmount(salesDTO.getEmdAmount());
+//	        salesOpportunityMaster.setModeOfEMD(salesDTO.getModeOfEMD());
+//	        salesOpportunityMaster.setTenderDocFee(salesDTO.getTenderDocFee());
+//	        salesOpportunityMaster.setTenderProcessingFee(salesDTO.getTenderProcessingFee());
+//	        salesOpportunityMaster.setPortalCharges(salesDTO.getPortalCharges());
+//	        salesOpportunityMaster.setApprovalForBidParticipation(salesDTO.getApprovalForBidParticipation());
+//
+//	        // Dynamic currentStatus handling (same as before)
+//	        if ("Approved".equalsIgnoreCase(salesDTO.getApprovalForBidParticipation())) {
+//	            salesOpportunityMaster.setCurrentStatus(salesDTO.getCurrentStatus());
+//	        } else {
+//	            salesOpportunityMaster.setCurrentStatus("");
+//	        }
+//
+//	        // Save the entity
+//	        salesOpportunityMaster = salesOpportunityService.save(salesOpportunityMaster);
+//	        
+//	        EmailNotificationView notification;
+//			// Handle pending payment for milestone
+//	        String pendingPaymentStr = notification.getPending_payment_for_milestone();
+//	        BigDecimal pendingPayment = null;
+//	        try {
+//	            pendingPayment = new BigDecimal(pendingPaymentStr);
+//	        } catch (NumberFormatException e) {
+//	            // Handle the error, set to default or log
+//	            pendingPayment = BigDecimal.ZERO;
+//	        }
+//
+//	        // Format the pending payment
+//	        String formattedAmount = formatCurrency(pendingPayment);
+//
+//	        // Generate the overdue email body
+//	        String formattedDueDate = "your formatted due date here"; // You'll need to format the due date properly
+//	        String emailBody = generateEmailBodyForOverdue(notification, formattedDueDate);
+//
+//	        // Send the email
+//	        emailService.sendEmail(notification.getRecipientEmail(), "Overdue Payment Notification", emailBody);
+//
+//	        // Prepare response
+//	        if (salesOpportunityMaster != null) {
+//	            statusMap.put("statusMsg", "Sales Created");
+//	            statusMap.put("status", Constants.SUCCESS);
+//	            statusMap.put("statusCode", "RU_200");
+//	            statusMap.put("currentStatus", salesOpportunityMaster.getCurrentStatus());
+//	            return new ResponseEntity<>(statusMap, HttpStatus.OK);
+//	        } else {
+//	            statusMap.put(Parameters.statusMsg, "Sales Not Created");
+//	            statusMap.put(Parameters.status, Constants.FAIL);
+//	            statusMap.put(Parameters.statusCode, "RU_301");
+//	            return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
+//	        }
+//	    } catch (Exception ex) {
+//	        // Log the exception
+////	        logger.error("Error occurred while creating sales opportunity", ex);
+//	        
+//	        statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
+//	        statusMap.put(Parameters.statusCode, Constants.SVD_USR);
+//	        statusMap.put(Parameters.status, Constants.FAIL);
+//	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+//
+//	// Helper method to format currency
+//	private String formatCurrency(BigDecimal value) {
+//	    if (value == null) {
+//	        return "0.00"; // return default value if null
+//	    }
+//	    return NumberFormat.getCurrencyInstance().format(value);
+//	}
+//
+//	// Method to generate the email body for overdue payments
+//	@SuppressWarnings("unused")
+//	private String generateEmailBodyForOverdue(EmailNotificationView notification, String formattedDueDate) {
+//	    BigDecimal pendingPayment = null;
+//	    try {
+//	        pendingPayment = new BigDecimal(notification.getPending_payment_for_milestone());
+//	    } catch (NumberFormatException e) {
+//	        pendingPayment = BigDecimal.ZERO;
+//	    }
+//	    String formattedAmount = formatCurrency(pendingPayment);
+//
+//	    return String.format(
+//	        "<html><body>" +
+//	        "<p>Hi %s,</p>" +
+//	        "<p>Please note that the following milestone payment is now <b>overdue</b> from <b>%s</b>:</p>" +
+//	        "<ul>" +
+//	        "<li>Project: <b>%s</b></li>" +
+//	        "<li>Milestone: <b>%s</b></li>" +
+//	        "<li>Amount (Incl. GST): <b>%s</b></li>" +
+//	        "<li>Milestone Duration: <b>%s</b></li>" +
+//	        "<li>Start Date: <b>%s</b></li>" +
+//	        "<li>Due Date: <b>%s</b></li>" +
+//	        "<li>Status: <b>%s</b></li>" +
+//	        "</ul>" +
+//	        "<p>Kindly proceed with the necessary steps to ensure payment is received as per the agreed terms.</p>" +
+//	        "<p>Thanks,<br><b>CVMS Admin</b></p>" +
+//	        "</body></html>",
+//	        notification.getAccount_manager(),
+//	        notification.getClient_name(),
+//	        notification.getProject_name(),
+//	        notification.getMilestone(),
+//	        formattedAmount,
+//	        notification.getMilestone_duration(),
+//	        LocalDate.parse(notification.getStart_date(), DateTimeFormatter.ofPattern("dd-MM-yy")).format(DATE_FORMATTER),
+//	        formattedDueDate,
+//	        notification.getStatus()
+//	    );
+//	}
+
 
 	@EncryptResponse
 	@PostMapping("/SalesCreated")
@@ -59,37 +239,41 @@ public class SalesOpportunityController {
 	    
 	    try {
 	        // Validate mandatory fields
-	        if (UtilValidate.isEmpty(salesDTO.getNameOfCustomer()) ||
-	            UtilValidate.isEmpty(salesDTO.getGeography()) ||
-	            UtilValidate.isEmpty(salesDTO.getRfpNumber()) ||
-	            UtilValidate.isEmpty(salesDTO.getEprocId()) ||
-	            UtilValidate.isEmpty(salesDTO.getRfpTitle()) ||
-	            UtilValidate.isEmpty(salesDTO.getModeOfSelection()) ||
-	            UtilValidate.isEmpty(salesDTO.getModeOfSubmission()) ||
-	            UtilValidate.isEmpty(salesDTO.getProjectDuration()) ||
-	            UtilValidate.isEmpty(salesDTO.getEstimatedProjectValue()) ||
-	            UtilValidate.isEmpty(salesDTO.getExpectedOEMs()) ||
-	            UtilValidate.isEmpty(salesDTO.getJvConsortiumSubContractors()) ||
-	            UtilValidate.isEmpty(salesDTO.getExpectedCompetitors()) ||
-	            UtilValidate.isEmpty(salesDTO.getConsultant()) ||
-	            UtilValidate.isEmpty(salesDTO.getSalesSPOC()) ||
-	            UtilValidate.isEmpty(salesDTO.getRemarksStatus()) ||
-	            salesDTO.getRfpPublished() == null ||
-	            salesDTO.getPreBidQueries() == null ||
-	            salesDTO.getPreBidMeeting() == null ||
-	            salesDTO.getSubmissionEndDate() == null ||
-	            salesDTO.getSubmissionOfBGHardCopy() == null ||
-	            salesDTO.getOpeningDate() == null ||
-	            salesDTO.getDateOfPresentation() == null ||
-	            UtilValidate.isEmpty(salesDTO.getEmdAmount()) ||
-	            UtilValidate.isEmpty(salesDTO.getModeOfEMD()) ||
-	            UtilValidate.isEmpty(salesDTO.getTenderDocFee()) ||
-	            UtilValidate.isEmpty(salesDTO.getTenderProcessingFee()) ||
-	            UtilValidate.isEmpty(salesDTO.getPortalCharges()) ||
-	            UtilValidate.isEmpty(salesDTO.getApprovalForBidParticipation())) {
+	    	if (UtilValidate.isEmpty(salesDTO.getNameOfCustomer()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getGeography()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getRfpNumber()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getEprocId()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getRfpTitle()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getModeOfSelection()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getModeOfSubmission()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getProjectDuration()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getEstimatedProjectValue()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getExpectedOEMs()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getJvConsortiumSubContractors()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getExpectedCompetitors()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getConsultant()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getSalesSPOC()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getRemarksStatus()) ||
+	    		    salesDTO.getRfpPublished() == null ||
+	    		    salesDTO.getPreBidQueries() == null ||
+	    		    salesDTO.getPreBidMeeting() == null ||
+	    		    salesDTO.getSubmissionEndDate() == null ||
+	    		    salesDTO.getSubmissionOfBGHardCopy() == null ||
+	    		    salesDTO.getOpeningDate() == null ||
+	    		    salesDTO.getDateOfPresentation() == null ||
+	    		    UtilValidate.isEmpty(salesDTO.getEmdAmount()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getModeOfEMD()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getTenderDocFee()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getTenderProcessingFee()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getPortalCharges()) ||
+	    		    UtilValidate.isEmpty(salesDTO.getApprovalForBidParticipation())) {
+	    		    return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+	    		}
 
-	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
-	        }
+	        
+	        // Format currency
+	    	String formattedEstimatedProjectValue = formatAmount(salesDTO.getEstimatedProjectValue());
+	        //String formattedProjectValue = formatAmount(salesDTO.getProjectValue());
 
 	        // Map fields to entity
 	        SalesOpportunityMasterEntity salesOpportunityMaster = new SalesOpportunityMasterEntity();
@@ -134,31 +318,34 @@ public class SalesOpportunityController {
 	        // Save the entity
 	        salesOpportunityMaster = salesOpportunityService.save(salesOpportunityMaster);
 	        
-	        String formattedAmount = CommonUtils.formatAmountInIndianStyle(salesDTO.getEstimatedProjectValue());
-
+//	        @SuppressWarnings("unused")
+//			String formattedAmount = CommonUtils.formatAmountInIndianStyle(salesDTO.getEstimatedProjectValue());
 	        
 	        // Send email notification
-	        String emailBody = "Dear Sir,\n\n" +
-	                "We have identified a new opportunity and are actively working towards it. Please find the key details below:\n" +
-	                "Prospect Client: " + salesDTO.getNameOfCustomer() + "\n" +
-	                "RFP No: " + salesDTO.getRfpNumber() + "\n" +
-	                "Mode of Selection: " + salesDTO.getModeOfSelection() + "\n" +
-	                "Project Value: " + salesDTO.getEstimatedProjectValue() + "\n" +
-	                "Geography: " + salesDTO.getGeography() + "\n" +
-	                "e-Proc ID: " + salesDTO.getEprocId() + "\n" +
-	                "RFP Title: " + salesDTO.getRfpTitle() + "\n" +
-	                "Mode of Submission: " + salesDTO.getModeOfSubmission() + "\n" +
-	                "Project Duration: " + salesDTO.getProjectDuration() + "\n" +
-	                "Estimated Project Value: " + salesDTO.getEstimatedProjectValue() + "\n" +
-	                "Expected OEMs: " + salesDTO.getExpectedOEMs() + "\n" +
-	                "JV/Consortium/Sub-Contractors: " + salesDTO.getJvConsortiumSubContractors() + "\n" +
-	                "Expected Competitors: " + salesDTO.getExpectedCompetitors() + "\n" +
-	                "Consultant (If any): " + salesDTO.getConsultant() + "\n" +
-	                "Sales SPOC: " + salesDTO.getSalesSPOC() + "\n\n" +
-	                "We kindly request your approval to proceed with this opportunity. Please let us know if any additional information is required.\n\n" +
-	                "Best regards,\n\nCVMS Admin";
+	        String emailBody = "<html><body>" +
+                    "<p>Dear Sir,</p>" +
+                    "<p>We have identified a new opportunity and are actively working towards it. Please find the key details below:</p>" +
+                    "<ul>" +
+                    "<li>Prospect Client: <b>" + salesDTO.getNameOfCustomer() + "</b></li>" +
+                    "<li>RFP No: <b>" + salesDTO.getRfpNumber() + "</b></li>" +
+                    "<li>Mode of Selection: <b>" + salesDTO.getModeOfSelection() + "</b></li>" +
+                    "<li>Geography: <b>" + salesDTO.getGeography() + "</b></li>" +
+                    "<li>e-Proc ID: <b>" + salesDTO.getEprocId() + "</b></li>" +
+                    "<li>RFP Title: <b>" + salesDTO.getRfpTitle() + "</b></li>" +
+                    "<li>Mode of Submission: <b>" + salesDTO.getModeOfSubmission() + "</b></li>" +
+                    "<li>Project Duration: <b>" + salesDTO.getProjectDuration() + "</b></li>" +
+                    "<li>Estimated Project Value: <b>" + formattedEstimatedProjectValue + "</b></li>" +
+                    "<li>Expected OEMs: <b>" + salesDTO.getExpectedOEMs() + "</b></li>" +
+                    "<li>JV/Consortium/Sub-Contractors: <b>" + salesDTO.getJvConsortiumSubContractors() + "</b></li>" +
+                    "<li>Expected Competitors: <b>" + salesDTO.getExpectedCompetitors() + "</b></li>" +
+                    "<li>Consultant (If any): <b>" + salesDTO.getConsultant() + "</b></li>" +
+                    "<li>Sales SPOC: <b>" + salesDTO.getSalesSPOC() + "</b></li>" +
+                    "</ul>" +
+                    "<p>Best regards,<br><b>CVMS Admin</b></p>" +
+                    "</body></html>";
 
-	        emailService.sendEmail("amit.rawat2@infinite.com", "New Sales Opportunity Identified", emailBody);
+
+	        emailService.sendEmail("debidatta.das@infinite.com", "New Sales Opportunity Identified", emailBody);
 
 	        // Prepare response
 	        if (salesOpportunityMaster != null) {
@@ -179,31 +366,22 @@ public class SalesOpportunityController {
 	        statusMap.put(Parameters.status, Constants.FAIL);
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
+	}	
+	
+	private String formatAmount(String amount) {
+	    try {
+	        BigDecimal value = new BigDecimal(amount);
+	        DecimalFormat formatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+	        formatter.applyPattern("#,##0.00");
+	        return formatter.format(value);
+	    } catch (NumberFormatException e) {
+	        return "0.00"; // Fallback for invalid numbers
+	    }
 	}
-	
-	
 
-	
-		
 
-//			if(salesDTO!=null) {
-//				SalesOpportunityMasterEntity salesOpportunityMaster= salesOpportunityService.findById(salesDTO.getId());
-//				if(salesOpportunityMaster!=null) {
-//					statusMap.put("SalesOpportunityMasterEntity",salesOpportunityMaster);
-//					statusMap.put("Status","Success");
-//					statusMap.put("Status_Code","RU_200");
-//					statusMap.put("StatusMessage","SuccessFully Found");
-//					return new ResponseEntity<>(statusMap,HttpStatus.OK);
-//				}
-//				else {
-//					statusMap.put("Status","Fail");
-//					statusMap.put("Status_Code","RU_301");
-//					statusMap.put("StatusMessage","Data Not Found");
-//					return new ResponseEntity<>(statusMap,HttpStatus.OK);
-//				}
-//			}else {
-	
-	
+
+
 	@EncryptResponse
 	@GetMapping("/getAllSales")
 	public ResponseEntity<?>getAllSales(){

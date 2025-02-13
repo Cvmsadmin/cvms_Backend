@@ -29,6 +29,9 @@ public interface UserMasterService {
 	UserMasterEntity findByEmail(String email);
 	void save(UserMasterEntity user);
 	
+
+//	List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName);
+	
 	
 	
 

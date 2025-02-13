@@ -126,6 +126,9 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	
 	@Column(name = "total_payment_received")
 	private Double totalPaymentReceived;
+	
+	@Column(name = "milestone")
+	private String milestone;
 
 	private String tdsOnGst;
 

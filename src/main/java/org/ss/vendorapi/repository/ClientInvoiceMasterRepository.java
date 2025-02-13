@@ -1,7 +1,9 @@
 package org.ss.vendorapi.repository;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.apache.catalina.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +21,13 @@ public interface ClientInvoiceMasterRepository extends JpaRepository<ClientInvoi
     ClientInvoiceMasterEntity findByInvoiceNoNative(@Param("invoiceNo") String invoiceNo);
 	
 	ClientInvoiceMasterEntity findByClientId(String clientId);
+	
+//	List<User> findUsersByclientNameAndprojectName(String clientName, String projectName, List<String> asList);
+
+	
+	
+	
+	
 	
 //	// JPQL query to get receivable invoice stats (count and sum)
 //	@Query("SELECT new org.ss.vendorapi.dto.ReceivableInvoiceStatsDTO(" +

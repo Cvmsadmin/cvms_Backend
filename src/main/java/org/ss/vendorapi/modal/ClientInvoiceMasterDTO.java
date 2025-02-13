@@ -49,6 +49,7 @@ public class ClientInvoiceMasterDTO {
 	private String CreditNote;
 	
 	private String TdsOnGst;
+	private String milestone;
 	
 	private String BillableState;
 	private List<ClientDescriptionAndBaseValue> clientDescriptionAndBaseValue;

@@ -1,6 +1,7 @@
 package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.hibernate.annotations.GenerationTime;
@@ -75,6 +76,7 @@ public class SalesOpportunityMasterEntity extends ParentEntity implements Serial
             this.srNumber = "SR-" + System.currentTimeMillis(); 
         }
     }
+
 	
 	
 		

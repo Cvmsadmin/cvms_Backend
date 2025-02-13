@@ -34,6 +34,9 @@ public class EmailNotificationView {
 	  private String mail_date;
 	  private String milestone_duration;
 	  private String start_date;
+	  private String Status;
+//	  private String RecipientEmail;
+	  
 	public String getClient_name() {
 		return client_name;
 	}
@@ -94,6 +97,21 @@ public class EmailNotificationView {
 	public void setStart_date(String start_date) {
 		this.start_date = start_date;
 	}
+	public String getStatus() {
+		return Status;
+	}
+	public void setStatus(String status) {
+		Status = status;
+	}
+//	public String getRecipientEmail() {
+//		
+//		return recipientEmail;
+//	}
+	
+//	public void setRecipientEmail(String recipientEmail) {
+//		RecipientEmail = recipientEmail;
+//	}
+
 	  
 
 	  

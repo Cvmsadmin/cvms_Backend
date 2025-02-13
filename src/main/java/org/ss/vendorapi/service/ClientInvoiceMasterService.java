@@ -16,5 +16,7 @@ public interface ClientInvoiceMasterService {
 	public ClientInvoiceMasterEntity findByInvoiceNo(String invoiceNo);
 //	public Optional findById(String clientName);	
 	public ClientMasterEntity findClientByClientName(String clientName);
+	
+//	List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName);
 
 }
