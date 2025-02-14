@@ -6,12 +6,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.mail.MessagingException;
+
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.ss.vendorapi.entity.ClientInvoiceDetailsEntity;
 import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
 import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.entity.UserMasterEntity;
+import org.ss.vendorapi.modal.ClientInvoiceMasterDTO;
+import org.ss.vendorapi.repository.ClientInvoiceDetailsRepo;
 //import org.ss.vendorapi.modal.ReceivableInvoiceStatsDTO;
 import org.ss.vendorapi.repository.ClientInvoiceMasterRepository;
 import org.ss.vendorapi.repository.ClientMasterRepository;
@@ -24,6 +29,12 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
     
     @Autowired
     private ClientMasterRepository clientMasterRepository;
+    
+    @Autowired
+    private ClientInvoiceDetailsRepo clientInvoiceDetailsRepo;
+    
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public ClientInvoiceMasterEntity save(ClientInvoiceMasterEntity clientInvoiceMasterEntity) {
@@ -62,43 +73,54 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
     public ClientMasterEntity findClientByClientName(String clientName) {
         return clientMasterRepository.findByClientName(clientName); 
     }
+
     
+    public void sendInvoiceEmail(ClientInvoiceMasterDTO clientInvoiceDTO) {
+        // Get the invoice details from the view
+        List<ClientInvoiceDetailsEntity> invoiceDetailsList = clientInvoiceDetailsRepo.getClientInvoiceDetails();
+        
+        if (!invoiceDetailsList.isEmpty()) {
+            ClientInvoiceDetailsEntity invoiceDetails = invoiceDetailsList.get(0); // Assuming you want to send the most recent invoice details
+            
+            // Prepare the email content
+            String subject = "Invoice Details for " + invoiceDetails.getClientName();
+            String body = "Dear All,\n\n" +
+                    "Please find below the invoice details for " + invoiceDetails.getClientName() + " related to the " + invoiceDetails.getProjectName() + ":\n\n" +
+                    "Invoice Details:\n" +
+                    "• Client Name: " + invoiceDetails.getClientName() + "\n" +
+                    "• Project Name: " + invoiceDetails.getProjectName() + "\n" +
+                    "• Invoice Date: " + invoiceDetails.getInvoiceDate() + "\n" +
+                    "• Invoice No.: " + invoiceDetails.getInvoiceNo() + "\n" +
+                    "• Invoice Due Date: " + invoiceDetails.getInvoiceDueDate() + "\n" +
+                    "• Total Amount (Incl. GST): " + invoiceDetails.getInvoiceAmountIncluGst() + "\n\n" +
+                    "The invoice is attached for your reference.\n\n" +
+                    "Best regards,\n" +
+                    "CVMS Admin";
+
+            // Send the email (assuming the emailService.sendEmail method exists and is properly implemented)
+            try {
+				emailService.sendEmail(invoiceDetails.getAccountManagerEmail1(), subject, body);
+			} catch (MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (jakarta.mail.MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            try {
+				emailService.sendEmail(invoiceDetails.getPrjectManagerEmail(), subject, body);
+			} catch (MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (jakarta.mail.MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+    }
+
     
-//    @Override
-//	public List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName) {
-//	    // Initialize an empty list to hold the authorized email addresses
-//	    List<String> authorizedEmails = new ArrayList<>();
-//
-//	    try {
-//	        // 1. Query the database for users with roles of Account Manager, Project Manager, and Management
-//	        // 2. Based on the given clientName and projectName
-//	        
-//	        // Assuming you have a repository or service to query the roles
-//	        List<org.apache.catalina.User> users = clientInvoiceMasterRepository.findUsersByclientNameAndprojectName(clientName, projectName, 
-//	              Arrays.asList("Account Manager", "Project Manager", "Management"));
-//
-//
-//	        // 3. Extract the emails of these users and add them to the authorizedEmails list
-//	        for (User user : users) {
-//	            authorizedEmails.add(((UserMasterEntity) user).getEmail());
-//	        }
-//	    } catch (Exception e) {
-//	        e.printStackTrace(); // Handle exceptions if necessary (e.g., logging)
-//	    }
-//
-//	    // Return the list of authorized emails
-//	    return authorizedEmails;
-//	}
-    
-//    @Override
-//    public ClientMasterEntity findClientByClientName(String clientName) {
-//        Optional<ClientMasterEntity> clientOptional = clientMasterRepository.findByClientName(clientName);
-//        return clientOptional.orElse(null);  // Return null if no client is found
-//    }
-    
-//    public ReceivableInvoiceStatsDTO getReceivableInvoiceStats() {
-//        return clientMasterRepository.getReceivableInvoiceStats();
-//    }
+
     
 
 }

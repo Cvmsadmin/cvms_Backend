@@ -745,7 +745,41 @@ public class PurchaseMasterController {
 	    }
 	}
 		
-	@EncryptResponse
+//	@EncryptResponse
+//	@GetMapping("/getPoNoByProjectName")
+//	public ResponseEntity<Map<String, Object>> getPoNoByProjectName(@RequestParam String projectName) {
+//	    Map<String, Object> response = new HashMap<>();
+//
+//	    try {
+//	        // Fetch purchase records based on project name
+//	        List<PurchaseMasterEntity> purchases = purchaseMasterService.findByProjectName(projectName);
+//
+//	        if (purchases == null || purchases.isEmpty()) {
+//	            // If no records found, return 404 Not Found
+//	            response.put("message", "No purchases found for project name: " + projectName);
+//	            response.put("status", HttpStatus.NOT_FOUND);
+//	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Extract PO numbers from the purchases
+//	        List<String> poNumbers = new ArrayList<>();
+//	        for (PurchaseMasterEntity purchase : purchases) {
+//	            poNumbers.add(purchase.getPoNo());
+//	        }
+//
+//	        // Return PO numbers with 200 OK status
+//	        response.put("message", "PO numbers fetched successfully.");
+//	        response.put("poNumbers", poNumbers);
+//	        response.put("status", HttpStatus.OK);
+//	        return new ResponseEntity<>(response, HttpStatus.OK);
+//
+//	    } catch (Exception e) {
+//	        response.put("message", "Error while fetching PO numbers: " + e.getMessage());
+//	        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+//	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+
 	@GetMapping("/getPoNoByProjectName")
 	public ResponseEntity<Map<String, Object>> getPoNoByProjectName(@RequestParam String projectName) {
 	    Map<String, Object> response = new HashMap<>();
@@ -782,26 +816,5 @@ public class PurchaseMasterController {
 
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 	
 }

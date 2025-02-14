@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
 import org.ss.vendorapi.entity.ClientMasterEntity;
+import org.ss.vendorapi.modal.ClientInvoiceMasterDTO;
 
 public interface ClientInvoiceMasterService {
 
@@ -16,6 +17,8 @@ public interface ClientInvoiceMasterService {
 	public ClientInvoiceMasterEntity findByInvoiceNo(String invoiceNo);
 //	public Optional findById(String clientName);	
 	public ClientMasterEntity findClientByClientName(String clientName);
+//	public List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName);
+	public void sendInvoiceEmail(ClientInvoiceMasterDTO clientInvoiceDTO);
 	
 //	List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName);
 

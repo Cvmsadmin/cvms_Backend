@@ -12,8 +12,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.ss.vendorapi.entity.EmailNotificationView;
 import org.ss.vendorapi.entity.InvoiceSummaryView;
+import org.ss.vendorapi.entity.RecivableInvoicesView;
 import org.ss.vendorapi.repository.EmailNotificationViewRepository;
 import org.ss.vendorapi.repository.InvoiceSummaryViewRepository;
+import org.ss.vendorapi.repository.RecivableInvoicesViewRepository;
 import org.ss.vendorapi.service.EmailService;
      
     @Component
@@ -27,6 +29,8 @@ import org.ss.vendorapi.service.EmailService;
         @Autowired
         private InvoiceSummaryViewRepository invoiceSummaryViewRepository;
         
+        @Autowired
+        private RecivableInvoicesViewRepository recivableInvoicesViewRepository;
         private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
      
 //        @Scheduled(cron = "*/10 * * * * *") // Runs every 10 seconds for testing
@@ -179,6 +183,79 @@ import org.ss.vendorapi.service.EmailService;
                     tableContent.append("</tr>");
                 } else {
                     System.err.println("Missing aging_bucket for invoice summary ID: " + summary.getId());
+                }
+            }
+            
+            // End the table and the email body
+            tableContent.append("</table>");
+            tableContent.append("<p>Best regards,<br><b>CVMS Admin</b></p>");
+            tableContent.append("</body></html>");
+            
+            return tableContent.toString();
+        }
+        
+//  ****************************************************************************************************************************************************************************************      
+        
+//        @Scheduled(cron = "*/10 * * * * *") // Runs every 10 seconds for testing
+        public void sendrecivableSummaryEmail() {
+            System.out.println("Invoice Summary Scheduler Running...");
+
+            // Fetch invoice data from RecivableInvoicesView
+            List<RecivableInvoicesView> receivables = recivableInvoicesViewRepository.findAll();
+            if (receivables.isEmpty()) {
+                System.out.println("No receivable invoices found.");
+                return;
+            }
+
+            // Hardcoded email recipients
+            String[] recipients = {"debidatta.das@infinite.com", "amit.rawat2@infinite.com"};
+
+            // Build the email body with all the receivables
+            String subject = "Pending Invoice Summary – Receivables";
+            String body = generaterecivableSummaryBody(receivables);
+
+            // Send the email to each recipient
+            for (String to : recipients) {
+                try {
+                    emailService.sendEmail(to, subject, body);
+                    System.out.println("Invoice summary email sent to: " + to);
+                } catch (Exception e) {
+                    System.err.println("Error sending email to: " + to + " - " + e.getMessage());
+                }
+            }
+        }
+
+        private String generaterecivableSummaryBody(List<RecivableInvoicesView> receivables) {
+            // Start the HTML content
+            StringBuilder tableContent = new StringBuilder();
+            tableContent.append("<html><body style='text-align: left;'>");
+            tableContent.append("<p>Dear Sir,</p>");
+            tableContent.append("<p>Please find below the summary of pending receivable invoices:</p>");
+            tableContent.append("<table border='1' cellpadding='10' cellspacing='0' style='margin-left: 0; margin-right: auto; border-collapse: collapse;'>");
+            tableContent.append("<tr>");
+            tableContent.append("<th style='text-align: center; padding: 10px;'>Client Name</th>");
+            tableContent.append("<th style='text-align: center; padding: 10px;'>Project Name</th>");
+            tableContent.append("<th style='text-align: center; padding: 10px;'>Milestone</th>");
+            tableContent.append("<th style='text-align: center; padding: 10px;'>Total Receivable Amount (Incl. GST)</th>");
+            tableContent.append("</tr>");
+            
+            // Iterate over each receivable and append it to the table
+            for (RecivableInvoicesView receivable : receivables) {
+                String clientName = receivable.getClient_name();
+                String projectName = receivable.getProject_name();
+                String milestone = receivable.getMilestone();
+                int invoiceInclusiveOfGst = receivable.getInvoice_inclusive_of_gst();
+
+                if (clientName != null && !clientName.isEmpty() && projectName != null && !projectName.isEmpty()) {
+                    tableContent.append("<tr>");
+                    tableContent.append("<td style='text-align: center; padding: 10px;'>").append(clientName).append("</td>");
+                    tableContent.append("<td style='text-align: center; padding: 10px;'>").append(projectName).append("</td>");
+                    tableContent.append("<td style='text-align: center; padding: 10px;'>").append(milestone).append("</td>");
+                    // Format the currency for the amount
+                    tableContent.append("<td style='text-align: center; padding: 10px;'>").append(formatCurrency(new BigDecimal(invoiceInclusiveOfGst))).append("</td>");
+                    tableContent.append("</tr>");
+                } else {
+                    System.err.println("Missing client or project name for receivable ID: " + receivable.getId());
                 }
             }
             

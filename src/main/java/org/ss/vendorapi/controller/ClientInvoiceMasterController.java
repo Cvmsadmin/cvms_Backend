@@ -128,8 +128,11 @@ public class ClientInvoiceMasterController {
 	                descriptionValue.setItemDescription(description.getItemDescription());
 	                descriptionValue.setBaseValue(description.getBaseValue());
 	                clientInvoiceDescriptionValueService.save(descriptionValue);
-	            }
+	            } 
+	     	            
 	        }
+	        
+	        clientInvoiceService.sendInvoiceEmail(clientInvoiceDTO);
 
 	        // Prepare success response
 	        responseMap.put("clientName", clientInvoice.getClientName());
@@ -535,6 +538,9 @@ public class ClientInvoiceMasterController {
 	            invoiceMap.put("totalPenaltyDeduction", invoice.getTotalPenaltyDeduction());
 	            invoiceMap.put("creditNote", invoice.getCreditNote());
 	            invoiceMap.put("totalPaymentReceived", invoice.getTotalPaymentReceived());
+	            
+	            invoiceMap.put("milestone", invoice.getMilestone()); // Added milestone field to the response
+
 
 	            // Map nested descriptions
 	            List<ClientInvoiceDescriptionValue> descriptions = clientInvoiceDescriptionValueService.findByClientInvoice(invoice);
@@ -717,7 +723,7 @@ public class ClientInvoiceMasterController {
 	        clientInvoiceEntity.setGstOnPenalty(clientInvoiceMasterDTO.getGstOnPenalty() != null ? clientInvoiceMasterDTO.getGstOnPenalty() : clientInvoiceEntity.getGstOnPenalty());
 	        clientInvoiceEntity.setTotalPenaltyDeduction(clientInvoiceMasterDTO.getTotalPenaltyDeduction() != null ? clientInvoiceMasterDTO.getTotalPenaltyDeduction() : clientInvoiceEntity.getTotalPenaltyDeduction());
 	        clientInvoiceEntity.setTotalPaymentReceived(clientInvoiceMasterDTO.getTotalPaymentReceived() != null ? clientInvoiceMasterDTO.getTotalPaymentReceived() : clientInvoiceEntity.getTotalPaymentReceived());
-
+	        clientInvoiceEntity.setMilestone(clientInvoiceMasterDTO.getMilestone() != null ? clientInvoiceMasterDTO.getMilestone() : clientInvoiceEntity.getMilestone());
 	        // Optional: Handling Client Description and Base Values (if you need to update these as well)
 	        if (clientInvoiceMasterDTO.getClientDescriptionAndBaseValue() != null) {
 	            // Process the description updates
