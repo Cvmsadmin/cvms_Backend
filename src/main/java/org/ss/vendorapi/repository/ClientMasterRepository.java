@@ -10,6 +10,7 @@ import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.modal.PayableInvoiceStatsDTO;
 import org.ss.vendorapi.modal.ReceivableInvoiceStatsDTO;
 //import org.ss.vendorapi.entity.UserCreationEntity;
+//import org.ss.vendorapi.service.Client;
 
 
 @Repository
@@ -24,6 +25,7 @@ public interface ClientMasterRepository extends JpaRepository<ClientMasterEntity
 	ClientMasterEntity findByClientName(String clientName);	
 //	ClientMasterEntity findById(Long id);
 //	public ReceivableInvoiceStatsDTO getReceivableInvoiceStats();
-		
+	
+//	public Optional<ClientMasterEntity> findById(Long clientId);
 	
 }

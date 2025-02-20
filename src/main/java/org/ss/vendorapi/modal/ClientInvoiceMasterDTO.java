@@ -1,5 +1,6 @@
 package org.ss.vendorapi.modal;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -17,10 +18,12 @@ public class ClientInvoiceMasterDTO {
 	private String clientName;
 	private String projectName;
 	private String discom;
+	
 	@JsonFormat(pattern="dd/MM/yyyy")
-	private Date invoiceDate;
+	private LocalDate invoiceDate;
 	private String invoiceNo;
 	private String invoiceDescription;
+	
 	@JsonFormat(pattern="dd/MM/yyyy")
 	private Date invoiceDueDate;
 	private String gstPer;

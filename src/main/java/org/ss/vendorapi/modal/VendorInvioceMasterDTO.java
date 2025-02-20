@@ -48,6 +48,12 @@ public class VendorInvioceMasterDTO {
 	private String IgstOnTds;
 	private String Penalty;
 	private String CreditNote;
+	
+	@JsonFormat(pattern="dd/MM/yyyy")
+	private Date startDate;
+	
+	@JsonFormat(pattern="dd/MM/yyyy")
+	private Date EndDate;
 		
 		
 }	

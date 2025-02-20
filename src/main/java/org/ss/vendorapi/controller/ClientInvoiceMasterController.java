@@ -96,6 +96,12 @@ public class ClientInvoiceMasterController {
 
 	        // Map fields to ClientInvoiceMasterEntity
 	        ClientInvoiceMasterEntity clientInvoice = new ClientInvoiceMasterEntity();
+	        
+//	        clientInvoice.setId(null);
+//	        System.out.println("Client Invoice ID before save: " + clientInvoice.getId());
+//	        clientInvoice = clientInvoiceService.save(clientInvoice);
+	        
+	        
 	        clientInvoice.setClientName(clientInvoiceDTO.getClientName());
 	        clientInvoice.setProjectName(clientInvoiceDTO.getProjectName());
 	        clientInvoice.setDiscom(clientInvoiceDTO.getDiscom());
@@ -499,8 +505,16 @@ public class ClientInvoiceMasterController {
 	            invoiceMap.put("id", invoice.getId());
 	            
 	            // Fetch client details from ClientMasterEntity using clientId
+//	            Optional<ClientMasterEntity> clientMasterEntity = clientMasterRepository.findById(Long.parseLong(invoice.getClientName()));
+//	            if (clientMasterEntity != null) {
+//	                invoiceMap.put("clientName", clientMasterEntity.get().getClientName()); // clientName from ClientMasterEntity
+//	                invoiceMap.put("clientId", clientMasterEntity.get().getId());  // clientId added
+//	            } else {
+//	                invoiceMap.put("clientName", "Not found");
+//	                invoiceMap.put("clientId", "Not found");
+//	            }
 	            Optional<ClientMasterEntity> clientMasterEntity = clientMasterRepository.findById(Long.parseLong(invoice.getClientName()));
-	            if (clientMasterEntity != null) {
+	            if (clientMasterEntity.isPresent()) {
 	                invoiceMap.put("clientName", clientMasterEntity.get().getClientName()); // clientName from ClientMasterEntity
 	                invoiceMap.put("clientId", clientMasterEntity.get().getId());  // clientId added
 	            } else {
@@ -508,10 +522,12 @@ public class ClientInvoiceMasterController {
 	                invoiceMap.put("clientId", "Not found");
 	            }
 
+
 	            // Add other invoice details
 	            invoiceMap.put("projectName", invoice.getProjectName());
 	            invoiceMap.put("discom", invoice.getDiscom());
 	            invoiceMap.put("invoiceDate", invoice.getInvoiceDate());
+//	            invoiceMap.put("invoiceDate", new SimpleDateFormat("yyyy-MM-dd").format(invoice.getInvoiceDate()));
 	            invoiceMap.put("invoiceNo", invoice.getInvoiceNo());
 	            invoiceMap.put("invoiceDescription", invoice.getInvoiceDescription());
 	            invoiceMap.put("invoiceDueDate", invoice.getInvoiceDueDate());

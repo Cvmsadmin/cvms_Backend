@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor @Setter @Getter @AllArgsConstructor
 @Entity
 @Where(clause="ACTIVE=1")
-@Table(name = "purchase_master")
+@Table(name = "purchase_master_view")
 public class PurchaseMasterEntity extends ParentEntity implements Serializable{
 	
 	private static final long serialVersionUID=1L;
@@ -32,11 +32,13 @@ public class PurchaseMasterEntity extends ParentEntity implements Serializable{
 	@Column(name="id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	
 	
 	@Column(name = "client_name")
 	private String clientName;
+	
+	@Column(name = "client_id")
+	private String clientId;
+
 
 	@Column(name = "project_name")
 	private String projectName;
@@ -81,11 +83,13 @@ public class PurchaseMasterEntity extends ParentEntity implements Serializable{
 	private Date poApproveDate;
     
   
+	@JsonFormat(pattern="dd/MM/yyyy")
+	@Column(name = "start_date")
+	private Date startDate;
+    
+	@JsonFormat(pattern="dd/MM/yyyy")
+	@Column(name = "end_date")
+	private Date endDate;
     
     
-    
-    
-    
-    
-
 }

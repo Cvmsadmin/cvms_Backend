@@ -322,30 +322,48 @@ public class SalesOpportunityController {
 //			String formattedAmount = CommonUtils.formatAmountInIndianStyle(salesDTO.getEstimatedProjectValue());
 	        
 	        // Send email notification
-	        String emailBody = "<html><body>" +
-                    "<p>Dear Sir,</p>" +
-                    "<p>We have identified a new opportunity and are actively working towards it. Please find the key details below:</p>" +
-                    "<ul>" +
-                    "<li>Prospect Client: <b>" + salesDTO.getNameOfCustomer() + "</b></li>" +
-                    "<li>RFP No: <b>" + salesDTO.getRfpNumber() + "</b></li>" +
-                    "<li>Mode of Selection: <b>" + salesDTO.getModeOfSelection() + "</b></li>" +
-                    "<li>Geography: <b>" + salesDTO.getGeography() + "</b></li>" +
-                    "<li>e-Proc ID: <b>" + salesDTO.getEprocId() + "</b></li>" +
-                    "<li>RFP Title: <b>" + salesDTO.getRfpTitle() + "</b></li>" +
-                    "<li>Mode of Submission: <b>" + salesDTO.getModeOfSubmission() + "</b></li>" +
-                    "<li>Project Duration: <b>" + salesDTO.getProjectDuration() + "</b></li>" +
-                    "<li>Estimated Project Value: <b>" + formattedEstimatedProjectValue + "</b></li>" +
-                    "<li>Expected OEMs: <b>" + salesDTO.getExpectedOEMs() + "</b></li>" +
-                    "<li>JV/Consortium/Sub-Contractors: <b>" + salesDTO.getJvConsortiumSubContractors() + "</b></li>" +
-                    "<li>Expected Competitors: <b>" + salesDTO.getExpectedCompetitors() + "</b></li>" +
-                    "<li>Consultant (If any): <b>" + salesDTO.getConsultant() + "</b></li>" +
-                    "<li>Sales SPOC: <b>" + salesDTO.getSalesSPOC() + "</b></li>" +
-                    "</ul>" +
-                    "<p>Best regards,<br><b>CVMS Admin</b></p>" +
-                    "</body></html>";
+	        String emailBody = String.format(
+	        		 "<html><body>" +
+	        				    "<p>Dear Sir,</p>" +
+	        				    "<p>We have identified a new opportunity and are actively working towards it. Please find the key details below:</p>" +
+	        				    "<table border='1' cellpadding='5' cellspacing='0'>" +
+	        				    "<tr><th>Field</th><th>Details</th></tr>" +
+	        				    "<tr><td>Prospect Client</td><td><b>%s</b></td></tr>" +
+	        				    "<tr><td>RFP No</td><td><b>%s</b></td></tr>" +
+	        				    "<tr><td>Mode of Selection</td><td><b>%s</b></td></tr>" +
+	        				    "<tr><td>Geography</td><td><b>%s</b></td></tr>" +
+	        				    "<tr><td>e-Proc ID</td><td><b>%s</b></td></tr>" +
+	        				    "<tr><td>RFP Title</td><td><b>%s</b></td></tr>" +
+	        				    "<tr><td>Mode of Submission</td><td><b>%s</b></td></tr>" +
+	        				    "<tr><td>Project Duration</td><td><b>%s</b></td></tr>" +
+	        				    "<tr><td>Estimated Project Value</td><td><b>%s</b></td></tr>" +
+	        				    "<tr><td>Expected OEMs</td><td><b>%s</b></td></tr>" +
+	        				    "<tr><td>JV/Consortium/Sub-Contractors</td><td><b>%s</b></td></tr>" +
+	        				    "<tr><td>Expected Competitors</td><td><b>%s</b></td></tr>" +
+	        				    "<tr><td>Consultant (If any)</td><td><b>%s</b></td></tr>" +
+	        				    "<tr><td>Sales SPOC</td><td><b>%s</b></td></tr>" +
+	        				    "</table>" +
+	        				    "<p>We kindly seek your approval to proceed with this opportunity.</p>" +
+	        				    "<p>Best regards,<br><b>CVMS Admin</b></p>" +
+	        				    "</body></html>",
+	                salesDTO.getNameOfCustomer(),
+	                salesDTO.getRfpNumber(),
+	                salesDTO.getModeOfSelection(),
+	                salesDTO.getGeography(),
+	                salesDTO.getEprocId(),
+	                salesDTO.getRfpTitle(),
+	                salesDTO.getModeOfSubmission(),
+	                salesDTO.getProjectDuration(),
+	                formattedEstimatedProjectValue,
+	                salesDTO.getExpectedOEMs(),
+	                salesDTO.getJvConsortiumSubContractors(),
+	                salesDTO.getExpectedCompetitors(),
+	                salesDTO.getConsultant(),
+	                salesDTO.getSalesSPOC()
+	            );
 
+	            emailService.sendEmail("debidatta.das@infinite.com", "New Sales Opportunity Identified", emailBody);
 
-	        emailService.sendEmail("debidatta.das@infinite.com", "New Sales Opportunity Identified", emailBody);
 
 	        // Prepare response
 	        if (salesOpportunityMaster != null) {

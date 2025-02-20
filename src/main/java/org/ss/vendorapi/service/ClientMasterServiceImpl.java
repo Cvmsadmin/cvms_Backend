@@ -2,6 +2,7 @@ package org.ss.vendorapi.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,21 @@ public class ClientMasterServiceImpl implements ClientMasterService{
 	public ClientMasterEntity findByEmail(String email) {
 		return clientMasterRepository.findByEmail(email);
 	}
+	
+	
+//	public String getClientNameById(String string) {
+//	    // Fetch the client by ID
+//	    Optional<ClientMasterEntity> client = clientMasterRepository.findById(string);
+//
+//	    // Return client name if present, else "Unknown"
+//	    return client.map(ClientMasterEntity::getClientName).orElse("Unknown");
+//	}
+
+	
+	
+		
+	
 	}
+	
 
 

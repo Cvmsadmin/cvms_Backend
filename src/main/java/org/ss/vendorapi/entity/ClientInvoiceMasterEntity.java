@@ -1,6 +1,7 @@
 package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -28,8 +29,8 @@ import lombok.Setter;
 @Where(clause="ACTIVE=1")
 @Table(name = "client_invoice_master")
 public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializable{
-	private static final long serialVersionUID=1L;
 	
+	private static final long serialVersionUID=1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -46,10 +47,8 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 
 	@Column(name = "discom")
 	private String discom;
-
-	@JsonFormat(pattern="dd/MM/yyyy")
-	@Column(name = "invoice_date")
-	private Date invoiceDate;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")private LocalDate invoiceDate;
 
 	@Column(name = "invoice_no")
 	private String invoiceNo;

@@ -197,6 +197,9 @@ public class VendorInvoiceMasterController {
 	        vendorInvoiceMaster.setInvoiceAmountExcluGst(vendorInvoiceDTO.getInvoiceAmountExcluGst());
 	        vendorInvoiceMaster.setInvoiceAmountIncluGst(vendorInvoiceDTO.getInvoiceAmountIncluGst());
 	        vendorInvoiceMaster.setStatus(vendorInvoiceDTO.getStatus());
+	        
+	        vendorInvoiceMaster.setStartDate(vendorInvoiceDTO.getStartDate());
+	        vendorInvoiceMaster.setEndDate(vendorInvoiceDTO.getEndDate());
 
 	        // Optional fields
 	        vendorInvoiceMaster.setInvoiceBaseValue(vendorInvoiceDTO.getInvoiceBaseValue());
@@ -622,6 +625,10 @@ public class VendorInvoiceMasterController {
 	        vendorInvoiceEntity.setInvoiceAmountExcluGst(vendorInvoiceMasterDTO.getInvoiceAmountExcluGst());
 	        vendorInvoiceEntity.setInvoiceAmountIncluGst(vendorInvoiceMasterDTO.getInvoiceAmountIncluGst());
 	        vendorInvoiceEntity.setStatus(vendorInvoiceMasterDTO.getStatus());
+	        
+	        // Set the new fields
+	        vendorInvoiceEntity.setStartDate(vendorInvoiceMasterDTO.getStartDate());
+	        vendorInvoiceEntity.setEndDate(vendorInvoiceMasterDTO.getEndDate());
 
 	        // Optional fields (only set if provided in the DTO)
 	        vendorInvoiceEntity.setInvoiceBaseValue(vendorInvoiceMasterDTO.getInvoiceBaseValue() != null ? vendorInvoiceMasterDTO.getInvoiceBaseValue() : vendorInvoiceEntity.getInvoiceBaseValue());

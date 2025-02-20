@@ -127,6 +127,14 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 
 	    @OneToMany(mappedBy = "vendorInvoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	    private List<InvoiceDescriptionValue> descriptionValues;
+	    
+		@JsonFormat(pattern="dd/MM/yyyy")
+		@Column(name = "start_date")
+		private Date startDate;
+	    
+		@JsonFormat(pattern="dd/MM/yyyy")
+		@Column(name = "end_date")
+		private Date endDate;
 
 	}
 

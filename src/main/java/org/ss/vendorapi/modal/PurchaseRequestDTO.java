@@ -35,8 +35,11 @@ public class PurchaseRequestDTO {
 	private String rejectionReason;
 
 	@JsonFormat(pattern="dd/MM/yyyy")
-	private Date poApproveDate; 
-		
+	private Date poApproveDate;
 
-
+	@JsonFormat(pattern="dd/MM/yyyy")
+	private Date startDate;
+	
+	@JsonFormat(pattern="dd/MM/yyyy")
+	private Date EndDate;
 }

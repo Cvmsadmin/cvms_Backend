@@ -330,11 +330,15 @@ public class LoginController {
 	    try {
 	        // Send OTP to the user's email
 	        emailSenderService.sendEmail(email, "Password Reset Request – OTP for Verification", 
-	        		                       "Dear " + (firstName != null ? firstName : "") + ",\r\n"
-	                                     + "\nWe received a request to reset your password. Please use the OTP below to proceed with the password reset:\r\n"
-	                                     + "\nYour OTP for password reset is: " + otp +" \n\nFor security reasons, this OTP is valid for a limited time. Please do not share it with anyone.\r\n"
-	                                     		+ "\nIf you did not request a password reset, please ignore this email. "+"\n\nBest regards,\r\n"
-	                                     				+ "CVMS Admin");
+	        			    "<html><body>" +
+	        			    "<p>Dear " + (firstName != null ? firstName : "") + ",</p>" +
+	        			    "<p>We received a request to reset your password. Please use the OTP below to proceed with the password reset:</p>" +
+	        			    "<p>Your OTP for password reset is: <b> " + otp + "</b></p>" +
+	        			    "<p>For security reasons, this OTP is valid for a limited time. Please do not share it with anyone.</p>" +
+	        			    "<p>If you did not request a password reset, please ignore this email.</p>" +
+	        			    "<p>Best regards,<br><b>CVMS Admin</b></p>" +
+	        			    "</body></html>");
+
 
 	        // If no exception, OTP email was successfully sent
 	        return CommonUtils.createResponse(Constants.SUCCESS, "OTP sent to your email", HttpStatus.OK);
