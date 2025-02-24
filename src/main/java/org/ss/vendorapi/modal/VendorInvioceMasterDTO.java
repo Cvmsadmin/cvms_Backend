@@ -54,7 +54,8 @@ public class VendorInvioceMasterDTO {
 	
 	@JsonFormat(pattern="dd/MM/yyyy")
 	private Date EndDate;
-		
+	
+	private String modeOfPayment;
 		
 }	
 	

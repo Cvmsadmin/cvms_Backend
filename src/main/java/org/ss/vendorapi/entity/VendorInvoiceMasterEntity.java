@@ -136,5 +136,7 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 		@Column(name = "end_date")
 		private Date endDate;
 
+	    @Column(name = "mode_of_payment")
+		private String modeOfPayment;
 	}
 
