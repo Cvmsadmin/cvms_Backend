@@ -8,10 +8,12 @@ import org.springframework.stereotype.Repository;
 import org.ss.vendorapi.entity.ProjectMasterEntity;
 
 @Repository
-public interface ProjectMasterRepository extends JpaRepository<ProjectMasterEntity, Long>{
+public interface ProjectMasterRepository extends JpaRepository<ProjectMasterEntity, Long> {
 
-	List<ProjectMasterEntity> findByClientId(String clientId);
-	ProjectMasterEntity findByProjectName(String projectName);
-//	List<ProjectMasterEntity> findByClientId(Long clientId);
-
+    List<ProjectMasterEntity> findByClientId(String clientId);
+    
+    List<ProjectMasterEntity> findByClientIdOrderByIdDesc(String clientId);
+    
+    ProjectMasterEntity findByProjectName(String projectName);
+    // List<ProjectMasterEntity> findByClientId(Long clientId);
 }

@@ -7,6 +7,7 @@ import org.hibernate.annotations.Where;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,6 +22,7 @@ import lombok.Setter;
 @Where(clause="ACTIVE=1")
 @Table(name="milestone_master")
 @Entity
+
 public class MilestoneMasterEntity extends ParentEntity implements Serializable{
 	private static final long serialVersionUID=1L;
 
@@ -41,8 +43,30 @@ public class MilestoneMasterEntity extends ParentEntity implements Serializable{
 	private String amountInclGst;
 	
 	private String status;  //new field
+	
 	@JsonFormat(pattern="dd/MM/yyyy")
-	private Date completiondate;  //new field
+	@Column(name = "completiondate")  // explicitly set the column name as in your DB
+	private Date completiondate;
+
+		
+	public String getAmountIncluGst() {		
+		return amountInclGst;
+	}
+
+	public String getAmountExcluGst() {
+		return amountExclGst;
+	}
+
+	public Date getCompletionDate() {		
+		return completiondate;
+	}
+
+	public void setCompletionDate(Date completionDate) {
+	    this.completiondate = completionDate;
+	}
+
+	
+
 	
 }
 

@@ -13,7 +13,7 @@ public class StatusMessageConstants {
 	public static final String CLIENT_FOUND_SUCCESSFULLY="Client found successfully";
 //	***********************************************client_master**************************************************************
 	
-	public static final String CLIENT_REGISTERED_SUCCESSFULLY="CLient registered successfully";
+	public static final String CLIENT_REGISTERED_SUCCESSFULLY="Client registered successfully";
 	public static final String CLIENT_NOT_REGISTERED = "Client not registered";
 	
 	

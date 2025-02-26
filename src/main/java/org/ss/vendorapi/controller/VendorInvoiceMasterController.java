@@ -3,6 +3,7 @@ package org.ss.vendorapi.controller;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -483,6 +484,11 @@ public class VendorInvoiceMasterController {
 	        if (vendorInvoices.isEmpty()) {
 	            return CommonUtils.createResponse(Constants.FAIL, "No Vendor Invoices Found", HttpStatus.NOT_FOUND);
 	        }
+	        
+	        // Sort the vendor invoices by ID in descending order
+	        if (vendorInvoices != null) {
+	            vendorInvoices.sort(Comparator.comparing(VendorInvoiceMasterEntity::getId).reversed());
+	        }
 
 	        // Map entities to DTOs and handle nested objects explicitly
 	        List<VendorInvioceMasterDTO> vendorInvoiceDTOs = vendorInvoices.stream()
@@ -514,7 +520,7 @@ public class VendorInvoiceMasterController {
 	                        .collect(Collectors.toList());
 	                    dto.setDescriptionsAndBaseValues(descriptionAndBaseValues);
 	                } else {
-	                    // If descriptionValues is null or empty, you can set default values
+	                    // If descriptionValues is null or empty, set default values
 	                    List<DescriptionAndBaseValue> defaultDescriptionAndBaseValues = new ArrayList<>();
 	                    DescriptionAndBaseValue defaultValue = new DescriptionAndBaseValue();
 	                    defaultValue.setItemDescription(""); // Default empty description
@@ -533,6 +539,71 @@ public class VendorInvoiceMasterController {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
+	
+	
+	
+	
+//	@EncryptResponse
+//	@GetMapping("/getAllVendorInvoice")
+//	public ResponseEntity<?> getAllVendorInvoices() {
+//	    try {
+//	        // Fetch all vendor invoices from the database
+//	        List<VendorInvoiceMasterEntity> vendorInvoices = vendorInvoiceMasterService.findAll();
+//
+//	        if (vendorInvoices.isEmpty()) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "No Vendor Invoices Found", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Map entities to DTOs and handle nested objects explicitly
+//	        List<VendorInvioceMasterDTO> vendorInvoiceDTOs = vendorInvoices.stream()
+//	            .map(invoice -> {
+//	                VendorInvioceMasterDTO dto = new VendorInvioceMasterDTO();
+//	                BeanUtils.copyProperties(invoice, dto);
+//
+//	                // Get client info
+//	                if (invoice.getClientName() != null) {
+//	                    ClientMasterEntity client = vendorInvoiceMasterService.findClientById(Long.parseLong(invoice.getClientName()));
+//	                    if (client != null) {
+//	                        dto.setClientId(client.getId());
+//	                        dto.setClientName(client.getClientName());
+//	                    } else {
+//	                        dto.setClientId(null); // Default to null if client is not found
+//	                        dto.setClientName("Unknown");
+//	                    }
+//	                }
+//
+//	                // Map nested descriptionsAndBaseValues from descriptionValues
+//	                if (invoice.getDescriptionValues() != null && !invoice.getDescriptionValues().isEmpty()) {
+//	                    List<DescriptionAndBaseValue> descriptionAndBaseValues = invoice.getDescriptionValues().stream()
+//	                        .map(desc -> {
+//	                            DescriptionAndBaseValue value = new DescriptionAndBaseValue();
+//	                            value.setItemDescription(desc.getItemDescription() != null ? desc.getItemDescription() : ""); // Fallback to empty string
+//	                            value.setBaseValue(desc.getBaseValue() != null ? desc.getBaseValue() : "0"); // Fallback to "0" if null
+//	                            return value;
+//	                        })
+//	                        .collect(Collectors.toList());
+//	                    dto.setDescriptionsAndBaseValues(descriptionAndBaseValues);
+//	                } else {
+//	                    // If descriptionValues is null or empty, you can set default values
+//	                    List<DescriptionAndBaseValue> defaultDescriptionAndBaseValues = new ArrayList<>();
+//	                    DescriptionAndBaseValue defaultValue = new DescriptionAndBaseValue();
+//	                    defaultValue.setItemDescription(""); // Default empty description
+//	                    defaultValue.setBaseValue("1000"); // Default base value
+//	                    defaultDescriptionAndBaseValues.add(defaultValue);
+//	                    dto.setDescriptionsAndBaseValues(defaultDescriptionAndBaseValues);
+//	                }
+//
+//	                return dto;
+//	            })
+//	            .collect(Collectors.toList());
+//
+//	        return new ResponseEntity<>(vendorInvoiceDTOs, HttpStatus.OK);
+//
+//	    } catch (Exception ex) {
+//	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
 
 	
 //	@EncryptResponse

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
 import org.ss.vendorapi.entity.ClientMasterEntity;
 //import org.ss.vendorapi.entity.UserCreationEntity;
 import org.ss.vendorapi.repository.ClientMasterRepository;
@@ -79,6 +80,12 @@ public class ClientMasterServiceImpl implements ClientMasterService{
 	public ClientMasterEntity findByEmail(String email) {
 		return clientMasterRepository.findByEmail(email);
 	}
+
+
+	@Override
+	public ClientMasterEntity findByClientName(String clientName) {		
+		return clientMasterRepository.findByClientName(clientName);
+	}
 	
 	
 //	public String getClientNameById(String string) {
@@ -88,6 +95,7 @@ public class ClientMasterServiceImpl implements ClientMasterService{
 //	    // Return client name if present, else "Unknown"
 //	    return client.map(ClientMasterEntity::getClientName).orElse("Unknown");
 //	}
+
 
 	
 	

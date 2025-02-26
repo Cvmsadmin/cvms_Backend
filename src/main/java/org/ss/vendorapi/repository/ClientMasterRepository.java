@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
 import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.modal.PayableInvoiceStatsDTO;
 import org.ss.vendorapi.modal.ReceivableInvoiceStatsDTO;
@@ -19,6 +20,8 @@ public interface ClientMasterRepository extends JpaRepository<ClientMasterEntity
 	
 	public ClientMasterEntity findByEmail(String email);
 	public List<ClientMasterEntity> findByAccountManagerId(String accountManagerId);
+	
+	
 	
 //	Optional<ClientMasterEntity> findByClientName(String clientName);
 	

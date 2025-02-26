@@ -1,8 +1,10 @@
 package org.ss.vendorapi.controller;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +96,16 @@ public class ClientMasterController {
 	            statusMap.put(Parameters.statusCode, "RU_409");
 	            return new ResponseEntity<>(statusMap, HttpStatus.CONFLICT);
 	        }
-
+	        
+	     // Check if client with the same clientName already exists
+	        ClientMasterEntity existingClientByName = clientMasterService.findByClientName(addClientMEntity.getClientName());
+	        if (existingClientByName != null) {
+	            statusMap.put(Parameters.statusMsg, "Client with this name already exists.");
+	            statusMap.put(Parameters.status, Constants.FAIL);
+	            statusMap.put(Parameters.statusCode, "RU_409");
+	            return new ResponseEntity<>(statusMap, HttpStatus.CONFLICT);
+	        }
+	        
 	        // Proceed to create the new client
 	        ClientMasterEntity clientCreationEntityObj = new ClientMasterEntity();
 	        clientCreationEntityObj.setClientName(addClientMEntity.getClientName());
@@ -312,6 +323,12 @@ public class ClientMasterController {
 					statusMap.put(Parameters.statusCode, "RU_404");
 					return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
 			}
+			
+			  // Sort the client list by ID in descending order
+	        if (clientList != null) {
+	            clientList.sort(Comparator.comparing(ClientMasterEntity::getId).reversed());
+	        }
+	        
 			// After updating, put the updated clientList into statusMap
 			statusMap.put("clientMasterEntities", clientList);
 			statusMap.put(Parameters.statusMsg,  StatusMessageConstants.CLIENT_FOUND_SUCCESSFULLY );

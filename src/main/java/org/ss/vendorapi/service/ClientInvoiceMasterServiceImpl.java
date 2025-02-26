@@ -1,9 +1,12 @@
 package org.ss.vendorapi.service;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.mail.MessagingException;
@@ -86,12 +89,25 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
         List<ClientInvoiceDetailsEntity> invoiceDetailsList = clientInvoiceDetailsRepo.getClientInvoiceDetails();
 
         if (!invoiceDetailsList.isEmpty()) {
-            ClientInvoiceDetailsEntity invoiceDetails = invoiceDetailsList.get(0); // Assuming you want the most recent invoice details
+            ClientInvoiceDetailsEntity invoiceDetails = invoiceDetailsList.get(0); // Get the most recent invoice details
 
-            // Prepare the subject
+            // Convert invoice amount to BigDecimal safely and format it properly
+            BigDecimal invoiceAmount = BigDecimal.ZERO;
+            String formattedAmount = "N/A"; // Default in case of errors
+
+            if (invoiceDetails.getInvoiceAmountIncluGst() != null) {
+                try {
+                    invoiceAmount = new BigDecimal(invoiceDetails.getInvoiceAmountIncluGst().toString());
+                    formattedAmount = formatCurrency(invoiceAmount); // Format the currency properly
+                } catch (NumberFormatException e) {
+                    e.printStackTrace(); // Log the error
+                }
+            }
+
+            // Prepare the email subject
             String subject = "Invoice Details for " + invoiceDetails.getClientName();
 
-            // Prepare the body with the desired HTML format
+            // Prepare the HTML email body
             String body = String.format(
                     "<html><body>" +
                     "<p>Dear All,</p>" +
@@ -115,16 +131,17 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
                     invoiceDetails.getInvoiceDate(),
                     invoiceDetails.getInvoiceNo(),
                     invoiceDetails.getInvoiceDueDate(),
-                    invoiceDetails.getInvoiceAmountIncluGst()
+                    formattedAmount // Now properly formatted with ₹ and commas
             );
 
-            // Send the email (assuming the emailService.sendEmail method exists and is properly implemented)
+            // Send the email to account manager
             try {
                 emailService.sendEmail(invoiceDetails.getAccountManagerEmail1(), subject, body);
             } catch (MessagingException | jakarta.mail.MessagingException e) {
                 e.printStackTrace();
             }
 
+            // Send the email to project manager
             try {
                 emailService.sendEmail(invoiceDetails.getPrjectManagerEmail(), subject, body);
             } catch (MessagingException | jakarta.mail.MessagingException e) {
@@ -132,6 +149,12 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
             }
         }
     }
+
+	private String formatCurrency(BigDecimal invoiceAmount) {
+		NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        return formatter.format(invoiceAmount);
+	}
+
 
 
     

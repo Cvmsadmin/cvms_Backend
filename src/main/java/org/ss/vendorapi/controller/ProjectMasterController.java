@@ -1,9 +1,11 @@
 package org.ss.vendorapi.controller;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,7 +144,7 @@ public class ProjectMasterController {
 						UtilValidate.isEmpty(milestoneMasterDto.getGstAmount())||
 						UtilValidate.isEmpty(milestoneMasterDto.getGstRate())||
 				        UtilValidate.isEmpty(milestoneMasterDto.getStatus()) ||  // Validate new field
-                        milestoneMasterDto.getCompletiondate() == null) { 
+                        milestoneMasterDto.getCompletionDate() == null) { 
 					return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);		
 				}
 
@@ -157,7 +159,7 @@ public class ProjectMasterController {
 				milestoneMasterEntity.setGstRate(milestoneMasterDto.getGstRate());
 				milestoneMasterEntity.setGstAmount(milestoneMasterDto.getGstAmount());
 				milestoneMasterEntity.setStatus(milestoneMasterDto.getStatus());  
-	            milestoneMasterEntity.setCompletiondate(milestoneMasterDto.getCompletiondate()); 
+	            milestoneMasterEntity.setCompletionDate(milestoneMasterDto.getCompletionDate()); 
 
 				try {
 
@@ -289,6 +291,13 @@ public class ProjectMasterController {
 				statusMap.put(Parameters.statusCode, "RU_404");
 				return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
 			}
+			
+			 // Sort the project list by ID in descending order
+	        if (projectList != null) {
+	            projectList.sort(Comparator.comparing(ProjectMasterEntity::getId).reversed());
+	        }
+			
+			
 			statusMap.put("projectMasterEntities",projectList);
 			statusMap.put(Parameters.statusMsg,  StatusMessageConstants.PROJECT_FOUND_SUCCESSFULLY);
 			statusMap.put(Parameters.status, Constants.SUCCESS);
@@ -369,64 +378,143 @@ public class ProjectMasterController {
 
 	}
 	
-	
-	
 	@EncryptResponse
 	@PutMapping("/updateMilestoneMaster")
 	public ResponseEntity<?> updateMilestoneMaster(@RequestBody ProjectRequestDTO projectRequestDTO) {
 	    Map<String, Object> statusMap = new HashMap<>();
+	    List<MilestoneMasterEntity> savedEntities = new ArrayList<>();
+
 	    try {
-	        // Initialize the list that will hold updated entities
-	        List<MilestoneMasterEntity> savedEntities = new ArrayList<>();
+	        // Validate if the projectId is provided
+	        if (projectRequestDTO.getProjectId() == null) {
+	            statusMap.put("status", "FAILURE");
+	            statusMap.put("statusCode", "RU_400");
+	            statusMap.put("statusMessage", "Project ID must not be null.");
+	            return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
+	        }
 
-	        // Null check for projectRequestDTO.getMoe()
-	        if (projectRequestDTO.getMoe() != null && !projectRequestDTO.getMoe().isEmpty()) {
-	            // Iterate through the moe list
-	            for (MilestoneMasterEntity projectMoe : projectRequestDTO.getMoe()) {
+	        // Fetch existing milestones by projectId
+	        List<MilestoneMasterEntity> existingMilestones = milestoneMasterService.findByProjectId(projectRequestDTO.getProjectId());
+	        
+	        if (existingMilestones.isEmpty()) {
+	            statusMap.put("status", "FAILURE");
+	            statusMap.put("statusCode", "RU_404");
+	            statusMap.put("statusMessage", "No milestones found for the given project ID.");
+	            return new ResponseEntity<>(statusMap, HttpStatus.NOT_FOUND);
+	        }
 
-	                // Fetch the existing milestone entity
-	                MilestoneMasterEntity milestoneMasterEntity = milestoneMasterService.findById(projectMoe.getId());
-
-	                // Update fields only if the new values are not null
-	                milestoneMasterEntity.setTDate(projectMoe.getTDate() != null ? projectMoe.getTDate() : milestoneMasterEntity.getTDate());
-	                milestoneMasterEntity.setProjectId(projectMoe.getProjectId() != null ? projectMoe.getProjectId() : milestoneMasterEntity.getProjectId());
-	                milestoneMasterEntity.setSerialNumber(projectMoe.getSerialNumber() != null ? projectMoe.getSerialNumber() : milestoneMasterEntity.getSerialNumber());
-	                milestoneMasterEntity.setDays(projectMoe.getDays() != null ? projectMoe.getDays() : milestoneMasterEntity.getDays());
-	                milestoneMasterEntity.setDeliverables(projectMoe.getDeliverables() != null ? projectMoe.getDeliverables() : milestoneMasterEntity.getDeliverables());
-	                milestoneMasterEntity.setAmountExclGst(projectMoe.getAmountExclGst() != null ? projectMoe.getAmountExclGst() : milestoneMasterEntity.getAmountExclGst());
-	                milestoneMasterEntity.setGstRate(projectMoe.getGstRate() != null ? projectMoe.getGstRate() : milestoneMasterEntity.getGstRate());
-	                milestoneMasterEntity.setGstAmount(projectMoe.getGstAmount() != null ? projectMoe.getGstAmount() : milestoneMasterEntity.getGstAmount());
-	                milestoneMasterEntity.setAmountInclGst(projectMoe.getAmountInclGst() != null ? projectMoe.getAmountInclGst() : milestoneMasterEntity.getAmountInclGst());
-
-	                // Save the updated entity
-	                milestoneMasterEntity = milestoneMasterService.update(milestoneMasterEntity);
-	                savedEntities.add(milestoneMasterEntity);
-	            }
-
-	            // If the update is successful, return the status map with updated entities
-	            statusMap.put("milestoneMasterEntity", savedEntities);
-	            statusMap.put("status", "SUCCESS");
-	            statusMap.put("statusCode", "RU_200");
-	            statusMap.put("statusMessage", "SUCCESSFULLY UPDATED");
-
-	            return new ResponseEntity<>(statusMap, HttpStatus.OK);
-	        } else {
-	            // Handle the case where the list is null or empty
+	        // Validate if the milestone list is present in the request
+	        if (UtilValidate.isEmpty(projectRequestDTO.getMoe())) {
 	            statusMap.put("status", "FAILURE");
 	            statusMap.put("statusCode", "RU_400");
 	            statusMap.put("statusMessage", "No milestones to update.");
 	            return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
 	        }
 
+	        // Iterate through the milestone list and update each one
+	        for (MilestoneMasterEntity milestoneDTO : projectRequestDTO.getMoe()) {
+	            Optional<MilestoneMasterEntity> existingMilestoneOpt = existingMilestones.stream()
+	                    .filter(m -> m.getSerialNumber().equals(milestoneDTO.getSerialNumber()))
+	                    .findFirst();
+
+	            if (!existingMilestoneOpt.isPresent()) {
+	                statusMap.put("status", "FAILURE");
+	                statusMap.put("statusCode", "RU_404");
+	                statusMap.put("statusMessage", "Milestone with Serial Number " + milestoneDTO.getSerialNumber() + " not found for the given project.");
+	                return new ResponseEntity<>(statusMap, HttpStatus.NOT_FOUND);
+	            }
+
+	            MilestoneMasterEntity milestoneMasterEntity = existingMilestoneOpt.get();
+	            
+	            // Update fields only if the new values are not null
+	            Optional.ofNullable(milestoneDTO.getTDate()).ifPresent(milestoneMasterEntity::setTDate);
+	            Optional.ofNullable(milestoneDTO.getDays()).ifPresent(milestoneMasterEntity::setDays);
+	            Optional.ofNullable(milestoneDTO.getDeliverables()).ifPresent(milestoneMasterEntity::setDeliverables);
+	            Optional.ofNullable(milestoneDTO.getAmountExclGst()).ifPresent(milestoneMasterEntity::setAmountExclGst);
+	            Optional.ofNullable(milestoneDTO.getGstRate()).ifPresent(milestoneMasterEntity::setGstRate);
+	            Optional.ofNullable(milestoneDTO.getGstAmount()).ifPresent(milestoneMasterEntity::setGstAmount);
+	            Optional.ofNullable(milestoneDTO.getAmountInclGst()).ifPresent(milestoneMasterEntity::setAmountInclGst);
+	            Optional.ofNullable(milestoneDTO.getStatus()).ifPresent(milestoneMasterEntity::setStatus);
+	            Optional.ofNullable(milestoneDTO.getCompletionDate()).ifPresent(milestoneMasterEntity::setCompletionDate);
+
+	            // Save the updated milestone entity
+	            milestoneMasterEntity = milestoneMasterService.update(milestoneMasterEntity);
+	            savedEntities.add(milestoneMasterEntity);
+	        }
+
+	        // Return successful response
+	        statusMap.put("milestoneMasterEntity", savedEntities);
+	        statusMap.put("status", "SUCCESS");
+	        statusMap.put("statusCode", "RU_200");
+	        statusMap.put("statusMessage", "Milestones successfully updated.");
+	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        statusMap.put("status", "FAILURE");
 	        statusMap.put("statusCode", "RU_500");
-	        statusMap.put("statusMessage", "An error occurred while updating the milestones.");
+	        statusMap.put("statusMessage", "An error occurred while updating the milestones: " + e.getMessage());
+	        return new ResponseEntity<>(statusMap, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
-
-	    return new ResponseEntity<>(statusMap, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+
+	
+//	@EncryptResponse
+//	@PutMapping("/updateMilestoneMaster")
+//	public ResponseEntity<?> updateMilestoneMaster(@RequestBody ProjectRequestDTO projectRequestDTO) {
+//	    Map<String, Object> statusMap = new HashMap<>();
+//	    try {
+//	        // Initialize the list that will hold updated entities
+//	        List<MilestoneMasterEntity> savedEntities = new ArrayList<>();
+//
+//	        // Null check for projectRequestDTO.getMoe()
+//	        if (projectRequestDTO.getMoe() != null && !projectRequestDTO.getMoe().isEmpty()) {
+//	            // Iterate through the moe list
+//	            for (MilestoneMasterEntity projectMoe : projectRequestDTO.getMoe()) {
+//
+//	                // Fetch the existing milestone entity
+//	                MilestoneMasterEntity milestoneMasterEntity = milestoneMasterService.findById(projectMoe.getId());
+//
+//	                // Update fields only if the new values are not null
+//	                milestoneMasterEntity.setTDate(projectMoe.getTDate() != null ? projectMoe.getTDate() : milestoneMasterEntity.getTDate());
+//	                milestoneMasterEntity.setProjectId(projectMoe.getProjectId() != null ? projectMoe.getProjectId() : milestoneMasterEntity.getProjectId());
+//	                milestoneMasterEntity.setSerialNumber(projectMoe.getSerialNumber() != null ? projectMoe.getSerialNumber() : milestoneMasterEntity.getSerialNumber());
+//	                milestoneMasterEntity.setDays(projectMoe.getDays() != null ? projectMoe.getDays() : milestoneMasterEntity.getDays());
+//	                milestoneMasterEntity.setDeliverables(projectMoe.getDeliverables() != null ? projectMoe.getDeliverables() : milestoneMasterEntity.getDeliverables());
+//	                milestoneMasterEntity.setAmountExclGst(projectMoe.getAmountExclGst() != null ? projectMoe.getAmountExclGst() : milestoneMasterEntity.getAmountExclGst());
+//	                milestoneMasterEntity.setGstRate(projectMoe.getGstRate() != null ? projectMoe.getGstRate() : milestoneMasterEntity.getGstRate());
+//	                milestoneMasterEntity.setGstAmount(projectMoe.getGstAmount() != null ? projectMoe.getGstAmount() : milestoneMasterEntity.getGstAmount());
+//	                milestoneMasterEntity.setAmountInclGst(projectMoe.getAmountInclGst() != null ? projectMoe.getAmountInclGst() : milestoneMasterEntity.getAmountInclGst());
+//
+//	                // Save the updated entity
+//	                milestoneMasterEntity = milestoneMasterService.update(milestoneMasterEntity);
+//	                savedEntities.add(milestoneMasterEntity);
+//	            }
+//
+//	            // If the update is successful, return the status map with updated entities
+//	            statusMap.put("milestoneMasterEntity", savedEntities);
+//	            statusMap.put("status", "SUCCESS");
+//	            statusMap.put("statusCode", "RU_200");
+//	            statusMap.put("statusMessage", "SUCCESSFULLY UPDATED");
+//
+//	            return new ResponseEntity<>(statusMap, HttpStatus.OK);
+//	        } else {
+//	            // Handle the case where the list is null or empty
+//	            statusMap.put("status", "FAILURE");
+//	            statusMap.put("statusCode", "RU_400");
+//	            statusMap.put("statusMessage", "No milestones to update.");
+//	            return new ResponseEntity<>(statusMap, HttpStatus.BAD_REQUEST);
+//	        }
+//
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	        statusMap.put("status", "FAILURE");
+//	        statusMap.put("statusCode", "RU_500");
+//	        statusMap.put("statusMessage", "An error occurred while updating the milestones.");
+//	    }
+//
+//	    return new ResponseEntity<>(statusMap, HttpStatus.INTERNAL_SERVER_ERROR);
+//	}
 
 
 

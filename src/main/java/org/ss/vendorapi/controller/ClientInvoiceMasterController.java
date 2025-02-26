@@ -1,5 +1,6 @@
 package org.ss.vendorapi.controller;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +79,13 @@ public class ClientInvoiceMasterController {
 	public ResponseEntity<?> addClientInvoices(@RequestBody ClientInvoiceMasterDTO clientInvoiceDTO, HttpServletRequest request) {
 	    Map<String, Object> responseMap = new HashMap<>();	    
 	    try {
+	    	
+	        // Check if the invoice already exists
+	        ClientInvoiceMasterEntity existingInvoice = clientInvoiceService.findByInvoiceNo(clientInvoiceDTO.getInvoiceNo());
+	        if (existingInvoice != null) {
+	            return CommonUtils.createResponse(Constants.FAIL, "Invoice with this Invoice No. already exists.", HttpStatus.CONFLICT);
+	    	
+	        }	    	
 	        // Validate mandatory fields if status is not "completed"
 	        if (!"completed".equalsIgnoreCase(clientInvoiceDTO.getStatus()) && (
 	                UtilValidate.isEmpty(clientInvoiceDTO.getClientName()) ||
@@ -139,42 +147,48 @@ public class ClientInvoiceMasterController {
 	        }
 	        
 	        clientInvoiceService.sendInvoiceEmail(clientInvoiceDTO);
+	        
+	        // Return success message
+	        Map<String, String> response = new HashMap<>();
+	        response.put("message", "Client Invoice added successfully");
+	        return ResponseEntity.ok(response);
 
-	        // Prepare success response
-	        responseMap.put("clientName", clientInvoice.getClientName());
-	        responseMap.put("projectName", clientInvoice.getProjectName());
-	        responseMap.put("discom", clientInvoice.getDiscom());
-	        responseMap.put("invoiceDate", clientInvoice.getInvoiceDate());
-	        responseMap.put("invoiceNo", clientInvoice.getInvoiceNo());
-	        responseMap.put("invoiceDescription", clientInvoice.getInvoiceDescription());
-	        responseMap.put("invoiceDueDate", clientInvoice.getInvoiceDueDate());
-	        responseMap.put("invoiceAmountExcluGst", clientInvoice.getInvoiceAmountExcluGst());
-	        responseMap.put("gstPer", clientInvoice.getGstPer());
-	        responseMap.put("gstAmount", clientInvoiceDTO.getGstAmount());
-	        responseMap.put("invoiceAmountIncluGst", clientInvoice.getInvoiceAmountIncluGst());
-	        responseMap.put("status", clientInvoice.getStatus());
-	        responseMap.put("clientDescriptionAndBaseValue", clientInvoiceDTO.getClientDescriptionAndBaseValue());
-	        responseMap.put("invoiceBaseValue", clientInvoiceDTO.getInvoiceBaseValue());
-	        responseMap.put("gstBaseValue", clientInvoiceDTO.getGstBaseValue());
-	        responseMap.put("invoiceInclusiveOfGst", clientInvoiceDTO.getInvoiceInclusiveOfGst());
-	        responseMap.put("tdsper", clientInvoiceDTO.getTdsPer());
-	        responseMap.put("tdsBaseValue", clientInvoiceDTO.getTdsBaseValue());
-	        responseMap.put("tdsOnGst", clientInvoiceDTO.getTdsOnGst());
-	        responseMap.put("billableState", clientInvoiceDTO.getBillableState());
-	        responseMap.put("cgstOnTds", clientInvoiceDTO.getCgstOnTds());
-	        responseMap.put("sgstOnTds", clientInvoiceDTO.getSgstOnTds());
-	        responseMap.put("igstOnTds", clientInvoiceDTO.getIgstOnTds());
-	        responseMap.put("totalTdsDeducted", clientInvoiceDTO.getTotalTdsDeducted());
-	        responseMap.put("balance", clientInvoiceDTO.getBalance());
-	        responseMap.put("penalty", clientInvoiceDTO.getPenalty());
-	        responseMap.put("penaltyDeductionOnBase", clientInvoiceDTO.getPenaltyDeductionOnBase());
-	        responseMap.put("gstOnPenalty", clientInvoiceDTO.getGstOnPenalty());
-	        responseMap.put("totalPenaltyDeduction", clientInvoiceDTO.getTotalPenaltyDeduction());
-	        responseMap.put("creditNote", clientInvoiceDTO.getCreditNote());
-	        responseMap.put("totalPaymentReceived", clientInvoiceDTO.getTotalPaymentReceived());
-	        responseMap.put("milestone", clientInvoiceDTO.getMilestone());
 
-	        return new ResponseEntity<>(responseMap, HttpStatus.OK);
+//	        // Prepare success response
+//	        responseMap.put("clientName", clientInvoice.getClientName());
+//	        responseMap.put("projectName", clientInvoice.getProjectName());
+//	        responseMap.put("discom", clientInvoice.getDiscom());
+//	        responseMap.put("invoiceDate", clientInvoice.getInvoiceDate());
+//	        responseMap.put("invoiceNo", clientInvoice.getInvoiceNo());
+//	        responseMap.put("invoiceDescription", clientInvoice.getInvoiceDescription());
+//	        responseMap.put("invoiceDueDate", clientInvoice.getInvoiceDueDate());
+//	        responseMap.put("invoiceAmountExcluGst", clientInvoice.getInvoiceAmountExcluGst());
+//	        responseMap.put("gstPer", clientInvoice.getGstPer());
+//	        responseMap.put("gstAmount", clientInvoiceDTO.getGstAmount());
+//	        responseMap.put("invoiceAmountIncluGst", clientInvoice.getInvoiceAmountIncluGst());
+//	        responseMap.put("status", clientInvoice.getStatus());
+//	        responseMap.put("clientDescriptionAndBaseValue", clientInvoiceDTO.getClientDescriptionAndBaseValue());
+//	        responseMap.put("invoiceBaseValue", clientInvoiceDTO.getInvoiceBaseValue());
+//	        responseMap.put("gstBaseValue", clientInvoiceDTO.getGstBaseValue());
+//	        responseMap.put("invoiceInclusiveOfGst", clientInvoiceDTO.getInvoiceInclusiveOfGst());
+//	        responseMap.put("tdsper", clientInvoiceDTO.getTdsPer());
+//	        responseMap.put("tdsBaseValue", clientInvoiceDTO.getTdsBaseValue());
+//	        responseMap.put("tdsOnGst", clientInvoiceDTO.getTdsOnGst());
+//	        responseMap.put("billableState", clientInvoiceDTO.getBillableState());
+//	        responseMap.put("cgstOnTds", clientInvoiceDTO.getCgstOnTds());
+//	        responseMap.put("sgstOnTds", clientInvoiceDTO.getSgstOnTds());
+//	        responseMap.put("igstOnTds", clientInvoiceDTO.getIgstOnTds());
+//	        responseMap.put("totalTdsDeducted", clientInvoiceDTO.getTotalTdsDeducted());
+//	        responseMap.put("balance", clientInvoiceDTO.getBalance());
+//	        responseMap.put("penalty", clientInvoiceDTO.getPenalty());
+//	        responseMap.put("penaltyDeductionOnBase", clientInvoiceDTO.getPenaltyDeductionOnBase());
+//	        responseMap.put("gstOnPenalty", clientInvoiceDTO.getGstOnPenalty());
+//	        responseMap.put("totalPenaltyDeduction", clientInvoiceDTO.getTotalPenaltyDeduction());
+//	        responseMap.put("creditNote", clientInvoiceDTO.getCreditNote());
+//	        responseMap.put("totalPaymentReceived", clientInvoiceDTO.getTotalPaymentReceived());
+//	        responseMap.put("milestone", clientInvoiceDTO.getMilestone());
+//
+//	        return new ResponseEntity<>(responseMap, HttpStatus.OK);
 
 	    } catch (Exception ex) {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -497,6 +511,11 @@ public class ClientInvoiceMasterController {
 	    try {
 	        // Fetch all client invoices
 	        List<ClientInvoiceMasterEntity> clientInvoices = clientInvoiceService.findAll();
+	        
+	     // Sort the client invoices by ID in descending order
+	        if (clientInvoices != null) {
+	            clientInvoices.sort(Comparator.comparing(ClientInvoiceMasterEntity::getId).reversed());
+	        }
 
 	        // Map entities to response structure
 	        List<Map<String, Object>> responseList = clientInvoices.stream().map(invoice -> {

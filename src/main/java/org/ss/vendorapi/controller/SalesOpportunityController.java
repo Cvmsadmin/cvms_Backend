@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -406,6 +407,12 @@ public class SalesOpportunityController {
 		Map<String,Object> statusMap=new HashMap<>();
 			try {
 				List<SalesOpportunityMasterEntity> saleOptList=salesOpportunityService.findAll();
+				
+			     // Sort by ID in descending order
+		        if (saleOptList != null) {
+		            saleOptList.sort(Comparator.comparing(SalesOpportunityMasterEntity::getId).reversed());
+		        }
+							
 				statusMap.put("SalesOpportunityMasterEntity",saleOptList);
 				statusMap.put("Status","Success");
 				statusMap.put("Status_Code","RU_200");

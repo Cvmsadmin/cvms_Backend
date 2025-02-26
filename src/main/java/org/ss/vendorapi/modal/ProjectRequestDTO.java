@@ -48,7 +48,7 @@ public class ProjectRequestDTO {
     @JsonFormat(pattern="dd/MM/yyyy")
     private Date singOfDate;
     private String contractPrice;
-    
-   
+	public String projectId;
+       
 
 }

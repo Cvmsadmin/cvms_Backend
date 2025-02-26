@@ -48,17 +48,17 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	@Column(name = "discom")
 	private String discom;
 	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")private LocalDate invoiceDate;
-
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	private LocalDate invoiceDate;
+	
 	@Column(name = "invoice_no")
 	private String invoiceNo;
 
 	@Column(name = "invoice_description")
 	private String invoiceDescription;
 
-	@JsonFormat(pattern="dd/MM/yyyy")
-	@Column(name = "invoice_due_date")
-	private Date invoiceDueDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	private LocalDate invoiceDueDate;
 	
 	@Column(name = "gst_per")
 	private String gstPer;
@@ -151,6 +151,10 @@ public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializ
 	public String getTdsOnGst() {
 		
 		return this.tdsOnGst;
+	}
+
+	public void setInvoiceDueDate(Object invoiceDueDate) {
+		
 	}
 
 

@@ -1,6 +1,7 @@
 
 package org.ss.vendorapi.controller;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -157,12 +158,19 @@ public class VendorMasterController {
 	@GetMapping("/getAllVendor")
 	public ResponseEntity<?> getAllVendor() {
 	    try {
-	        List<VendorMasterEntity> users = vendorMasterService.getAllVendor();
-	        return new ResponseEntity<>(users, HttpStatus.OK);
+	        List<VendorMasterEntity> vendors = vendorMasterService.getAllVendor();
+
+	        // Sort the vendor list by ID in descending order
+	        if (vendors != null) {
+	            vendors.sort(Comparator.comparing(VendorMasterEntity::getId).reversed());
+	        }
+
+	        return new ResponseEntity<>(vendors, HttpStatus.OK);
 	    } catch (Exception ex) {
 	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
 
 	
 	
