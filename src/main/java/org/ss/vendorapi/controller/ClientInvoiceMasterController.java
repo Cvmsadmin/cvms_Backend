@@ -129,11 +129,14 @@ public class ClientInvoiceMasterController {
 	        Optional.ofNullable(clientInvoiceDTO.getBalance()).ifPresent(clientInvoice::setBalance);
 	        Optional.ofNullable(clientInvoiceDTO.getCreditNote()).ifPresent(clientInvoice::setCreditNote);
 	        Optional.ofNullable(clientInvoiceDTO.getTotalPaymentReceived()).ifPresent(clientInvoice::setTotalPaymentReceived);
-	        Optional.ofNullable(clientInvoiceDTO.getMilestone()).ifPresent(clientInvoice::setMilestone);  // Set the milestone
+	        Optional.ofNullable(clientInvoiceDTO.getMilestone()).ifPresent(clientInvoice::setMilestone);  
 
 	        // Save ClientInvoiceMasterEntity
 	        clientInvoice = clientInvoiceService.save(clientInvoice);
 
+	     // Assume the invoice PDF is saved in a specific directory
+	        String attachmentPath = "/invoices/" + clientInvoice.getInvoiceNo() + ".pdf";
+	        
 	        // Save descriptions and base values
 	        if (clientInvoiceDTO.getDescriptionsAndBaseValues() != null) {
 	            for (ClientDescriptionAndBaseValue description : clientInvoiceDTO.getClientDescriptionAndBaseValue()) {
@@ -152,43 +155,6 @@ public class ClientInvoiceMasterController {
 	        Map<String, String> response = new HashMap<>();
 	        response.put("message", "Client Invoice added successfully");
 	        return ResponseEntity.ok(response);
-
-
-//	        // Prepare success response
-//	        responseMap.put("clientName", clientInvoice.getClientName());
-//	        responseMap.put("projectName", clientInvoice.getProjectName());
-//	        responseMap.put("discom", clientInvoice.getDiscom());
-//	        responseMap.put("invoiceDate", clientInvoice.getInvoiceDate());
-//	        responseMap.put("invoiceNo", clientInvoice.getInvoiceNo());
-//	        responseMap.put("invoiceDescription", clientInvoice.getInvoiceDescription());
-//	        responseMap.put("invoiceDueDate", clientInvoice.getInvoiceDueDate());
-//	        responseMap.put("invoiceAmountExcluGst", clientInvoice.getInvoiceAmountExcluGst());
-//	        responseMap.put("gstPer", clientInvoice.getGstPer());
-//	        responseMap.put("gstAmount", clientInvoiceDTO.getGstAmount());
-//	        responseMap.put("invoiceAmountIncluGst", clientInvoice.getInvoiceAmountIncluGst());
-//	        responseMap.put("status", clientInvoice.getStatus());
-//	        responseMap.put("clientDescriptionAndBaseValue", clientInvoiceDTO.getClientDescriptionAndBaseValue());
-//	        responseMap.put("invoiceBaseValue", clientInvoiceDTO.getInvoiceBaseValue());
-//	        responseMap.put("gstBaseValue", clientInvoiceDTO.getGstBaseValue());
-//	        responseMap.put("invoiceInclusiveOfGst", clientInvoiceDTO.getInvoiceInclusiveOfGst());
-//	        responseMap.put("tdsper", clientInvoiceDTO.getTdsPer());
-//	        responseMap.put("tdsBaseValue", clientInvoiceDTO.getTdsBaseValue());
-//	        responseMap.put("tdsOnGst", clientInvoiceDTO.getTdsOnGst());
-//	        responseMap.put("billableState", clientInvoiceDTO.getBillableState());
-//	        responseMap.put("cgstOnTds", clientInvoiceDTO.getCgstOnTds());
-//	        responseMap.put("sgstOnTds", clientInvoiceDTO.getSgstOnTds());
-//	        responseMap.put("igstOnTds", clientInvoiceDTO.getIgstOnTds());
-//	        responseMap.put("totalTdsDeducted", clientInvoiceDTO.getTotalTdsDeducted());
-//	        responseMap.put("balance", clientInvoiceDTO.getBalance());
-//	        responseMap.put("penalty", clientInvoiceDTO.getPenalty());
-//	        responseMap.put("penaltyDeductionOnBase", clientInvoiceDTO.getPenaltyDeductionOnBase());
-//	        responseMap.put("gstOnPenalty", clientInvoiceDTO.getGstOnPenalty());
-//	        responseMap.put("totalPenaltyDeduction", clientInvoiceDTO.getTotalPenaltyDeduction());
-//	        responseMap.put("creditNote", clientInvoiceDTO.getCreditNote());
-//	        responseMap.put("totalPaymentReceived", clientInvoiceDTO.getTotalPaymentReceived());
-//	        responseMap.put("milestone", clientInvoiceDTO.getMilestone());
-//
-//	        return new ResponseEntity<>(responseMap, HttpStatus.OK);
 
 	    } catch (Exception ex) {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
