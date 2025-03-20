@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.annotations.Where;
 
@@ -23,139 +24,158 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-@Data 
-@NoArgsConstructor @AllArgsConstructor
+
+@NoArgsConstructor @Setter @Getter @AllArgsConstructor
 @Entity
-@Where(clause="ACTIVE=1")
+//@Where(clause = "ACTIVE=1")
 @Table(name = "client_invoice_master")
-public class ClientInvoiceMasterEntity  extends ParentEntity implements Serializable{
-	
-	private static final long serialVersionUID=1L;
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+public class ClientInvoiceMasterEntity implements Serializable {
 
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "client_id")
-	private String clientId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(name = "client_name")
-	private String clientName;
+    @Column(name = "client_id")
+    private String clientId;
 
-	@Column(name = "project_name")
-	private String projectName;
+    @Column(name = "client_name")
+    private String clientName;
 
-	@Column(name = "discom")
-	private String discom;
-	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-	private LocalDate invoiceDate;
-	
-	@Column(name = "invoice_no")
-	private String invoiceNo;
+    @Column(name = "project_name")
+    private String projectName;
 
-	@Column(name = "invoice_description")
-	private String invoiceDescription;
+    @Column(name = "discom")
+    private String discom;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-	private LocalDate invoiceDueDate;
-	
-	@Column(name = "gst_per")
-	private String gstPer;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate invoiceDate;
 
-	@Column(name = "gst_amount")
-	private String gstAmount;
+    @Column(name = "invoice_no")
+    private String invoiceNo;
 
-	@Column(name = "invoice_amount_exclu_gst")
-	private String invoiceAmountExcluGst;
+    @Column(name = "invoice_description")
+    private String invoiceDescription;
 
-	@Column(name = "invoice_amount_inclu_gst")
-	private String invoiceAmountIncluGst;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate invoiceDueDate;
 
-	@Column(name = "status")
-	private String status;
+//    @Column(name = "gst_per")
+//    private Double gstPer;
 
-	@Column(name = "invoice_base_value")
-	private String invoiceBaseValue;
+//    @Column(name = "gst_amount")
+//    private Double gstAmount;
 
-	@Column(name = "gst_base_value")
-	private String gstBaseValue;
+//    @Column(name = "invoice_amount_exclu_gst")
+//    private Double invoiceAmountExcluGst;
 
-	@Column(name = "invoice_inclusive_of_gst")
-	private String invoiceInclusiveOfGst;
-	
-	@Column(name = "tds_Per")
-	private String tdsPer;
-	
-	@Column(name = "tds_on_gst_Per")
-	private String tdsOnGstPer;
+    @Column(name = "invoice_amount_inclu_gst")
+    private String invoiceAmountIncluGst;
+    
+    @Column(name = "invoice_amt_inclu_gst")
+    private Double invoiceAmtIncluGst;     
 
-	@Column(name = "tds_base_value")
-	private String tdsBaseValue;
-	
-	@Column(name = "igst_on_tds")
-	private String igstOnTds;
+    @Column(name = "status")
+    private String status;
 
-	@Column(name = "cgst_on_tds")
-	private String cgstOnTds;
+    @Column(name = "invoice_base_value")
+    private String invoiceBaseValue;
 
-	@Column(name = "sgst_on_tds")
-	private String sgstOnTds;
+    @Column(name = "gst_base_value")
+    private String gstBaseValue;
 
-	@Column(name = "total_tds_deducted")
-	private String totalTdsDeducted;
+    @Column(name = "invoice_inclusive_of_gst")
+    private String invoiceInclusiveOfGst;
 
-	@Column(name = "balance")
-	private String balance;
+    @Column(name = "tds_Per")
+    private String tdsPer;
 
-	@Column(name = "penalty")
-	private String penalty;
+//    @Column(name = "tds_on_gst_Per")
+//    private Double tdsOnGstPer;
 
-	@Column(name = "penalty_deduction_on_base")
-	private String penaltyDeductionOnBase;
+    @Column(name = "tds_base_value")
+    private String tdsBaseValue;
 
-	@Column(name = "gst_on_penalty")
-	private String gstOnPenalty;
+//    @Column(name = "igst_on_tds")
+//    private Double igstOnTds;
 
-	@Column(name = "total_penalty_deduction")
-	private String totalPenaltyDeduction;
-	
-	 @Column(name = "credit_note")
-	 private String creditNote;
-	
-	@Column(name = "total_payment_received")
-	private Double totalPaymentReceived;
-	
-	@Column(name = "milestone")
-	private String milestone;
+    @Column(name = "cgst_on_tds")
+    private String cgstOnTds;
 
-	private String tdsOnGst;
+    @Column(name = "sgst_on_tds")
+    private String sgstOnTds;
 
-	public Object getBillableState() {
-	    // Determine the billable state based on the status or other logic
-	    if ("Completed".equalsIgnoreCase(this.status)) {
-	        return "Billable";
-	    } else if ("Pending".equalsIgnoreCase(this.status)) {
-	        return "Non-Billable";
-	    } else if ("Rejected".equalsIgnoreCase(this.status)) {
-	        return "Not Applicable";
-	    } else {
-	        return "Unknown";
-	    }
-	}
+    @Column(name = "total_tds_deducted")
+    private String totalTdsDeducted;
 
-	public void setBillableState(Object object) {
-				
-	}
+    @Column(name = "balance")
+    private String balance;
 
-	public String getTdsOnGst() {
-		
-		return this.tdsOnGst;
-	}
+    @Column(name = "penalty")
+    private String penalty;
 
-	public void setInvoiceDueDate(Object invoiceDueDate) {
-		
-	}
+    @Column(name = "penalty_deduction_on_base")
+    private String penaltyDeductionOnBase;
 
+    @Column(name = "gst_on_penalty")
+    private String gstOnPenalty;
 
+    @Column(name = "total_penalty_deduction")
+    private String totalPenaltyDeduction;
+
+    @Column(name = "credit_note")
+    private String creditNote;
+
+    @Column(name = "total_payment_received")
+    private Double totalPaymentReceived;
+
+    @Column(name = "milestone")
+    private String milestone;
+
+    private String tdsOnGst;
+
+    // Newly added fields
+    @Column(name = "total_cgst")
+    private String totalCgst;
+
+    @Column(name = "total_sgst")
+    private String totalSgst;
+
+    @Column(name = "total_igst")
+    private String totalIgst;
+
+    @Column(name = "amount_exclu_gst")
+    private String amountExcluGst;
+
+    @Column(name = "billable_state")
+    private String billableState;
+
+    @OneToMany(mappedBy = "clientInvoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ClientInvoiceDescriptionValue> clientInvoiceDescriptionValue;
+
+    public String getBillableState() {
+        if ("Completed".equalsIgnoreCase(this.status)) {
+            return "Billable";
+        } else if ("Pending".equalsIgnoreCase(this.status)) {
+            return "Non-Billable";
+        } else if ("Rejected".equalsIgnoreCase(this.status)) {
+            return "Not Applicable";
+        } else {
+            return "Unknown";
+        }
+    }
+
+    public void setBillableState(String billableState) {
+        this.billableState = billableState;
+    }
+
+    
+    public List<ClientInvoiceDescriptionValue> getClientInvoiceDescriptionValue() {
+        return clientInvoiceDescriptionValue;
+    }
+
+    public void setClientInvoiceDescriptionValue(List<ClientInvoiceDescriptionValue> clientInvoiceDescriptionValue) {
+        this.clientInvoiceDescriptionValue = clientInvoiceDescriptionValue;
+    }
 }

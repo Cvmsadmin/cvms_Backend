@@ -1,10 +1,10 @@
 package org.ss.vendorapi.modal;
-
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-import org.ss.vendorapi.entity.ClientDescriptionAndBaseValue;
+//import org.ss.vendorapi.entity.ClientDescriptionAndBaseValue;
+import org.ss.vendorapi.entity.ClientInvoiceDescriptionValue;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -25,11 +25,13 @@ public class ClientInvoiceMasterDTO {
 	private String invoiceDescription;
 	
 	@JsonFormat(pattern="dd/MM/yyyy")
-	private Date invoiceDueDate;
-	private String gstPer;
-	private String gstAmount;
-	private String invoiceAmountExcluGst;
+	private LocalDate invoiceDueDate;
+//	private String gstPer;
+//	private String gstAmount;
+//	private String invoiceAmountExcluGst;
 	private String invoiceAmountIncluGst;
+
+	private String invoiceAmtIncluGst;
 	private String status;
 	private String invoiceBaseValue;
 	private String gstBaseValue;
@@ -46,19 +48,36 @@ public class ClientInvoiceMasterDTO {
 	private Double totalPaymentReceived;
 	private String tdsDeductionIncluGst;
 
-	private String TdsPer;
-	private String TdsOnGstPer;
-	private String IgstOnTds;
-	private String CreditNote;
+	private String tdsPer;
+//	private String TdsOnGstPer;
+//	private String IgstOnTds;
+	private String creditNote;
 	
-	private String TdsOnGst;
+	private String tdsOnGst;
 	private String milestone;
 	
-	private String BillableState;
-	private List<ClientDescriptionAndBaseValue> clientDescriptionAndBaseValue;
+	private String billableState;
+	private List<ClientInvoiceDescriptionValue> clientInvoiceDescriptionValue;
+	
+//	private String DescriptionsAndBaseValues;
+	
+	// New fields added
+	private String amountExcluGst;  
 
+    private String totalCgst;
+    private String totalSgst;
+    private String totalIgst;
+    
+    private String accountManagerEmail;
+    private String projectManagerEmail;
+    
+//    public String getAccountManagerEmail() {
+//    	return getAccountManagerEmail();
+//    }
+//    
+//	public String getProjectManagerEmail() {
+//		return getProjectManagerEmail();
+//	}
 
-
-	private String DescriptionsAndBaseValues;
-
+ 
 }

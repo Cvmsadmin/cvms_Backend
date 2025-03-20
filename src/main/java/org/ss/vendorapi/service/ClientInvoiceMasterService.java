@@ -19,6 +19,7 @@ public interface ClientInvoiceMasterService {
 	public ClientMasterEntity findClientByClientName(String clientName);
 //	public List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName);
 	public void sendInvoiceEmail(ClientInvoiceMasterDTO clientInvoiceDTO);
+//	public List<ClientInvoiceMasterEntity> findAllWithDescriptionValues();
 	
 //	List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName);
 

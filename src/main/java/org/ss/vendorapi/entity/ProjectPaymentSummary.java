@@ -44,7 +44,7 @@ public class ProjectPaymentSummary implements Serializable{
 //	@Transient
 //	private Long id; 
 
-	private Long clientId;
+	private Long client_Id;
 
 //    private String projectId;
     	

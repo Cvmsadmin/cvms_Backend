@@ -19,17 +19,14 @@ public class ClientInvoiceDescriptionValueServiceImpl implements ClientInvoiceDe
         return clientInvoiceDescriptionValueRepository.save(clientInvoiceDescriptionValue);
     }
 
-
 	@Override
     public List<ClientInvoiceDescriptionValue> findByClientInvoice(ClientInvoiceMasterEntity clientInvoice) {
         return clientInvoiceDescriptionValueRepository.findByClientInvoice_Id(new Long(1));
-//		return null;
+
     }
 
-
 	@Override
-	public List<ClientInvoiceDescriptionValue> findByInvoiceNo(String invoiceNo) {
-	
+	public List<ClientInvoiceDescriptionValue> findByInvoiceNo(String invoiceNo) {	
 		return clientInvoiceDescriptionValueRepository.findByInvoiceNo(invoiceNo);
 	}
 

@@ -16,6 +16,8 @@ public class PurchaseRequestDTO {
     
 	private Long id;
 	private String clientName;
+	private Long clientId; 
+
 	private String projectName;
 	private String vendor;
 	private String requestorName;

@@ -61,14 +61,17 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 	    @Column(name = "invoice_description")
 	    private String invoiceDescription;
 
-	    @Column(name = "gst_per")
-	    private String gstPer;
+//	    @Column(name = "gst_per")
+//	    private String gstPer;
 
-	    @Column(name = "invoice_amount_exclu_gst")
-	    private String invoiceAmountExcluGst;
+//	    @Column(name = "invoice_amount_exclu_gst")
+//	    private String invoiceAmountExcluGst;
 
 	    @Column(name = "invoice_amount_inclu_gst")
 	    private String invoiceAmountIncluGst;
+	    
+	    @Column(name = "invoice_amt_inclu_gst")
+	    private Double invoiceAmtIncluGst;
 
 	    @Column(name = "status")
 	    private String status;
@@ -126,7 +129,7 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 	    private String totalPaymentReceived;
 
 	    @OneToMany(mappedBy = "vendorInvoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	    private List<InvoiceDescriptionValue> descriptionValues;
+	    private List<InvoiceDescriptionValue> InvoiceDescriptionValue;
 	    
 		@JsonFormat(pattern="dd/MM/yyyy")
 		@Column(name = "start_date")
@@ -138,5 +141,20 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 
 	    @Column(name = "mode_of_payment")
 		private String modeOfPayment;
+	    
+	    // Newly added fields
+	    @Column(name = "total_cgst")
+	    private Double totalCgst;
+
+	    @Column(name = "total_sgst")
+	    private Double totalSgst;
+
+	    @Column(name = "total_igst")
+	    private Double totalIgst;
+
+	    @Column(name = "amount_exclu_gst")
+	    private Double amountExcluGst;
+	    	    	    
 	}
+
 

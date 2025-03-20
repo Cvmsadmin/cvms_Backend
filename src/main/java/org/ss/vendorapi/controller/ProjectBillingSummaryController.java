@@ -40,12 +40,7 @@ public class ProjectBillingSummaryController {
 	        List<ProjectPaymentSummary> summaryList = projectBillingSummaryService.getProjectBillingSummary();
 	        return new ResponseEntity<>(summaryList, HttpStatus.OK);
 	    }
-	 
-	 
-	 
-	 
-	 
-	 
+	 	 
 	
 //	 @GetMapping("/getdata")
 //	   public void getdata( ) {

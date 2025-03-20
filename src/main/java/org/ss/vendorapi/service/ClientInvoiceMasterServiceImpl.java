@@ -41,9 +41,11 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
 
     @Override
     public ClientInvoiceMasterEntity save(ClientInvoiceMasterEntity clientInvoiceMasterEntity) {
-        clientInvoiceMasterEntity.setActive(1);
-        clientInvoiceMasterEntity.setCreateDate(new java.sql.Date(new Date().getTime()));
+//        clientInvoiceMasterEntity.setActive(1);
+//        clientInvoiceMasterEntity.setCreateDate(new java.sql.Date(new Date().getTime()));
         try {
+//        	clientInvoiceMasterEntity.setId(Long.parseLong("1"));
+//        	clientInvoiceMasterEntity.setClientId("12");
         	return clientInvoiceMasterRepository.save(clientInvoiceMasterEntity);
         }catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -54,7 +56,7 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
 
     @Override
     public ClientInvoiceMasterEntity update(ClientInvoiceMasterEntity clientInvoiceMasterEntity) {
-        clientInvoiceMasterEntity.setUpdateDate(new java.sql.Date(new Date().getTime()));
+//        clientInvoiceMasterEntity.setUpdateDate(new java.sql.Date(new Date().getTime()));
         return clientInvoiceMasterRepository.save(clientInvoiceMasterEntity);
     }
 
@@ -68,10 +70,6 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
         return clientInvoiceMasterRepository.findById(id).orElse(null);
     }
 
-//    @Override
-//    public ClientInvoiceMasterEntity findByInvoiceNo(String invoiceNo) {
-//        return clientInvoiceMasterRepository.findByInvoiceNo(invoiceNo);
-//    }
     
     @Override
   public ClientInvoiceMasterEntity findByInvoiceNo(String invoiceNo) {
@@ -83,7 +81,76 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
         return clientMasterRepository.findByClientName(clientName); 
     }
 
-    
+//    @Override
+//    public void sendInvoiceEmail(ClientInvoiceMasterDTO clientInvoiceDTO) {
+//        // Get the invoice details
+//        List<ClientInvoiceDetailsEntity> invoiceDetailsList = clientInvoiceDetailsRepo.getClientInvoiceDetails();
+//
+//        if (!invoiceDetailsList.isEmpty()) {
+//            ClientInvoiceDetailsEntity invoiceDetails = invoiceDetailsList.get(0); // Get latest invoice
+//
+//            // Extract attachment path (Ensure it exists)
+//            String attachmentPath = clientInvoiceDTO.getAttachmentPath();
+//            
+////             Convert invoice amount to BigDecimal safely and format it properly
+//          BigDecimal invoiceAmount = BigDecimal.ZERO;
+//          String formattedAmount = "N/A"; // Default in case of errors
+//
+//          if (invoiceDetails.getInvoiceAmountIncluGst() != null) {
+//              try {
+//                  invoiceAmount = new BigDecimal(invoiceDetails.getInvoiceAmountIncluGst().toString());
+//                  formattedAmount = formatCurrency(invoiceAmount); // Format the currency properly
+//              } catch (NumberFormatException e) {
+//                  e.printStackTrace(); // Log the error
+//              }
+//          }
+//
+//            // Prepare email subject
+//            String subject = "Invoice Details for " + invoiceDetails.getClientName();
+//
+//            // Prepare email body
+//            String body = String.format(
+//                "<html><body>" +
+//                "<p>Dear All,</p>" +
+//                "<p>Please find below the invoice details for <b>%s</b> related to the <b>%s</b>:</p>" +
+//                "<table border='1' cellpadding='5' cellspacing='0'>" +
+//                "<tr><th>Parameter</th><th>Details</th></tr>" +
+//                "<tr><td><b>Client Name</b></td><td>%s</td></tr>" +
+//                "<tr><td><b>Project Name</b></td><td>%s</td></tr>" +
+//                "<tr><td><b>Invoice Date</b></td><td>%s</td></tr>" +
+//                "<tr><td><b>Invoice No.</b></td><td>%s</td></tr>" +
+//                "<tr><td><b>Invoice Due Date</b></td><td>%s</td></tr>" +
+//                "<tr><td><b>Total Amount (Incl. GST)</b></td><td>%s</td></tr>" +
+//                "</table>" +
+//                "<p>The invoice is attached for your reference.</p>" +
+//                "<p>Best regards,<br><b>CVMS Admin</b></p>" +
+//                "</body></html>",
+//                invoiceDetails.getClientName(),
+//                invoiceDetails.getProjectName(),
+//                invoiceDetails.getClientName(),
+//                invoiceDetails.getProjectName(),
+//                invoiceDetails.getInvoiceDate(),
+//                invoiceDetails.getInvoiceNo(),
+//                invoiceDetails.getInvoiceDueDate(),
+//                formattedAmount
+//            );
+//
+//            // Send email to account manager and project manager
+//            try {
+//				emailService.sendEmailWithAttachment(invoiceDetails.getAccountManagerEmail1(), subject, body, attachmentPath);
+//			} catch (MessagingException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//            try {
+//				emailService.sendEmailWithAttachment(invoiceDetails.getPrjectManagerEmail(), subject, body, attachmentPath);
+//			} catch (MessagingException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//        }
+//    }
+
     public void sendInvoiceEmail(ClientInvoiceMasterDTO clientInvoiceDTO) {
         // Get the invoice details from the repository (assuming you want the most recent details)
         List<ClientInvoiceDetailsEntity> invoiceDetailsList = clientInvoiceDetailsRepo.getClientInvoiceDetails();
@@ -133,77 +200,50 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
                     invoiceDetails.getInvoiceDueDate(),
                     formattedAmount // Now properly formatted with ₹ and commas
             );
+            
+            // Hardcoded email address for account manager
+            String hardcodedEmail = "debidatta.das@infinite.com";
 
             // Send the email to account manager
+            
             try {
-                emailService.sendEmail(invoiceDetails.getAccountManagerEmail1(), subject, body);
+                emailService.sendEmail(hardcodedEmail, subject, body);
             } catch (MessagingException | jakarta.mail.MessagingException e) {
                 e.printStackTrace();
             }
 
-            // Send the email to project manager
+            // Also send the email to the same hardcoded email address instead of project manager email
             try {
-                emailService.sendEmail(invoiceDetails.getPrjectManagerEmail(), subject, body);
+                emailService.sendEmail(hardcodedEmail, subject, body);
             } catch (MessagingException | jakarta.mail.MessagingException e) {
                 e.printStackTrace();
             }
+//            try {
+//                emailService.sendEmail(invoiceDetails.getAccountManagerEmail1(), subject, body);
+//            } catch (MessagingException | jakarta.mail.MessagingException e) {
+//                e.printStackTrace();
+//            }
+//
+//            // Send the email to project manager
+//            try {
+//                emailService.sendEmail(invoiceDetails.getPrjectManagerEmail(), subject, body);
+//            } catch (MessagingException | jakarta.mail.MessagingException e) {
+//                e.printStackTrace();
+//            }
         }
     }
-
+//
 	private String formatCurrency(BigDecimal invoiceAmount) {
 		NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         return formatter.format(invoiceAmount);
 	}
 
-
-
-    
-//    public void sendInvoiceEmail(ClientInvoiceMasterDTO clientInvoiceDTO) {
-//        // Get the invoice details from the view
-//        List<ClientInvoiceDetailsEntity> invoiceDetailsList = clientInvoiceDetailsRepo.getClientInvoiceDetails();
-//        
-//        if (!invoiceDetailsList.isEmpty()) {
-//            ClientInvoiceDetailsEntity invoiceDetails = invoiceDetailsList.get(0); // Assuming you want to send the most recent invoice details
-//
-//            // Prepare the email content
-//            String subject = "Invoice Details for " + invoiceDetails.getClientName();
-//            String body = "Dear All,\n\n" +
-//                    "Please find below the invoice details for " + invoiceDetails.getClientName() + " related to the " + invoiceDetails.getProjectName() + ":\n\n" +
-//                    "Invoice Details:\n" +
-//                    " Client Name: " + invoiceDetails.getClientName() + "\n" +
-//                    " Project Name: " + invoiceDetails.getProjectName() + "\n" +
-//                    " Invoice Date: " + invoiceDetails.getInvoiceDate() + "\n" +
-//                    " Invoice No.: " + invoiceDetails.getInvoiceNo() + "\n" +
-//                    " Invoice Due Date: " + invoiceDetails.getInvoiceDueDate() + "\n" +
-//                    " Total Amount (Incl. GST): " + invoiceDetails.getInvoiceAmountIncluGst() + "\n\n" +
-//                    "The invoice is attached for your reference.\n\n" +
-//                    "Best regards,\n" +
-//                    "CVMS Admin";
-//
-//            // Send the email (assuming the emailService.sendEmail method exists and is properly implemented)
-//            try {
-//				emailService.sendEmail(invoiceDetails.getAccountManagerEmail1(), subject, body);
-//			} catch (MessagingException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (jakarta.mail.MessagingException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//            try {
-//				emailService.sendEmail(invoiceDetails.getPrjectManagerEmail(), subject, body);
-//			} catch (MessagingException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (jakarta.mail.MessagingException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+//	public List<ClientInvoiceMasterEntity> findAllWithDescriptionValues() {
+//        try {
+//            return clientMasterRepository.findAllWithDescriptionValues(); // Call the custom query in repository
+//        } catch (Exception ex) {
+//            throw new RuntimeException("Error while fetching client invoices: " + ex.getMessage());
 //        }
 //    }
-
-    
-
-    
 
     }

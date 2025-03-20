@@ -1,3 +1,4 @@
+
 package org.ss.vendorapi.entity;
 
 import jakarta.persistence.Column;
@@ -10,34 +11,25 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
-
-
 @Entity
 @Table(name = "client_invoice_description_values")
 @Getter
 @Setter
 public class ClientInvoiceDescriptionValue {
 	
-	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
 	@ManyToOne
-    @JoinColumn(name = "client_invoice_id", nullable = false)
-    private ClientInvoiceMasterEntity clientInvoice;
+	@JoinColumn(name = "client_invoice_id", referencedColumnName = "id", nullable = false)
+	private ClientInvoiceMasterEntity clientInvoice;
 
-    @Column(name = "item_description")
-    private String itemDescription;
-
-    @Column(name = "base_value")
-    private String baseValue;
 
     @Column(name = "invoice_no")
     private String invoiceNo;
 
-    // Getters and Setters
+
     public String getInvoiceNo() {
         return invoiceNo;
     }
@@ -45,5 +37,26 @@ public class ClientInvoiceDescriptionValue {
     public void setInvoiceNo(String invoiceNo) {
         this.invoiceNo = invoiceNo;
     }
+    
+    @Column(name = "item_description")
+    private String itemDescription;
+    
+    @Column(name = "base_value")
+    private Double baseValue;
+    
+    @Column(name = "gst_per")
+    private Double gstPer;
+    
+    @Column(name = "cgst")
+    private Double cgst;
+    
+    @Column(name = "sgst")
+    private Double sgst;
+    
+    @Column(name = "igst")
+    private Double igst;
+    
+    @Column(name = "amt_incl_gst")
+    private Double amtInclGst;
 
 }

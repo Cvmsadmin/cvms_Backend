@@ -59,6 +59,9 @@ public class PurchaseMasterController {
 	@PostMapping("/addPurchase")
 	public ResponseEntity<?> addPurchase(@RequestBody PurchaseRequestDTO purchaseRequestDTO, HttpServletRequest request) {
 	    String methodName = request.getRequestURI();
+	    if (purchaseRequestDTO == null) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Request body is missing!");
+	    }
 
 	    Map<String, Object> statusMap = new HashMap<>();
 	    List<Map<String, Object>> bomList = new ArrayList<>();
@@ -80,6 +83,14 @@ public class PurchaseMasterController {
 	        // Create and populate PurchaseMasterEntity
 	        PurchaseMasterEntity purchaseMaster = new PurchaseMasterEntity();
 	        purchaseMaster.setClientName(purchaseRequestDTO.getClientName());
+	        
+	     // If clientId is mandatory in the database, set it to a default valid ID or NULL
+	        if (purchaseRequestDTO.getClientId() != null) {
+	            purchaseMaster.setClientId(purchaseRequestDTO.getClientId());
+	        } else {
+	            purchaseMaster.setClientId(null); // or set it to a default valid ID
+	        }
+
 	        purchaseMaster.setProjectName(purchaseRequestDTO.getProjectName());
 	        purchaseMaster.setVendor(purchaseRequestDTO.getVendor());
 	        purchaseMaster.setRequestorName(purchaseRequestDTO.getRequestorName());
@@ -92,6 +103,13 @@ public class PurchaseMasterController {
 	        purchaseMaster.setRejectionReason(purchaseRequestDTO.getRejectionReason());
 	        purchaseMaster.setStartDate(purchaseRequestDTO.getStartDate());
 	        purchaseMaster.setEndDate(purchaseRequestDTO.getEndDate());
+	        
+//	        purchaseMaster.setClientId(Long.valueOf(purchaseRequestDTO.getClientId()));
+//	        if (purchaseRequestDTO.getClientId() != null) {
+//	            purchaseMaster.setClientId(purchaseRequestDTO.getClientId());
+//	        } else {
+//	            purchaseMaster.setClientId(0L); // Set default if null
+//	        }
 
 	        // Handle status (Approved, Rejected, Pending, PoApproved)
 	        String status = purchaseRequestDTO.getStatus();

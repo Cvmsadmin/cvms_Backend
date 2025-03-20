@@ -15,9 +15,7 @@ public class InvoiceSummaryView {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id; 
-	
-	
-	
+		
     private String aging_bucket;
     private String total_invoices;
     private BigDecimal total_amount;

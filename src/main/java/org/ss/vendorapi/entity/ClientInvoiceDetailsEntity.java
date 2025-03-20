@@ -1,5 +1,9 @@
 package org.ss.vendorapi.entity;
 
+import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,7 +14,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 @Data 
 @Entity
-@Table(name = "client_invoice_details")
+@Table(name = "client_invoice_details_dd")
 public class ClientInvoiceDetailsEntity {
 	
 	
@@ -20,27 +24,30 @@ public class ClientInvoiceDetailsEntity {
 	
 	
 	@Column(name = "client_name")
-	private String ClientName;
+	private String clientName;
 	
 	@Column(name = "project_name")
-	private String ProjectName;
+	private String projectName;
 	
 	@Column(name = "account_manager_email")
-	private String AccountManagerEmail1;
+	private String accountManagerEmail1;
 	
 	@Column(name = "project_manager_email")
-	private String PrjectManagerEmail;
+	private String prjectManagerEmail;
 	
-	@Column(name = "invoice_date")
-	private String InvoiceDate;
+    // This field is stored as a String; hence we convert LocalDate to String in the controller
+    @Column(name = "invoice_date")
+    private String invoiceDate;
+    
+    @Column(name = "invoice_no")
+    private String invoiceNo;
+    
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @Column(name = "invoice_due_date")
+    private LocalDate invoiceDueDate;
+    
+    @Column(name = "invoice_amount_inclu_gst")
+    private Long invoiceAmountIncluGst;
 	
-	@Column(name = "invoice_no")
-	private String InvoiceNo;
-	
-	@Column(name = "invoice_due_date")
-	private String InvoiceDueDate;
-	
-	@Column(name = "invoice_amount_inclu_gst")
-	private String InvoiceAmountIncluGst;
 
 }

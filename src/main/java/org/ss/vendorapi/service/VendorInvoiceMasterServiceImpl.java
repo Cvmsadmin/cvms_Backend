@@ -57,7 +57,7 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
 
 
 	@Override
-	public Optional<VendorInvoiceMasterEntity> findByInvoiceNo(String invoiceNo) {
+    public Optional<VendorInvoiceMasterEntity> findByInvoiceNo(String invoiceNo) {
         return vendorinviceMasterRepository.findByInvoiceNo(invoiceNo);
     }
 
@@ -70,6 +70,8 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
 //        return vendorinviceMasterRepository.getPayableInvoiceStats();
 		return null;
     }
+	
+
 
 
 

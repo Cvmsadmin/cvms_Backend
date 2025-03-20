@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor @Setter @Getter @AllArgsConstructor
 @Entity
 @Where(clause="ACTIVE=1")
-@Table(name = "purchase_master_view")
+@Table(name = "purchase_master")
 public class PurchaseMasterEntity extends ParentEntity implements Serializable{
 	
 	private static final long serialVersionUID=1L;
@@ -37,8 +37,7 @@ public class PurchaseMasterEntity extends ParentEntity implements Serializable{
 	private String clientName;
 	
 	@Column(name = "client_id")
-	private String clientId;
-
+	private Long clientId;
 
 	@Column(name = "project_name")
 	private String projectName;

@@ -130,10 +130,7 @@ public class SftpUploaderService {
             sftpChannel.disconnect();
             session.disconnect();
         }
-    }
-
-
-      
+    }      
 }
  
  

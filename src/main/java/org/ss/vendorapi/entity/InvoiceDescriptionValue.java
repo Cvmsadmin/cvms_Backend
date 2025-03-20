@@ -30,6 +30,21 @@ public class InvoiceDescriptionValue {
 
     @Column(name = "base_value")
     private String baseValue;
-
+    
+//    New fields
+    @Column(name = "gst_per")
+    private Double gstPer;
+    
+    @Column(name = "cgst")
+    private Double cgst;
+    
+    @Column(name = "sgst")
+    private Double sgst;
+    
+    @Column(name = "igst")
+    private Double igst;
+    
+    @Column(name = "amt_incl_gst")
+    private Double amtInclGst;
 
 }

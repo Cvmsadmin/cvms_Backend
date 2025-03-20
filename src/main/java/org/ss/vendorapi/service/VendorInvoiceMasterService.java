@@ -17,8 +17,8 @@ public interface VendorInvoiceMasterService {
 	public VendorInvoiceMasterEntity update(VendorInvoiceMasterEntity vendorInvoiceMasterEntity);
 	public VendorInvoiceMasterEntity findById(Long id);
 	public List<VendorInvoiceMasterEntity> findAll();
-	public Optional<VendorInvoiceMasterEntity> findByInvoiceNo(String invoiceNo);
 	
+	Optional<VendorInvoiceMasterEntity> findByInvoiceNo(String invoiceNo);
 	ClientMasterEntity findClientById(Long clientId);
 	
 }

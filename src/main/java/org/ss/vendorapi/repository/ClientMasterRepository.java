@@ -28,6 +28,7 @@ public interface ClientMasterRepository extends JpaRepository<ClientMasterEntity
 	ClientMasterEntity findByClientName(String clientName);	
 //	ClientMasterEntity findById(Long id);
 //	public ReceivableInvoiceStatsDTO getReceivableInvoiceStats();
+//	public List<ClientInvoiceMasterEntity> findAllWithDescriptionValues();
 	
 //	public Optional<ClientMasterEntity> findById(Long clientId);
 	

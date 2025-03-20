@@ -12,8 +12,8 @@ public class InvoiceDescriptionValueServiceImpl implements InvoiceDescriptionVal
     private InvoiceDescriptionValueRepository repository;
 
     @Override
-    public InvoiceDescriptionValue save(InvoiceDescriptionValue invoiceDescriptionValue) {
-        return repository.save(invoiceDescriptionValue);
+    public InvoiceDescriptionValue save(InvoiceDescriptionValue DescriptionValue) {
+        return repository.save(DescriptionValue);
     }
 
 }

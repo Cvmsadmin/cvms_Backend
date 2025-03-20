@@ -24,17 +24,5 @@ public interface ClientInvoiceMasterRepository extends JpaRepository<ClientInvoi
 	
 //	List<User> findUsersByclientNameAndprojectName(String clientName, String projectName, List<String> asList);
 
-	
-	
-	
-	
-	
-//	// JPQL query to get receivable invoice stats (count and sum)
-//	@Query("SELECT new org.ss.vendorapi.dto.ReceivableInvoiceStatsDTO(" +
-//		       "COUNT(cim), " +
-//		       "SUM(cim.invoiceAmountIncluGst)) " +
-//		       "FROM ClientInvoiceMaster cim " +
-//		       "WHERE cim.status = 'pending'")
-//		ReceivableInvoiceStatsDTO getReceivableInvoiceStats();
-//
+
 }

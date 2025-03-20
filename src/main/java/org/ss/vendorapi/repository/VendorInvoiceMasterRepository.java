@@ -11,6 +11,8 @@ import org.ss.vendorapi.modal.PayableInvoiceStatsDTO;
 @Repository
 public interface VendorInvoiceMasterRepository extends JpaRepository<VendorInvoiceMasterEntity, Long>{
 	
+//	Optional<VendorInvoiceMasterEntity> findByInvoiceNo(String invoiceNo);
+	
 	Optional<VendorInvoiceMasterEntity> findByInvoiceNo(String invoiceNo);
 	
 //	 @Query("SELECT new org.ss.vendorapi.dto.PayableInvoiceStatsDTO(" +
