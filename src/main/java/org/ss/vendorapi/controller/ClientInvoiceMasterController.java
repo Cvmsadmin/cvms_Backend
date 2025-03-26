@@ -2,6 +2,7 @@ package org.ss.vendorapi.controller;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -229,28 +231,7 @@ public class ClientInvoiceMasterController {
 	                // Save the description value
 	                clientInvoiceDescriptionValueService.save(descriptionValue);
 	            }
-	        }
-	        
-//	     // Save invoice details in ClientInvoiceDetailsEntity
-//	        ClientInvoiceDetailsEntity details = new ClientInvoiceDetailsEntity();
-//	        details.setClientName(clientInvoice.getClientName());
-//	        details.setProjectName(clientInvoice.getProjectName());
-//	        // Map email addresses from the DTO (ensure these values are provided)
-//	        details.setAccountManagerEmail1(clientInvoiceDTO.getAccountManagerEmail());
-//	        details.setPrjectManagerEmail(clientInvoiceDTO.getProjectManagerEmail());
-//	        details.setInvoiceDate(clientInvoice.getInvoiceDate() != null 
-//	                ? clientInvoice.getInvoiceDate().toString() 
-//	                : null);
-//	        details.setInvoiceNo(clientInvoice.getInvoiceNo());
-//	        details.setInvoiceDueDate(clientInvoice.getInvoiceDueDate());
-//	        if (clientInvoiceDTO.getInvoiceAmountIncluGst() != null) {
-//	            details.setInvoiceAmountIncluGst(
-//	                new BigDecimal(clientInvoiceDTO.getInvoiceAmountIncluGst()).longValue()
-//	            );
-//	        }
-//	        clientInvoiceDetailsRepo.save(details);
-
-            
+	        }          
 	        // Send email notification
 	        clientInvoiceService.sendInvoiceEmail(clientInvoiceDTO);
 
@@ -527,7 +508,7 @@ public class ClientInvoiceMasterController {
 
 	            // Include the new fields in the response format as per your requirements
 	            invoiceMap.put("invoiceAmountIncluGst", invoice.getInvoiceAmountIncluGst() != null ? invoice.getInvoiceAmountIncluGst() : "Not provided");
-//	            invoiceMap.put("milestone", invoice.getMilestone() != null ? invoice.getMilestone() : "Not provided");
+	            invoiceMap.put("milestone", invoice.getMilestone() != null ? invoice.getMilestone() : "Not provided");
 	            invoiceMap.put("billableState", invoice.getBillableState() != null ? invoice.getBillableState() : "Not provided");
 	            invoiceMap.put("status", invoice.getStatus() != null ? invoice.getStatus() : "Not provided");
 	            invoiceMap.put("amountExcluGst", invoice.getAmountExcluGst() != null ? invoice.getAmountExcluGst() : "Not provided");
@@ -727,11 +708,368 @@ public class ClientInvoiceMasterController {
 					
 		}catch(Exception ex) {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		
+		}	
 		
 	}
 	
+	@EncryptResponse
+	@PutMapping("/updateClientInvoiceMaster")
+	public ResponseEntity<?> updateClientInvoiceMaster(@RequestBody ClientInvoiceMasterDTO dto) {
+	    // Check if ID is provided
+	    if (dto.getId() == null) {
+	        return ResponseEntity.badRequest().body("Invoice ID is missing");
+	    }
+
+	    // Find the existing invoice entity
+	    ClientInvoiceMasterEntity invoiceEntity = clientInvoiceService.findById(dto.getId());
+	    if (invoiceEntity == null) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invoice not found");
+	    }
+
+	    // Preserve the existing client details (DO NOT update clientId or clientName)
+	    String existingClientId = invoiceEntity.getClientId();
+	    String existingClientName = invoiceEntity.getClientName();
+
+	    // Update basic fields
+	    invoiceEntity.setProjectName(dto.getProjectName());
+	    invoiceEntity.setDiscom(dto.getDiscom());
+	    invoiceEntity.setInvoiceDate(dto.getInvoiceDate());
+	    invoiceEntity.setInvoiceNo(dto.getInvoiceNo());
+	    invoiceEntity.setInvoiceDescription(dto.getInvoiceDescription());
+	    invoiceEntity.setInvoiceDueDate(dto.getInvoiceDueDate());
+	    invoiceEntity.setInvoiceAmountIncluGst(dto.getInvoiceAmountIncluGst());
+	    invoiceEntity.setInvoiceAmtIncluGst(dto.getInvoiceAmtIncluGst() != null ? Double.valueOf(dto.getInvoiceAmtIncluGst()) : null);
+	    invoiceEntity.setMilestone(dto.getMilestone() != null ? dto.getMilestone().toString() : null);
+	    invoiceEntity.setBillableState(dto.getBillableState());
+	    invoiceEntity.setStatus(dto.getStatus());
+	    invoiceEntity.setAmountExcluGst(dto.getAmountExcluGst());
+	    invoiceEntity.setTotalCgst(dto.getTotalCgst());
+	    invoiceEntity.setTotalSgst(dto.getTotalSgst());
+	    invoiceEntity.setTotalIgst(dto.getTotalIgst());
+
+	    // Restore the original client details
+	    invoiceEntity.setClientId(existingClientId);
+	    invoiceEntity.setClientName(existingClientName);
+
+	    // Update the Client Invoice Description Values
+	    if (dto.getClientInvoiceDescriptionValue() != null) {
+	        invoiceEntity.getClientInvoiceDescriptionValue().clear();  // Clear existing collection
+	        for (ClientInvoiceDescriptionValue descDTO : dto.getClientInvoiceDescriptionValue()) {
+	            ClientInvoiceDescriptionValue descEntity = new ClientInvoiceDescriptionValue();
+	            descEntity.setItemDescription(descDTO.getItemDescription());
+	            descEntity.setBaseValue(descDTO.getBaseValue());
+	            descEntity.setGstPer(descDTO.getGstPer());
+	            descEntity.setCgst(descDTO.getCgst());
+	            descEntity.setSgst(descDTO.getSgst());
+	            descEntity.setIgst(descDTO.getIgst());
+	            descEntity.setAmtInclGst(descDTO.getAmtInclGst());
+	            descEntity.setClientInvoice(invoiceEntity);  // Set the parent reference
+	            invoiceEntity.getClientInvoiceDescriptionValue().add(descEntity);  // Add new item
+	        }
+	    }
+
+	    // Persist the updated entity
+	    clientInvoiceService.update(invoiceEntity);
+
+	    // Build response
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("status", "SUCCESS");
+	    response.put("message", "Invoice updated successfully");
+	    response.put("invoice", invoiceEntity);
+	    return ResponseEntity.ok(response);
+	}
+
+	
+//	@EncryptResponse
+//	@PutMapping("/updateClientInvoiceMaster")
+//	public ResponseEntity<?> updateClientInvoiceMaster(@RequestBody ClientInvoiceMasterDTO dto) {
+//	    // Check if ID is provided
+//	    if (dto.getId() == null) {
+//	        return ResponseEntity.badRequest().body("Invoice ID is missing");
+//	    }
+//	    
+//	    // Retrieve the existing invoice entity
+//	    ClientInvoiceMasterEntity invoiceEntity = clientInvoiceService.findById(dto.getId());
+//	    if (invoiceEntity == null) {
+//	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invoice not found");
+//	    }
+//	    
+////	    // Update client details:
+////	    if (dto.getClientName() != null) {
+////	        Optional<ClientMasterEntity> clientOpt = clientMasterRepository.findById(Long.valueOf(dto.getClientName().toString()));
+////	        if (clientOpt.isPresent()) {
+////	            invoiceEntity.setClientId(String.valueOf(clientOpt.get().getId()));
+////	            invoiceEntity.setClientName(clientOpt.get().getClientName());
+////	        } else {
+////	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not found");
+////	        }
+////	    }
+//	    
+//	    // Update basic fields
+//	    invoiceEntity.setProjectName(dto.getProjectName());
+//	    invoiceEntity.setDiscom(dto.getDiscom());
+//	    invoiceEntity.setInvoiceDate(dto.getInvoiceDate());
+//	    invoiceEntity.setInvoiceNo(dto.getInvoiceNo());
+//	    invoiceEntity.setInvoiceDescription(dto.getInvoiceDescription());
+//	    invoiceEntity.setInvoiceDueDate(dto.getInvoiceDueDate());
+//	    invoiceEntity.setInvoiceAmountIncluGst(dto.getInvoiceAmountIncluGst());
+//	    invoiceEntity.setInvoiceAmtIncluGst(dto.getInvoiceAmtIncluGst() != null ? Double.valueOf(dto.getInvoiceAmtIncluGst()) : null);
+//	    invoiceEntity.setMilestone(dto.getMilestone() != null ? dto.getMilestone().toString() : null);
+//	    invoiceEntity.setBillableState(dto.getBillableState());
+//	    invoiceEntity.setStatus(dto.getStatus());
+//	    invoiceEntity.setAmountExcluGst(dto.getAmountExcluGst());
+//	    invoiceEntity.setTotalCgst(dto.getTotalCgst());
+//	    invoiceEntity.setTotalSgst(dto.getTotalSgst());
+//	    invoiceEntity.setTotalIgst(dto.getTotalIgst());
+//	    
+//	    // Update the Client Invoice Description Values
+//	    if (dto.getClientInvoiceDescriptionValue() != null) {
+//	        invoiceEntity.getClientInvoiceDescriptionValue().clear();  // Clear existing collection
+//	        for (ClientInvoiceDescriptionValue descDTO : dto.getClientInvoiceDescriptionValue()) {
+//	            ClientInvoiceDescriptionValue descEntity = new ClientInvoiceDescriptionValue();
+//	            descEntity.setItemDescription(descDTO.getItemDescription());
+//	            descEntity.setBaseValue(descDTO.getBaseValue());
+//	            descEntity.setGstPer(descDTO.getGstPer());
+//	            descEntity.setCgst(descDTO.getCgst());
+//	            descEntity.setSgst(descDTO.getSgst());
+//	            descEntity.setIgst(descDTO.getIgst());
+//	            descEntity.setAmtInclGst(descDTO.getAmtInclGst());
+//	            descEntity.setClientInvoice(invoiceEntity);  // Set the parent reference
+//	            invoiceEntity.getClientInvoiceDescriptionValue().add(descEntity);  // Add new item
+//	        }
+//	    }
+//	    
+//	    // Persist the updated entity
+//	    clientInvoiceService.update(invoiceEntity);
+//	    
+//	    // Build response
+//	    Map<String, Object> response = new HashMap<>();
+//	    response.put("status", "SUCCESS");
+//	    response.put("message", "Invoice updated successfully");
+//	    response.put("invoice", invoiceEntity);
+//	    return ResponseEntity.ok(response);
+//	}
+
+	
+//	    @PutMapping("/updateClientInvoiceMaster")
+//	    public ResponseEntity<?> updateClientInvoiceMaster(@RequestBody ClientInvoiceMasterDTO dto) {
+//	        // Check if ID is provided
+//	        if (dto.getId() == null) {
+//	            return ResponseEntity.badRequest().body("Invoice ID is missing");
+//	        }
+//	        
+//	        // Retrieve the existing invoice entity
+//	        ClientInvoiceMasterEntity invoiceEntity = clientInvoiceService.findById(dto.getId());
+//	        if (invoiceEntity == null) {
+//	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invoice not found");
+//	        }
+//	        
+//	        // Update client details:
+//	        // Assuming the clientName field in the JSON is actually a client ID (e.g. 607)
+//	        if (dto.getClientName() != null) {
+//	            // Convert to Long if needed. Here, clientName is treated as a client ID.
+//	            Optional<ClientMasterEntity> clientOpt = clientMasterRepository.findById(Long.valueOf(dto.getClientName().toString()));
+//	            if (clientOpt.isPresent()) {
+//	                // Save both the client ID and its actual name in the invoice
+//	                invoiceEntity.setClientId(String.valueOf(clientOpt.get().getId()));
+//	                invoiceEntity.setClientName(clientOpt.get().getClientName());
+//	            } else {
+//	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not found");
+//	            }
+//	        }
+//	        
+//	        // Update basic fields
+//	        invoiceEntity.setProjectName(dto.getProjectName());
+//	        invoiceEntity.setDiscom(dto.getDiscom());
+//	        invoiceEntity.setInvoiceDate(dto.getInvoiceDate());
+//	        invoiceEntity.setInvoiceNo(dto.getInvoiceNo());
+//	        invoiceEntity.setInvoiceDescription(dto.getInvoiceDescription());
+//	        invoiceEntity.setInvoiceDueDate(dto.getInvoiceDueDate());
+//	        invoiceEntity.setInvoiceAmountIncluGst(dto.getInvoiceAmountIncluGst());
+//	        invoiceEntity.setInvoiceAmtIncluGst(dto.getInvoiceAmtIncluGst() != null
+//	                ? Double.valueOf(dto.getInvoiceAmtIncluGst()) : null);
+//	        invoiceEntity.setMilestone(dto.getMilestone() != null ? dto.getMilestone().toString() : null);
+//	        invoiceEntity.setBillableState(dto.getBillableState());
+//	        invoiceEntity.setStatus(dto.getStatus());
+//	        invoiceEntity.setAmountExcluGst(dto.getAmountExcluGst());
+//	        invoiceEntity.setTotalCgst(dto.getTotalCgst());
+//	        invoiceEntity.setTotalSgst(dto.getTotalSgst());
+//	        invoiceEntity.setTotalIgst(dto.getTotalIgst());
+//	        
+//	        // Update the Client Invoice Description Values (if provided)
+//	        if (dto.getClientInvoiceDescriptionValue() != null) {
+//	            List<ClientInvoiceDescriptionValue> descriptionList = new ArrayList<>();
+//	            for (ClientInvoiceDescriptionValue descDTO : dto.getClientInvoiceDescriptionValue()) {
+//	                ClientInvoiceDescriptionValue descEntity = new ClientInvoiceDescriptionValue();
+//	                descEntity.setItemDescription(descDTO.getItemDescription());
+//	                descEntity.setBaseValue(descDTO.getBaseValue());
+//	                descEntity.setGstPer(descDTO.getGstPer());
+//	                descEntity.setCgst(descDTO.getCgst());
+//	                descEntity.setSgst(descDTO.getSgst());
+//	                descEntity.setIgst(descDTO.getIgst());
+//	                descEntity.setAmtInclGst(descDTO.getAmtInclGst());
+//	                // (If a bidirectional relationship exists, set the parent invoice too)
+//	                descEntity.setClientInvoice(invoiceEntity);
+//	                descriptionList.add(descEntity);
+//	            }
+//	            invoiceEntity.setClientInvoiceDescriptionValue(descriptionList);
+//	        }
+//	        
+//	        // Update additional fields
+//	        invoiceEntity.setInvoiceBaseValue(dto.getInvoiceBaseValue() != null ? dto.getInvoiceBaseValue().toString() : null);
+//	        invoiceEntity.setGstBaseValue(dto.getGstBaseValue() != null ? dto.getGstBaseValue().toString() : null);
+//	        invoiceEntity.setInvoiceInclusiveOfGst(dto.getInvoiceInclusiveOfGst() != null ? dto.getInvoiceInclusiveOfGst().toString() : null);
+//	        invoiceEntity.setTdsPer(dto.getTdsPer());
+//	        invoiceEntity.setTdsBaseValue(dto.getTdsBaseValue() != null ? dto.getTdsBaseValue().toString() : null);
+//	        invoiceEntity.setTdsOnGst(dto.getTdsOnGst());
+//	        invoiceEntity.setCgstOnTds(dto.getCgstOnTds());
+//	        invoiceEntity.setSgstOnTds(dto.getSgstOnTds());
+//	        invoiceEntity.setTotalTdsDeducted(dto.getTotalTdsDeducted());
+//	        invoiceEntity.setBalance(dto.getBalance());
+//	        invoiceEntity.setPenalty(dto.getPenalty());
+//	        invoiceEntity.setPenaltyDeductionOnBase(dto.getPenaltyDeductionOnBase());
+//	        invoiceEntity.setGstOnPenalty(dto.getGstOnPenalty());
+//	        invoiceEntity.setTotalPenaltyDeduction(dto.getTotalPenaltyDeduction());
+//	        invoiceEntity.setCreditNote(dto.getCreditNote());
+//	        invoiceEntity.setTotalPaymentReceived(dto.getTotalPaymentReceived());
+//	        
+//	        // Persist the updated entity
+//	        clientInvoiceService.update(invoiceEntity);
+//	        
+//	        // Build response
+//	        Map<String, Object> response = new HashMap<>();
+//	        response.put("status", "SUCCESS");
+//	        response.put("message", "Invoice updated successfully");
+//	        response.put("invoice", invoiceEntity);
+//	        return ResponseEntity.ok(response);
+//	    }
+
+
+	
+	
+	
+//	@EncryptResponse
+//	@PutMapping("/updateClientInvoiceMaster")
+//	public ResponseEntity<?> updateClientInvoiceMaster(@RequestBody ClientInvoiceMasterDTO clientInvoiceMasterDTO) {
+//	    Map<String, Object> statusMap = new HashMap<>();
+//	    try {
+//	        // Check that the invoice ID is provided
+//	        if (clientInvoiceMasterDTO.getId() == null) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "Invoice ID is missing", HttpStatus.BAD_REQUEST);
+//	        }
+//	        
+//	        // Retrieve the existing invoice entity
+//	        ClientInvoiceMasterEntity clientInvoiceEntity = clientInvoiceService.findById(clientInvoiceMasterDTO.getId());
+//	        if (clientInvoiceEntity == null) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "Invoice not found", HttpStatus.NOT_FOUND);
+//	        }
+//	        
+//	        // If status is not "completed", ensure mandatory fields are provided
+//	        if (!"completed".equalsIgnoreCase(clientInvoiceMasterDTO.getStatus())) {
+//	            if (UtilValidate.isEmpty(clientInvoiceMasterDTO.getClientName()) ||
+//	                UtilValidate.isEmpty(clientInvoiceMasterDTO.getProjectName()) ||
+//	                UtilValidate.isEmpty(clientInvoiceMasterDTO.getDiscom()) ||
+//	                clientInvoiceMasterDTO.getInvoiceDate() == null ||
+//	                UtilValidate.isEmpty(clientInvoiceMasterDTO.getInvoiceNo()) ||
+//	                UtilValidate.isEmpty(clientInvoiceMasterDTO.getInvoiceDescription()) ||
+//	                clientInvoiceMasterDTO.getInvoiceDueDate() == null ||
+//	                UtilValidate.isEmpty(clientInvoiceMasterDTO.getInvoiceAmountIncluGst())) {
+//	                return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+//	            }
+//	        }
+//	        
+//	        // Update each field if a new value is provided; otherwise, retain the existing value.
+//	        if (!UtilValidate.isEmpty(clientInvoiceMasterDTO.getClientName())) {
+//	            clientInvoiceEntity.setClientName(clientInvoiceMasterDTO.getClientName());
+//	        }
+//	        if (!UtilValidate.isEmpty(clientInvoiceMasterDTO.getProjectName())) {
+//	            clientInvoiceEntity.setProjectName(clientInvoiceMasterDTO.getProjectName());
+//	        }
+//	        if (!UtilValidate.isEmpty(clientInvoiceMasterDTO.getDiscom())) {
+//	            clientInvoiceEntity.setDiscom(clientInvoiceMasterDTO.getDiscom());
+//	        }
+//	        if (clientInvoiceMasterDTO.getInvoiceDate() != null) {
+//	            clientInvoiceEntity.setInvoiceDate(clientInvoiceMasterDTO.getInvoiceDate());
+//	        }
+//	        if (!UtilValidate.isEmpty(clientInvoiceMasterDTO.getInvoiceNo())) {
+//	            clientInvoiceEntity.setInvoiceNo(clientInvoiceMasterDTO.getInvoiceNo());
+//	        }
+//	        if (!UtilValidate.isEmpty(clientInvoiceMasterDTO.getInvoiceDescription())) {
+//	            clientInvoiceEntity.setInvoiceDescription(clientInvoiceMasterDTO.getInvoiceDescription());
+//	        }
+//	        if (clientInvoiceMasterDTO.getInvoiceDueDate() != null) {
+//	            clientInvoiceEntity.setInvoiceDueDate(clientInvoiceMasterDTO.getInvoiceDueDate());
+//	        }
+////	        if (clientInvoiceMasterDTO.getGstPer() != null) {
+////	            clientInvoiceEntity.setGstPer(clientInvoiceMasterDTO.getGstPer());
+////	        }
+////	        if (clientInvoiceMasterDTO.getGstAmount() != null) {
+////	            clientInvoiceEntity.setGstAmount(clientInvoiceMasterDTO.getGstAmount());
+////	        }
+////	        if (clientInvoiceMasterDTO.getInvoiceAmountExcluGst() != null) {
+////	            clientInvoiceEntity.setInvoiceAmountExcluGst(clientInvoiceMasterDTO.getInvoiceAmountExcluGst());
+////	        }
+//	        if (clientInvoiceMasterDTO.getInvoiceAmountIncluGst() != null) {
+//	            clientInvoiceEntity.setInvoiceAmountIncluGst(clientInvoiceMasterDTO.getInvoiceAmountIncluGst());
+//	        }
+//	        if (!UtilValidate.isEmpty(clientInvoiceMasterDTO.getStatus())) {
+//	            clientInvoiceEntity.setStatus(clientInvoiceMasterDTO.getStatus());
+//	        }
+//	        if (clientInvoiceMasterDTO.getInvoiceBaseValue() != null) {
+//	            clientInvoiceEntity.setInvoiceBaseValue(clientInvoiceMasterDTO.getInvoiceBaseValue());
+//	        }
+//	        if (clientInvoiceMasterDTO.getGstBaseValue() != null) {
+//	            clientInvoiceEntity.setGstBaseValue(clientInvoiceMasterDTO.getGstBaseValue());
+//	        }
+//	        if (clientInvoiceMasterDTO.getInvoiceInclusiveOfGst() != null) {
+//	            clientInvoiceEntity.setInvoiceInclusiveOfGst(clientInvoiceMasterDTO.getInvoiceInclusiveOfGst());
+//	        }
+//	        if (clientInvoiceMasterDTO.getTdsBaseValue() != null) {
+//	            clientInvoiceEntity.setTdsBaseValue(clientInvoiceMasterDTO.getTdsBaseValue());
+//	        }
+//	        if (clientInvoiceMasterDTO.getCgstOnTds() != null) {
+//	            clientInvoiceEntity.setCgstOnTds(clientInvoiceMasterDTO.getCgstOnTds());
+//	        }
+//	        if (clientInvoiceMasterDTO.getSgstOnTds() != null) {
+//	            clientInvoiceEntity.setSgstOnTds(clientInvoiceMasterDTO.getSgstOnTds());
+//	        }
+//	        if (clientInvoiceMasterDTO.getTotalTdsDeducted() != null) {
+//	            clientInvoiceEntity.setTotalTdsDeducted(clientInvoiceMasterDTO.getTotalTdsDeducted());
+//	        }
+//	        if (clientInvoiceMasterDTO.getBalance() != null) {
+//	            clientInvoiceEntity.setBalance(clientInvoiceMasterDTO.getBalance());
+//	        }
+//	        if (clientInvoiceMasterDTO.getPenalty() != null) {
+//	            clientInvoiceEntity.setPenalty(clientInvoiceMasterDTO.getPenalty());
+//	        }
+//	        if (clientInvoiceMasterDTO.getPenaltyDeductionOnBase() != null) {
+//	            clientInvoiceEntity.setPenaltyDeductionOnBase(clientInvoiceMasterDTO.getPenaltyDeductionOnBase());
+//	        }
+//	        if (clientInvoiceMasterDTO.getGstOnPenalty() != null) {
+//	            clientInvoiceEntity.setGstOnPenalty(clientInvoiceMasterDTO.getGstOnPenalty());
+//	        }
+//	        if (clientInvoiceMasterDTO.getTotalPenaltyDeduction() != null) {
+//	            clientInvoiceEntity.setTotalPenaltyDeduction(clientInvoiceMasterDTO.getTotalPenaltyDeduction());
+//	        }
+//	        if (clientInvoiceMasterDTO.getTotalPaymentReceived() != null) {
+//	            clientInvoiceEntity.setTotalPaymentReceived(clientInvoiceMasterDTO.getTotalPaymentReceived());
+//	        }
+//
+//	        // Persist the updated invoice entity
+//	        clientInvoiceService.update(clientInvoiceEntity);
+//
+//	        statusMap.put("clientInvoiceMasterEntity", clientInvoiceEntity);
+//	        statusMap.put("status", "SUCCESS");
+//	        statusMap.put("statusCode", "RU_200");
+//	        statusMap.put("statusMessage", "Successfully updated");
+//
+//	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+
 	
 //	@EncryptResponse
 //	@PutMapping("/updateClientInvoiceMaster")

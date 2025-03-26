@@ -29,7 +29,7 @@ public class ClientMasterEntity extends ParentEntity implements Serializable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
+    private long id; 
 
     @Column(name = "client_name")
     private String clientName;

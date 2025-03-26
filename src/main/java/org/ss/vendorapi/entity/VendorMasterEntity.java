@@ -1,6 +1,7 @@
 package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.annotations.Where;
@@ -56,9 +57,11 @@ public class VendorMasterEntity extends ParentEntity implements Serializable  {
 	@Column(name="email")
 	private String email;
 	
+//	@ElementCollection
+//	@Convert(converter = ListToStringConverter.class)
 	@Column(name="type_of_service")
-	@ElementCollection
-	private List<String> typeOfService;
+	private String typeOfService;
+
 	
 	@Column(name="gst")
 	private String gst;
@@ -66,5 +69,13 @@ public class VendorMasterEntity extends ParentEntity implements Serializable  {
 	@Column(name="pan_no")
 	private String panNo;
 	
+	// Custom getter and setter to handle comma-separated values
+    public List<String> getTypeOfService() {
+        return typeOfService != null ? Arrays.asList(typeOfService.split(",")) : List.of();
+    }
+
+    public void setTypeOfService(List<String> typeOfService) {
+        this.typeOfService = typeOfService != null ? String.join(",", typeOfService) : "";
+    }
 
 }

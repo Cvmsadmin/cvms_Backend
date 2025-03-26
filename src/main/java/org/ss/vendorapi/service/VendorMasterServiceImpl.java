@@ -1,5 +1,6 @@
 package org.ss.vendorapi.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,13 +14,9 @@ public class VendorMasterServiceImpl implements VendorMasterService{
 	@Autowired 
 	private VendorMasterRepository vendorMasterRepository;
 
-	
-	
 	public List<VendorMasterEntity> getAllVendor(){
-		return vendorMasterRepository.findAll();
+		return vendorMasterRepository.findAllVendor();
 	}
-
-
 
 	@Override
 	public VendorMasterEntity save(VendorMasterEntity vendorMasterEntity) {
@@ -28,15 +25,11 @@ public class VendorMasterServiceImpl implements VendorMasterService{
 		return vendorMasterRepository.save(vendorMasterEntity);
 	}
 
-
-
 	@Override
 	public VendorMasterEntity update(VendorMasterEntity vendorMasterEntity) {
 		vendorMasterEntity.setUpdateDate(new Date());
 		return vendorMasterRepository.save(vendorMasterEntity);
 	}
-
-
 
 	@Override
 	public VendorMasterEntity findById(Long id) {

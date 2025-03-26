@@ -44,21 +44,14 @@ public class ClientMasterServiceImpl implements ClientMasterService{
 		return clientMasterRepository.save(clientMasterEntity);
 	}
 
-
-
 	@Override
 	public ClientMasterEntity findById(Long id) {
-	
 		return clientMasterRepository.findById(id).orElse(null);
 	}
-
-
 	@Override
 	public List<ClientMasterEntity> findByAccountManagerId(String userId) {
 		return clientMasterRepository.findByAccountManagerId(userId);
 	}
-
-
 	
 	@SuppressWarnings("unchecked")
 	@Override

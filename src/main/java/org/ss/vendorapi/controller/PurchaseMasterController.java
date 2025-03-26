@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.PurchaseBOMMasterEntity;
 import org.ss.vendorapi.entity.PurchaseMasterEntity;
+import org.ss.vendorapi.entity.PurchaseMasterView;
 import org.ss.vendorapi.modal.PurchaseRequestDTO;
 import org.ss.vendorapi.service.ClientMasterServiceImpl;
 import org.ss.vendorapi.service.PurchaseBOMService;
@@ -730,56 +731,106 @@ public class PurchaseMasterController {
 //    }
 //
 //	}
+	
+//	************************************************************
 	@EncryptResponse
 	@GetMapping("/getAllPurchase")
-	public ResponseEntity<?> getAllPurchase() {
-	    Map<String, Object> statusMap = new HashMap<>();
-	    try {
-	        // Fetch all purchase records
-	        List<PurchaseMasterEntity> purchaseMasterEntityList = purchaseMasterService.findAll();
-	        
-	        // Create a list to hold the response data
-	        List<Map<String, Object>> responseList = new ArrayList<>();
-	        
-	        for (PurchaseMasterEntity purchaseMasterEntity : purchaseMasterEntityList) {
-	            Map<String, Object> responseMap = new HashMap<>();
-	            
-	            // Add the existing fields
-	            responseMap.put("clientName", purchaseMasterEntity.getClientName());
-	            responseMap.put("projectName", purchaseMasterEntity.getProjectName());
-	            responseMap.put("vendor", purchaseMasterEntity.getVendor());
-	            responseMap.put("requestorName", purchaseMasterEntity.getRequestorName());
-	            responseMap.put("description", purchaseMasterEntity.getDescription());
-	            responseMap.put("prNo", purchaseMasterEntity.getPrNo());
-	            responseMap.put("prDate", purchaseMasterEntity.getPrDate());
-	            responseMap.put("prAmount", purchaseMasterEntity.getPrAmount());
-	            responseMap.put("status", purchaseMasterEntity.getStatus());
-	            responseMap.put("approveDate", purchaseMasterEntity.getApproveDate());
-	            responseMap.put("poNo", purchaseMasterEntity.getPoNo());
-	            responseMap.put("prFor", purchaseMasterEntity.getPrFor());
-	            responseMap.put("rejectionReason", purchaseMasterEntity.getRejectionReason());
-	            responseMap.put("poApproveDate", purchaseMasterEntity.getPoApproveDate());
-	            responseMap.put("startDate", purchaseMasterEntity.getStartDate());
-	            responseMap.put("endDate", purchaseMasterEntity.getEndDate());
-	            
-	            // Add clientId as well
-	            responseMap.put("clientId", purchaseMasterEntity.getClientId());  // assuming clientId is a field in PurchaseMasterEntity
-	            
-	            // Add the response map to the response list
-	            responseList.add(responseMap);
-	        }
-	        
-	        // Add the response list to the statusMap
-	        statusMap.put("PurchaseMasterEntity", responseList);
-	        statusMap.put("Status", "Success");
-	        statusMap.put("Status_Code", "RU_200");
+    public ResponseEntity<?> getAllPurchase() {
+        Map<String, Object> statusMap = new HashMap<>();
+        try {
+            // Fetch all records from the view
+            List<PurchaseMasterView> purchaseMasterList = purchaseMasterService.findAll1();
 
-	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
-	    } catch (Exception ex) {
-	        ex.printStackTrace();
-	        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-	    }
-	}
+            // Create a list to hold response data
+            List<Map<String, Object>> responseList = new ArrayList<>();
+
+            for (PurchaseMasterView purchaseMaster : purchaseMasterList) {
+                Map<String, Object> responseMap = new HashMap<>();
+
+                responseMap.put("id", purchaseMaster.getId());
+                responseMap.put("clientId", purchaseMaster.getClient_id());
+                responseMap.put("clientName", purchaseMaster.getClient_name());
+                responseMap.put("projectName", purchaseMaster.getProject_name());
+                responseMap.put("vendor", purchaseMaster.getVendor());
+                responseMap.put("vendorId", purchaseMaster.getVendor_id());
+                responseMap.put("vendorName", purchaseMaster.getVendor_name());
+                responseMap.put("requestorName", purchaseMaster.getRequestor_name());
+                responseMap.put("description", purchaseMaster.getDescription());
+                responseMap.put("prNo", purchaseMaster.getPurchase_register_no());
+                responseMap.put("prDate", purchaseMaster.getPurchase_register_date());
+                responseMap.put("prAmount", purchaseMaster.getPurchase_register_amount());
+                responseMap.put("status", purchaseMaster.getStatus());
+                responseMap.put("poApproveDate", purchaseMaster.getPo_approve_date());
+                responseMap.put("approveDate", purchaseMaster.getApprove_date());
+                responseMap.put("poNo", purchaseMaster.getPurchase_order_no());
+                responseMap.put("prFor", purchaseMaster.getPr_for());
+                responseMap.put("rejectionReason", purchaseMaster.getRejection_reason());
+                responseMap.put("startDate", purchaseMaster.getStart_date());
+                responseMap.put("endDate", purchaseMaster.getEnd_date());
+
+                responseList.add(responseMap);
+            }
+
+            statusMap.put("PurchaseMasterEntity", responseList);
+            statusMap.put("Status", "Success");
+            statusMap.put("Status_Code", "RU_200");
+
+            return new ResponseEntity<>(statusMap, HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+//	@EncryptResponse
+//	@GetMapping("/getAllPurchase")
+//	public ResponseEntity<?> getAllPurchase() {
+//	    Map<String, Object> statusMap = new HashMap<>();
+//	    try {
+//	        // Fetch all purchase records
+//	        List<PurchaseMasterEntity> purchaseMasterEntityList = purchaseMasterService.findAll();
+//	        
+//	        // Create a list to hold the response data
+//	        List<Map<String, Object>> responseList = new ArrayList<>();
+//	        
+//	        for (PurchaseMasterEntity purchaseMasterEntity : purchaseMasterEntityList) {
+//	            Map<String, Object> responseMap = new HashMap<>();
+//	            
+//	            // Add the existing fields
+//	            responseMap.put("clientName", purchaseMasterEntity.getClientName());
+//	            responseMap.put("projectName", purchaseMasterEntity.getProjectName());
+//	            responseMap.put("vendor", purchaseMasterEntity.getVendor());
+//	            responseMap.put("requestorName", purchaseMasterEntity.getRequestorName());
+//	            responseMap.put("description", purchaseMasterEntity.getDescription());
+//	            responseMap.put("prNo", purchaseMasterEntity.getPrNo());
+//	            responseMap.put("prDate", purchaseMasterEntity.getPrDate());
+//	            responseMap.put("prAmount", purchaseMasterEntity.getPrAmount());
+//	            responseMap.put("status", purchaseMasterEntity.getStatus());
+//	            responseMap.put("approveDate", purchaseMasterEntity.getApproveDate());
+//	            responseMap.put("poNo", purchaseMasterEntity.getPoNo());
+//	            responseMap.put("prFor", purchaseMasterEntity.getPrFor());
+//	            responseMap.put("rejectionReason", purchaseMasterEntity.getRejectionReason());
+//	            responseMap.put("poApproveDate", purchaseMasterEntity.getPoApproveDate());
+//	            responseMap.put("startDate", purchaseMasterEntity.getStartDate());
+//	            responseMap.put("endDate", purchaseMasterEntity.getEndDate());
+//	            
+//	            // Add clientId as well
+//	            responseMap.put("clientId", purchaseMasterEntity.getClientId());  // assuming clientId is a field in PurchaseMasterEntity
+//	            
+//	            // Add the response map to the response list
+//	            responseList.add(responseMap);
+//	        }
+//	        
+//	        // Add the response list to the statusMap
+//	        statusMap.put("PurchaseMasterEntity", responseList);
+//	        statusMap.put("Status", "Success");
+//	        statusMap.put("Status_Code", "RU_200");
+//
+//	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+//	    } catch (Exception ex) {
+//	        ex.printStackTrace();
+//	        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
 
 	
 //	@EncryptResponse

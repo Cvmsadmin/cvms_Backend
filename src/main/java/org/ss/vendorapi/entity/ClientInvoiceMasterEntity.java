@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Data
 @NoArgsConstructor @Setter @Getter @AllArgsConstructor
 @Entity
 //@Where(clause = "ACTIVE=1")
@@ -169,8 +170,7 @@ public class ClientInvoiceMasterEntity implements Serializable {
     public void setBillableState(String billableState) {
         this.billableState = billableState;
     }
-
-    
+   
     public List<ClientInvoiceDescriptionValue> getClientInvoiceDescriptionValue() {
         return clientInvoiceDescriptionValue;
     }
@@ -178,4 +178,5 @@ public class ClientInvoiceMasterEntity implements Serializable {
     public void setClientInvoiceDescriptionValue(List<ClientInvoiceDescriptionValue> clientInvoiceDescriptionValue) {
         this.clientInvoiceDescriptionValue = clientInvoiceDescriptionValue;
     }
+
 }

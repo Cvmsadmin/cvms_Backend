@@ -1,6 +1,8 @@
 
 package org.ss.vendorapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,6 +23,7 @@ public class ClientInvoiceDescriptionValue {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "client_invoice_id", referencedColumnName = "id", nullable = false)
 	private ClientInvoiceMasterEntity clientInvoice;
@@ -58,5 +61,11 @@ public class ClientInvoiceDescriptionValue {
     
     @Column(name = "amt_incl_gst")
     private Double amtInclGst;
+
+
+//	public void setClientInvoiceMaster(ClientInvoiceMasterEntity existingInvoice) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 
 }

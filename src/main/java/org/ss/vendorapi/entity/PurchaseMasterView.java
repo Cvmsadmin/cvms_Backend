@@ -19,7 +19,8 @@ public class PurchaseMasterView {
 	private Long id;
 	
 	private String client_id; 
-	private String desription;
+	private String description;
+
 	private String purchase_order_no; 
 	private String purchase_register_amount; 
 	private Date purchase_register_date; 
@@ -33,7 +34,7 @@ public class PurchaseMasterView {
 	private String pr_for; 
 	private String rejection_reason; 
 	private String type_of_expenditure;
-	
+	private Date approve_date;
 	private Date po_approve_date; 
 	private String vendor_name;
 	private String client_name; 

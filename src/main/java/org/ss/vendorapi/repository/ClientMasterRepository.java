@@ -13,7 +13,6 @@ import org.ss.vendorapi.modal.ReceivableInvoiceStatsDTO;
 //import org.ss.vendorapi.entity.UserCreationEntity;
 //import org.ss.vendorapi.service.Client;
 
-
 @Repository
 public interface ClientMasterRepository extends JpaRepository<ClientMasterEntity, Long>{
 	
@@ -21,7 +20,9 @@ public interface ClientMasterRepository extends JpaRepository<ClientMasterEntity
 	public ClientMasterEntity findByEmail(String email);
 	public List<ClientMasterEntity> findByAccountManagerId(String accountManagerId);
 	
+//	Optional<ClientMasterEntity> findById(Long id);	
 	
+//    Optional<ClientInvoiceMasterEntity> findByClientId(String clientId);
 	
 //	Optional<ClientMasterEntity> findByClientName(String clientName);
 	
@@ -29,6 +30,7 @@ public interface ClientMasterRepository extends JpaRepository<ClientMasterEntity
 //	ClientMasterEntity findById(Long id);
 //	public ReceivableInvoiceStatsDTO getReceivableInvoiceStats();
 //	public List<ClientInvoiceMasterEntity> findAllWithDescriptionValues();
+	public Optional<ClientMasterEntity> findById(long clientName);
 	
 //	public Optional<ClientMasterEntity> findById(Long clientId);
 	

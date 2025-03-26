@@ -132,21 +132,19 @@ public class ProjectMasterController {
 
 			projectMasterEntity = projectMasterService.save(projectMasterEntity);
 
-			for(MilestoneMasterEntity milestoneMasterDto:projectRequestDTO.getMoe()) {
-
-
-				if( UtilValidate.isEmpty(milestoneMasterDto.getSerialNumber())||
-						milestoneMasterDto.getTDate()==null||
-						UtilValidate.isEmpty(milestoneMasterDto.getDays())||
-						UtilValidate.isEmpty(milestoneMasterDto.getDeliverables())||	  
-						UtilValidate.isEmpty(milestoneMasterDto.getAmountExclGst())||
-						UtilValidate.isEmpty(milestoneMasterDto.getAmountInclGst())||
-						UtilValidate.isEmpty(milestoneMasterDto.getGstAmount())||
-						UtilValidate.isEmpty(milestoneMasterDto.getGstRate())||
-				        UtilValidate.isEmpty(milestoneMasterDto.getStatus()) ||  // Validate new field
-                        milestoneMasterDto.getCompletionDate() == null) { 
-					return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);		
-				}
+//			for(MilestoneMasterEntity milestoneMasterDto:projectRequestDTO.getMoe()) {
+				  for (MilestoneMasterEntity milestoneMasterDto : projectRequestDTO.getMoe()) {
+			            if (UtilValidate.isEmpty(milestoneMasterDto.getSerialNumber()) ||
+			                milestoneMasterDto.getTDate() == null ||
+			                UtilValidate.isEmpty(milestoneMasterDto.getDays()) ||
+			                UtilValidate.isEmpty(milestoneMasterDto.getDeliverables()) ||  
+			                UtilValidate.isEmpty(milestoneMasterDto.getAmountExclGst()) ||
+			                UtilValidate.isEmpty(milestoneMasterDto.getAmountInclGst()) ||
+			                UtilValidate.isEmpty(milestoneMasterDto.getGstAmount()) ||
+			                UtilValidate.isEmpty(milestoneMasterDto.getGstRate()) ||
+			                UtilValidate.isEmpty(milestoneMasterDto.getStatus())) {  // Removed Completion Date check
+			                return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+			            }
 
 				MilestoneMasterEntity milestoneMasterEntity=new MilestoneMasterEntity();
 				milestoneMasterEntity.setTDate(milestoneMasterDto.getTDate());
@@ -159,7 +157,11 @@ public class ProjectMasterController {
 				milestoneMasterEntity.setGstRate(milestoneMasterDto.getGstRate());
 				milestoneMasterEntity.setGstAmount(milestoneMasterDto.getGstAmount());
 				milestoneMasterEntity.setStatus(milestoneMasterDto.getStatus());  
-	            milestoneMasterEntity.setCompletionDate(milestoneMasterDto.getCompletionDate()); 
+//	            milestoneMasterEntity.setCompletionDate(milestoneMasterDto.getCompletionDate()); 
+				 // Only set completion date if it's not empty
+	            if (milestoneMasterDto.getCompletionDate() != null && !milestoneMasterDto.getCompletionDate().toString().trim().isEmpty()) {
+	                milestoneMasterEntity.setCompletionDate(milestoneMasterDto.getCompletionDate());
+	            }
 
 				try {
 

@@ -20,6 +20,8 @@ public interface ClientInvoiceMasterService {
 //	public List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName);
 	public void sendInvoiceEmail(ClientInvoiceMasterDTO clientInvoiceDTO);
 //	public List<ClientInvoiceMasterEntity> findAllWithDescriptionValues();
+//	public ClientInvoiceMasterEntity updateClientInvoice(ClientInvoiceMasterDTO clientInvoiceMasterDTO);
+//	public void updateClientInvoice(Long clientId, ClientInvoiceMasterDTO dto);
 	
 //	List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName);
 

@@ -20,7 +20,7 @@ public interface ClientInvoiceMasterRepository extends JpaRepository<ClientInvoi
 	@Query(value = "SELECT * FROM client_invoice_master WHERE invoice_no = :invoiceNo", nativeQuery = true)
     ClientInvoiceMasterEntity findByInvoiceNoNative(@Param("invoiceNo") String invoiceNo);
 	
-	ClientInvoiceMasterEntity findByClientId(String clientId);
+
 	
 //	List<User> findUsersByclientNameAndprojectName(String clientName, String projectName, List<String> asList);
 

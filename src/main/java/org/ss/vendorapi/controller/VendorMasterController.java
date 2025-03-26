@@ -1,6 +1,7 @@
 
 package org.ss.vendorapi.controller;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -152,7 +153,34 @@ public class VendorMasterController {
 	
 //	******************************************************************************************************************************************************************************************
 //	***************************************************************************************get api***************************************************************************************************
-	
+//	
+//	@EncryptResponse
+//	@GetMapping("/getAllVendor")
+//	public ResponseEntity<?> getAllVendor() {
+//	    try {
+//	        List<VendorMasterEntity> vendors = vendorMasterService.getAllVendor();
+//	        
+//	        // Ensure the list is not null
+//	        if (vendors == null || vendors.isEmpty()) {
+//	            Map<String, Object> response = new HashMap<>();
+//	            response.put("status", "SUCCESS");
+//	            response.put("message", "No vendors found.");
+//	            response.put("data", Collections.emptyList()); // Return an empty list
+//	            return new ResponseEntity<>(response, HttpStatus.OK);
+//	        }
+//
+//	        // Sort vendors by ID in descending order
+//	        vendors.sort(Comparator.comparing(VendorMasterEntity::getId).reversed());
+//
+//	        return new ResponseEntity<>(vendors, HttpStatus.OK);
+//	    } catch (Exception ex) {
+//	        Map<String, Object> errorResponse = new HashMap<>();
+//	        errorResponse.put("status", "FAIL");
+//	        errorResponse.put("message", ex.getMessage());
+//	        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+
 	
 	@EncryptResponse
 	@GetMapping("/getAllVendor")
@@ -173,10 +201,6 @@ public class VendorMasterController {
 
 
 	
-	
-
-
-
 	 @EncryptResponse
 	 @PutMapping("/updateVendorMaster") 
 	  public ResponseEntity<?>updateVendorMaster(@RequestBody CustomerDetailsDTO addVendorEntity ){

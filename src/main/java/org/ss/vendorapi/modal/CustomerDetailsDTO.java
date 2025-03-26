@@ -28,7 +28,9 @@ public class CustomerDetailsDTO implements Serializable{
 	private String ContactNo;
 	private String Gst;
 	private String Pan;
-	private List<String> TypeOfService;
+//	private List<String> TypeOfService;
+	private List<String> typeOfService;
+
 	private String AccountManager;
 	private String VendorName;
 	private String PanNo;

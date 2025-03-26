@@ -804,74 +804,119 @@ public class VendorInvoiceMasterController {
 //	}
 
 	
+
+	
 //	@EncryptResponse
 //	@PutMapping("/updateVendorInvoiceMaster")
-//	public ResponseEntity<?>updateVendorMaster(@RequestBody VendorInvioceMasterDTO vendorInvioceMasterDTO ){
+//	public ResponseEntity<?> updateVendorInvoiceMaster(@RequestBody VendorInvioceMasterDTO vendorInvoiceMasterDTO) {
+//	    Map<String, Object> statusMap = new HashMap<>();
+//	    try {
+//	        // Validate mandatory fields
+//	        if (UtilValidate.isEmpty(vendorInvoiceMasterDTO.getVendorName()) ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getClientName()) ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getProjectName()) ||
+//	            vendorInvoiceMasterDTO.getInvoiceDate() == null ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceNo()) ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getPoNo()) ||
+////	            vendorInvoiceMasterDTO.getInvoiceDueDate() == null ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceDescription()) ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getGstPer()) ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceAmountExcluGst()) ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceAmountIncluGst()) ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getStatus())) {
+//	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+//	        }
 //
-//		Map<String,Object> statusMap=new HashMap<String,Object>();
-//		try {
-//			VendorInvoiceMasterEntity vendorInvoiceEntity=vendorInvoiceMasterService.findById(vendorInvioceMasterDTO.getId());
-//			
-//			
-//			vendorInvoiceEntity.setVendorName(vendorInvioceMasterDTO.getVendorName() != null ? vendorInvioceMasterDTO.getVendorName() : vendorInvoiceEntity.getVendorName());
-//			vendorInvoiceEntity.setClientName(vendorInvioceMasterDTO.getClientName() != null ? vendorInvioceMasterDTO.getClientName() : vendorInvoiceEntity.getClientName());
-//			vendorInvoiceEntity.setProjectName(vendorInvioceMasterDTO.getProjectName() != null ? vendorInvioceMasterDTO.getProjectName() : vendorInvoiceEntity.getProjectName());
-//			vendorInvoiceEntity.setInvoiceDate(vendorInvioceMasterDTO.getInvoiceDate() != null ? vendorInvioceMasterDTO.getInvoiceDate() : vendorInvoiceEntity.getInvoiceDate());
-//			vendorInvoiceEntity.setInvoiceNo(vendorInvioceMasterDTO.getInvoiceNo() != null ? vendorInvioceMasterDTO.getInvoiceNo() : vendorInvoiceEntity.getInvoiceNo());
-//			vendorInvoiceEntity.setPoNo(vendorInvioceMasterDTO.getPoNo() != null ? vendorInvioceMasterDTO.getPoNo() : vendorInvoiceEntity.getPoNo());
-//			vendorInvoiceEntity.setInvoiceDueDate(vendorInvioceMasterDTO.getInvoiceDueDate() != null ? vendorInvioceMasterDTO.getInvoiceDueDate() : vendorInvoiceEntity.getInvoiceDueDate());
-//			vendorInvoiceEntity.setInvoiceDescription(vendorInvioceMasterDTO.getInvoiceDescription() != null ? vendorInvioceMasterDTO.getInvoiceDescription() : vendorInvoiceEntity.getInvoiceDescription());
-//			vendorInvoiceEntity.setGstPer(vendorInvioceMasterDTO.getGstPer() != null ? vendorInvioceMasterDTO.getGstPer() : vendorInvoiceEntity.getGstPer());
-//			vendorInvoiceEntity.setInvoiceAmountExcluGst(vendorInvioceMasterDTO.getInvoiceAmountExcluGst() != null ? vendorInvioceMasterDTO.getInvoiceAmountExcluGst() : vendorInvoiceEntity.getInvoiceAmountExcluGst());
-//			vendorInvoiceEntity.setInvoiceAmountIncluGst(vendorInvioceMasterDTO.getInvoiceAmountIncluGst() != null ? vendorInvioceMasterDTO.getInvoiceAmountIncluGst() : vendorInvoiceEntity.getInvoiceAmountIncluGst());
-//			vendorInvoiceEntity.setStatus(vendorInvioceMasterDTO.getStatus() != null ? vendorInvioceMasterDTO.getStatus() : vendorInvoiceEntity.getStatus());
+//	        // Find the existing VendorInvoice by ID
+//	        VendorInvoiceMasterEntity vendorInvoiceEntity = vendorInvoiceMasterService.findById(vendorInvoiceMasterDTO.getId());
+//	        if (vendorInvoiceEntity == null) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "Vendor Invoice not found", HttpStatus.NOT_FOUND);
+//	        }
 //
-//			vendorInvoiceEntity.setInvoiceBaseValue(vendorInvioceMasterDTO.getInvoiceBaseValue() != null ? vendorInvioceMasterDTO.getInvoiceBaseValue() : vendorInvoiceEntity.getInvoiceBaseValue());
-//	        vendorInvoiceEntity.setGstBaseValue(vendorInvioceMasterDTO.getGstBaseValue() != null ? vendorInvioceMasterDTO.getGstBaseValue() : vendorInvoiceEntity.getGstBaseValue());
-//	        vendorInvoiceEntity.setInvoiceInclusiveOfGst(vendorInvioceMasterDTO.getInvoiceInclusiveOfGst() != null ? vendorInvioceMasterDTO.getInvoiceInclusiveOfGst() : vendorInvoiceEntity.getInvoiceInclusiveOfGst());
-//	        vendorInvoiceEntity.setTdsBaseValue(vendorInvioceMasterDTO.getTdsBaseValue() != null ? vendorInvioceMasterDTO.getTdsBaseValue() : vendorInvoiceEntity.getTdsBaseValue());
-//	        vendorInvoiceEntity.setCgstOnTds(vendorInvioceMasterDTO.getCgstOnTds() != null ? vendorInvioceMasterDTO.getCgstOnTds() : vendorInvoiceEntity.getCgstOnTds());
-//	        vendorInvoiceEntity.setSgstOnTds(vendorInvioceMasterDTO.getSgstOnTds() != null ? vendorInvioceMasterDTO.getSgstOnTds() : vendorInvoiceEntity.getSgstOnTds());
-//	        vendorInvoiceEntity.setTotalTdsDeducted(vendorInvioceMasterDTO.getTotalTdsDeducted() != null ? vendorInvioceMasterDTO.getTotalTdsDeducted() : vendorInvoiceEntity.getTotalTdsDeducted());
-//	        vendorInvoiceEntity.setBalance(vendorInvioceMasterDTO.getBalance() != null ? vendorInvioceMasterDTO.getBalance() : vendorInvoiceEntity.getBalance());
-//	        vendorInvoiceEntity.setPenaltyDeductionOnBase(vendorInvioceMasterDTO.getPenaltyDeductionOnBase() != null ? vendorInvioceMasterDTO.getPenaltyDeductionOnBase() : vendorInvoiceEntity.getPenaltyDeductionOnBase());
-//	        vendorInvoiceEntity.setGstOnPenalty(vendorInvioceMasterDTO.getGstOnPenalty() != null ? vendorInvioceMasterDTO.getGstOnPenalty() : vendorInvoiceEntity.getGstOnPenalty());
-//	        vendorInvoiceEntity.setTotalPenaltyDeduction(vendorInvioceMasterDTO.getTotalPenaltyDeduction() != null ? vendorInvioceMasterDTO.getTotalPenaltyDeduction() : vendorInvoiceEntity.getTotalPenaltyDeduction());
-//	        vendorInvoiceEntity.setTotalPaymentReceived(vendorInvioceMasterDTO.getTotalPaymentReceived() != null ? vendorInvioceMasterDTO.getTotalPaymentReceived() : vendorInvoiceEntity.getTotalPaymentReceived());
+//	        // Map DTO to Entity (Mandatory fields)
+//	        vendorInvoiceEntity.setVendorName(vendorInvoiceMasterDTO.getVendorName());
+//	        vendorInvoiceEntity.setClientName(vendorInvoiceMasterDTO.getClientName());
+//	        vendorInvoiceEntity.setProjectName(vendorInvoiceMasterDTO.getProjectName());
+//	        vendorInvoiceEntity.setInvoiceDate(vendorInvoiceMasterDTO.getInvoiceDate());
+//	        vendorInvoiceEntity.setInvoiceNo(vendorInvoiceMasterDTO.getInvoiceNo());
+//	        vendorInvoiceEntity.setPoNo(vendorInvoiceMasterDTO.getPoNo());
+//	        vendorInvoiceEntity.setInvoiceDueDate(vendorInvoiceMasterDTO.getInvoiceDueDate());
+//	        vendorInvoiceEntity.setInvoiceDescription(vendorInvoiceMasterDTO.getInvoiceDescription());
+////	        vendorInvoiceEntity.setGstPer(vendorInvoiceMasterDTO.getGstPer());
+////	        vendorInvoiceEntity.setInvoiceAmountExcluGst(vendorInvoiceMasterDTO.getInvoiceAmountExcluGst());
+//	        vendorInvoiceEntity.setInvoiceAmountIncluGst(vendorInvoiceMasterDTO.getInvoiceAmountIncluGst());
+//	        vendorInvoiceEntity.setStatus(vendorInvoiceMasterDTO.getStatus());
 //	        
-//			vendorInvoiceMasterService.update(vendorInvoiceEntity);
-//			
+//	        // Set the new fields
+//	        vendorInvoiceEntity.setStartDate(vendorInvoiceMasterDTO.getStartDate());
+//	        vendorInvoiceEntity.setEndDate(vendorInvoiceMasterDTO.getEndDate());
+//	        vendorInvoiceEntity.setModeOfPayment(vendorInvoiceMasterDTO.getModeOfPayment());
 //
-//			statusMap.put("purchaseMasterEntity",vendorInvoiceEntity);
-//			statusMap.put("status", "SUCCESS");
-//			statusMap.put("statusCode", "RU_200");
-//			statusMap.put("statusMessage", "SUCCESSFULLY UPDATED"); 
+//	        // Optional fields (only set if provided in the DTO)
+//	        vendorInvoiceEntity.setInvoiceBaseValue(vendorInvoiceMasterDTO.getInvoiceBaseValue() != null ? vendorInvoiceMasterDTO.getInvoiceBaseValue() : vendorInvoiceEntity.getInvoiceBaseValue());
+//	        vendorInvoiceEntity.setGstBaseValue(vendorInvoiceMasterDTO.getGstBaseValue() != null ? vendorInvoiceMasterDTO.getGstBaseValue() : vendorInvoiceEntity.getGstBaseValue());
+//	        vendorInvoiceEntity.setInvoiceInclusiveOfGst(vendorInvoiceMasterDTO.getInvoiceInclusiveOfGst() != null ? vendorInvoiceMasterDTO.getInvoiceInclusiveOfGst() : vendorInvoiceEntity.getInvoiceInclusiveOfGst());
+//	        vendorInvoiceEntity.setTdsBaseValue(vendorInvoiceMasterDTO.getTdsBaseValue() != null ? vendorInvoiceMasterDTO.getTdsBaseValue() : vendorInvoiceEntity.getTdsBaseValue());
+//	        vendorInvoiceEntity.setTdsPer(vendorInvoiceMasterDTO.getTdsPer() != null ? vendorInvoiceMasterDTO.getTdsPer() : vendorInvoiceEntity.getTdsPer());
+//	        vendorInvoiceEntity.setTdsOnGst(vendorInvoiceMasterDTO.getTdsOnGst() != null ? vendorInvoiceMasterDTO.getTdsOnGst() : vendorInvoiceEntity.getTdsOnGst());
+//	        vendorInvoiceEntity.setIgstOnTds(vendorInvoiceMasterDTO.getIgstOnTds() != null ? vendorInvoiceMasterDTO.getIgstOnTds() : vendorInvoiceEntity.getIgstOnTds());
+//	        vendorInvoiceEntity.setCgstOnTds(vendorInvoiceMasterDTO.getCgstOnTds() != null ? vendorInvoiceMasterDTO.getCgstOnTds() : vendorInvoiceEntity.getCgstOnTds());
+//	        vendorInvoiceEntity.setSgstOnTds(vendorInvoiceMasterDTO.getSgstOnTds() != null ? vendorInvoiceMasterDTO.getSgstOnTds() : vendorInvoiceEntity.getSgstOnTds());
+//	        vendorInvoiceEntity.setTotalTdsDeducted(vendorInvoiceMasterDTO.getTotalTdsDeducted() != null ? vendorInvoiceMasterDTO.getTotalTdsDeducted() : vendorInvoiceEntity.getTotalTdsDeducted());
+//	        vendorInvoiceEntity.setBalance(vendorInvoiceMasterDTO.getBalance() != null ? vendorInvoiceMasterDTO.getBalance() : vendorInvoiceEntity.getBalance());
+//	        vendorInvoiceEntity.setPenalty(vendorInvoiceMasterDTO.getPenalty() != null ? vendorInvoiceMasterDTO.getPenalty() : vendorInvoiceEntity.getPenalty());
+//	        vendorInvoiceEntity.setPenaltyDeductionOnBase(vendorInvoiceMasterDTO.getPenaltyDeductionOnBase() != null ? vendorInvoiceMasterDTO.getPenaltyDeductionOnBase() : vendorInvoiceEntity.getPenaltyDeductionOnBase());
+//	        vendorInvoiceEntity.setGstOnPenalty(vendorInvoiceMasterDTO.getGstOnPenalty() != null ? vendorInvoiceMasterDTO.getGstOnPenalty() : vendorInvoiceEntity.getGstOnPenalty());
+//	        vendorInvoiceEntity.setTotalPenaltyDeduction(vendorInvoiceMasterDTO.getTotalPenaltyDeduction() != null ? vendorInvoiceMasterDTO.getTotalPenaltyDeduction() : vendorInvoiceEntity.getTotalPenaltyDeduction());
+//	        vendorInvoiceEntity.setCreditNote(vendorInvoiceMasterDTO.getCreditNote() != null ? vendorInvoiceMasterDTO.getCreditNote() : vendorInvoiceEntity.getCreditNote());
+//	        vendorInvoiceEntity.setTotalPaymentReceived(vendorInvoiceMasterDTO.getTotalPaymentReceived() != null ? vendorInvoiceMasterDTO.getTotalPaymentReceived() : vendorInvoiceEntity.getTotalPaymentReceived());
 //
-//			return new ResponseEntity<>(statusMap,HttpStatus.OK);
+//	        // Save the updated vendor invoice
+//	        vendorInvoiceMasterService.update(vendorInvoiceEntity);
 //
-//		}catch(Exception e){
-//			e.printStackTrace();
-//			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
-//		}
-	
+//	        // Handle descriptions and base values (similar to the addVendorInvoices method)
+//	        if (vendorInvoiceMasterDTO.getInvoiceDescriptionValue() != null) {
+//	            for (InvoiceDescriptionValue descAndBase : vendorInvoiceMasterDTO.getInvoiceDescriptionValue()) {
+//	                if (!UtilValidate.isEmpty(descAndBase.getBaseValue())) {
+//	                    InvoiceDescriptionValue descriptionValue = new InvoiceDescriptionValue();
+//	                    descriptionValue.setVendorInvoice(vendorInvoiceEntity);
+//	                    descriptionValue.setItemDescription(descAndBase.getItemDescription());
+//	                    descriptionValue.setBaseValue(descAndBase.getBaseValue());
+//	                    invoiceDescriptionValueService.save(descriptionValue);
+//	                }
+//	            }
+//	        }
+//
+//	        // Prepare response data
+//	        statusMap.put("purchaseMasterEntity", vendorInvoiceEntity);
+//	        statusMap.put("status", "SUCCESS");
+//	        statusMap.put("statusCode", "RU_200");
+//	        statusMap.put("statusMessage", "SUCCESSFULLY UPDATED");
+//
+//	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+//
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+
 	@EncryptResponse
 	@PutMapping("/updateVendorInvoiceMaster")
 	public ResponseEntity<?> updateVendorInvoiceMaster(@RequestBody VendorInvioceMasterDTO vendorInvoiceMasterDTO) {
 	    Map<String, Object> statusMap = new HashMap<>();
 	    try {
-	        // Validate mandatory fields
+	        // Validate mandatory fields (similar to addVendorInvoices API)
 	        if (UtilValidate.isEmpty(vendorInvoiceMasterDTO.getVendorName()) ||
 	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getClientName()) ||
 	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getProjectName()) ||
 	            vendorInvoiceMasterDTO.getInvoiceDate() == null ||
 	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceNo()) ||
 	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getPoNo()) ||
-//	            vendorInvoiceMasterDTO.getInvoiceDueDate() == null ||
+	            vendorInvoiceMasterDTO.getInvoiceDueDate() == null ||
 	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceDescription()) ||
-	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getGstPer()) ||
-	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceAmountExcluGst()) ||
 	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceAmountIncluGst()) ||
+	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceAmtIncluGst()) ||
 	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getStatus())) {
 	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
 	        }
@@ -891,17 +936,16 @@ public class VendorInvoiceMasterController {
 	        vendorInvoiceEntity.setPoNo(vendorInvoiceMasterDTO.getPoNo());
 	        vendorInvoiceEntity.setInvoiceDueDate(vendorInvoiceMasterDTO.getInvoiceDueDate());
 	        vendorInvoiceEntity.setInvoiceDescription(vendorInvoiceMasterDTO.getInvoiceDescription());
-//	        vendorInvoiceEntity.setGstPer(vendorInvoiceMasterDTO.getGstPer());
-//	        vendorInvoiceEntity.setInvoiceAmountExcluGst(vendorInvoiceMasterDTO.getInvoiceAmountExcluGst());
 	        vendorInvoiceEntity.setInvoiceAmountIncluGst(vendorInvoiceMasterDTO.getInvoiceAmountIncluGst());
+	        vendorInvoiceEntity.setInvoiceAmtIncluGst(Double.valueOf(vendorInvoiceMasterDTO.getInvoiceAmtIncluGst()));
 	        vendorInvoiceEntity.setStatus(vendorInvoiceMasterDTO.getStatus());
-	        
-	        // Set the new fields
+
+	        // Optional fields: Set only if provided in the DTO
 	        vendorInvoiceEntity.setStartDate(vendorInvoiceMasterDTO.getStartDate());
 	        vendorInvoiceEntity.setEndDate(vendorInvoiceMasterDTO.getEndDate());
 	        vendorInvoiceEntity.setModeOfPayment(vendorInvoiceMasterDTO.getModeOfPayment());
 
-	        // Optional fields (only set if provided in the DTO)
+	        // New fields: Set only if provided
 	        vendorInvoiceEntity.setInvoiceBaseValue(vendorInvoiceMasterDTO.getInvoiceBaseValue() != null ? vendorInvoiceMasterDTO.getInvoiceBaseValue() : vendorInvoiceEntity.getInvoiceBaseValue());
 	        vendorInvoiceEntity.setGstBaseValue(vendorInvoiceMasterDTO.getGstBaseValue() != null ? vendorInvoiceMasterDTO.getGstBaseValue() : vendorInvoiceEntity.getGstBaseValue());
 	        vendorInvoiceEntity.setInvoiceInclusiveOfGst(vendorInvoiceMasterDTO.getInvoiceInclusiveOfGst() != null ? vendorInvoiceMasterDTO.getInvoiceInclusiveOfGst() : vendorInvoiceEntity.getInvoiceInclusiveOfGst());
@@ -920,17 +964,31 @@ public class VendorInvoiceMasterController {
 	        vendorInvoiceEntity.setCreditNote(vendorInvoiceMasterDTO.getCreditNote() != null ? vendorInvoiceMasterDTO.getCreditNote() : vendorInvoiceEntity.getCreditNote());
 	        vendorInvoiceEntity.setTotalPaymentReceived(vendorInvoiceMasterDTO.getTotalPaymentReceived() != null ? vendorInvoiceMasterDTO.getTotalPaymentReceived() : vendorInvoiceEntity.getTotalPaymentReceived());
 
+	        // Set total tax values if present
+	        vendorInvoiceEntity.setTotalCgst(vendorInvoiceMasterDTO.getTotalCgst() != null ? vendorInvoiceMasterDTO.getTotalCgst() : vendorInvoiceEntity.getTotalCgst());
+	        vendorInvoiceEntity.setTotalSgst(vendorInvoiceMasterDTO.getTotalSgst() != null ? vendorInvoiceMasterDTO.getTotalSgst() : vendorInvoiceEntity.getTotalSgst());
+	        vendorInvoiceEntity.setTotalIgst(vendorInvoiceMasterDTO.getTotalIgst() != null ? vendorInvoiceMasterDTO.getTotalIgst() : vendorInvoiceEntity.getTotalIgst());
+	        vendorInvoiceEntity.setAmountExcluGst(vendorInvoiceMasterDTO.getAmountExcluGst() != null ? vendorInvoiceMasterDTO.getAmountExcluGst() : vendorInvoiceEntity.getAmountExcluGst());
+
 	        // Save the updated vendor invoice
 	        vendorInvoiceMasterService.update(vendorInvoiceEntity);
 
-	        // Handle descriptions and base values (similar to the addVendorInvoices method)
+	        // Handle descriptions and base values (only set if provided)
 	        if (vendorInvoiceMasterDTO.getInvoiceDescriptionValue() != null) {
+	            // Clear existing descriptions before adding new ones
+	            invoiceDescriptionValueService.deleteByVendorInvoiceId(vendorInvoiceEntity.getId());
+
 	            for (InvoiceDescriptionValue descAndBase : vendorInvoiceMasterDTO.getInvoiceDescriptionValue()) {
 	                if (!UtilValidate.isEmpty(descAndBase.getBaseValue())) {
 	                    InvoiceDescriptionValue descriptionValue = new InvoiceDescriptionValue();
 	                    descriptionValue.setVendorInvoice(vendorInvoiceEntity);
 	                    descriptionValue.setItemDescription(descAndBase.getItemDescription());
 	                    descriptionValue.setBaseValue(descAndBase.getBaseValue());
+	                    descriptionValue.setGstPer(descAndBase.getGstPer());
+	                    descriptionValue.setCgst(descAndBase.getCgst());
+	                    descriptionValue.setSgst(descAndBase.getSgst());
+	                    descriptionValue.setIgst(descAndBase.getIgst());
+	                    descriptionValue.setAmtInclGst(descAndBase.getAmtInclGst());
 	                    invoiceDescriptionValueService.save(descriptionValue);
 	                }
 	            }
@@ -949,6 +1007,130 @@ public class VendorInvoiceMasterController {
 	        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
+	
+	
+	
+	
+//	@EncryptResponse
+//	@PutMapping("/updateVendorInvoiceMaster")
+//	public ResponseEntity<?> updateVendorInvoiceMaster(@RequestBody VendorInvioceMasterDTO vendorInvoiceMasterDTO) {
+//	    Map<String, Object> statusMap = new HashMap<>();
+//	    try {
+//	        // Validate mandatory fields
+//	        if (UtilValidate.isEmpty(vendorInvoiceMasterDTO.getVendorName()) ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getClientName()) ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getProjectName()) ||
+//	            vendorInvoiceMasterDTO.getInvoiceDate() == null ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceNo()) ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getPoNo()) ||
+//	            vendorInvoiceMasterDTO.getInvoiceDueDate() == null ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceDescription()) ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceAmountIncluGst()) ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getInvoiceAmtIncluGst()) ||
+//	            UtilValidate.isEmpty(vendorInvoiceMasterDTO.getStatus())) {
+//	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+//	        }
+//
+//	        // Check if the vendor invoice exists
+//	        VendorInvoiceMasterEntity vendorInvoiceEntity = vendorInvoiceMasterService.findById(vendorInvoiceMasterDTO.getId());
+//	        if (vendorInvoiceEntity == null) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "Vendor Invoice not found", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Update the existing invoice entity with new values from the DTO
+//	        updateVendorInvoiceFields(vendorInvoiceEntity, vendorInvoiceMasterDTO);
+//
+//	        // Save the updated vendor invoice
+//	        vendorInvoiceMasterService.update(vendorInvoiceEntity);
+//
+//	        // Handle descriptions and base values (only set if provided)
+//	        if (vendorInvoiceMasterDTO.getInvoiceDescriptionValue() != null) {
+//	            updateInvoiceDescriptionValues(vendorInvoiceEntity, vendorInvoiceMasterDTO.getInvoiceDescriptionValue());
+//	        }
+//
+//	        // Prepare and return success response
+//	        statusMap.put("purchaseMasterEntity", vendorInvoiceEntity);
+//	        statusMap.put("status", "SUCCESS");
+//	        statusMap.put("statusCode", "RU_200");
+//	        statusMap.put("statusMessage", "SUCCESSFULLY UPDATED");
+//
+//	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+//
+//	    } catch (Exception e) {
+//	        // Enhanced error handling
+//	        e.printStackTrace();
+//	        statusMap.put("status", "FAIL");
+//	        statusMap.put("statusCode", "RU_500");
+//	        statusMap.put("statusMessage", "An error occurred while updating the vendor invoice.");
+//	        return new ResponseEntity<>(statusMap, HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+//
+//	private void updateVendorInvoiceFields(VendorInvoiceMasterEntity vendorInvoiceEntity, VendorInvioceMasterDTO vendorInvoiceMasterDTO) {
+//	    vendorInvoiceEntity.setVendorName(vendorInvoiceMasterDTO.getVendorName());
+//	    vendorInvoiceEntity.setClientName(vendorInvoiceMasterDTO.getClientName());
+//	    vendorInvoiceEntity.setProjectName(vendorInvoiceMasterDTO.getProjectName());
+//	    vendorInvoiceEntity.setInvoiceDate(vendorInvoiceMasterDTO.getInvoiceDate());
+//	    vendorInvoiceEntity.setInvoiceNo(vendorInvoiceMasterDTO.getInvoiceNo());
+//	    vendorInvoiceEntity.setPoNo(vendorInvoiceMasterDTO.getPoNo());
+//	    vendorInvoiceEntity.setInvoiceDueDate(vendorInvoiceMasterDTO.getInvoiceDueDate());
+//	    vendorInvoiceEntity.setInvoiceDescription(vendorInvoiceMasterDTO.getInvoiceDescription());
+//	    vendorInvoiceEntity.setInvoiceAmountIncluGst(vendorInvoiceMasterDTO.getInvoiceAmountIncluGst());
+//	    vendorInvoiceEntity.setInvoiceAmtIncluGst(Double.valueOf(vendorInvoiceMasterDTO.getInvoiceAmtIncluGst()));
+//	    vendorInvoiceEntity.setStatus(vendorInvoiceMasterDTO.getStatus());
+//
+//	    // Optional fields
+//	    vendorInvoiceEntity.setStartDate(vendorInvoiceMasterDTO.getStartDate());
+//	    vendorInvoiceEntity.setEndDate(vendorInvoiceMasterDTO.getEndDate());
+//	    vendorInvoiceEntity.setModeOfPayment(vendorInvoiceMasterDTO.getModeOfPayment());
+//
+//	    // Tax fields
+//	    vendorInvoiceEntity.setInvoiceBaseValue(vendorInvoiceMasterDTO.getInvoiceBaseValue() != null ? vendorInvoiceMasterDTO.getInvoiceBaseValue() : vendorInvoiceEntity.getInvoiceBaseValue());
+//	    vendorInvoiceEntity.setGstBaseValue(vendorInvoiceMasterDTO.getGstBaseValue() != null ? vendorInvoiceMasterDTO.getGstBaseValue() : vendorInvoiceEntity.getGstBaseValue());
+//	    vendorInvoiceEntity.setInvoiceInclusiveOfGst(vendorInvoiceMasterDTO.getInvoiceInclusiveOfGst() != null ? vendorInvoiceMasterDTO.getInvoiceInclusiveOfGst() : vendorInvoiceEntity.getInvoiceInclusiveOfGst());
+//	    vendorInvoiceEntity.setTdsBaseValue(vendorInvoiceMasterDTO.getTdsBaseValue() != null ? vendorInvoiceMasterDTO.getTdsBaseValue() : vendorInvoiceEntity.getTdsBaseValue());
+//	    vendorInvoiceEntity.setTdsPer(vendorInvoiceMasterDTO.getTdsPer() != null ? vendorInvoiceMasterDTO.getTdsPer() : vendorInvoiceEntity.getTdsPer());
+//	    vendorInvoiceEntity.setTdsOnGst(vendorInvoiceMasterDTO.getTdsOnGst() != null ? vendorInvoiceMasterDTO.getTdsOnGst() : vendorInvoiceEntity.getTdsOnGst());
+//	    vendorInvoiceEntity.setIgstOnTds(vendorInvoiceMasterDTO.getIgstOnTds() != null ? vendorInvoiceMasterDTO.getIgstOnTds() : vendorInvoiceEntity.getIgstOnTds());
+//	    vendorInvoiceEntity.setCgstOnTds(vendorInvoiceMasterDTO.getCgstOnTds() != null ? vendorInvoiceMasterDTO.getCgstOnTds() : vendorInvoiceEntity.getCgstOnTds());
+//	    vendorInvoiceEntity.setSgstOnTds(vendorInvoiceMasterDTO.getSgstOnTds() != null ? vendorInvoiceMasterDTO.getSgstOnTds() : vendorInvoiceEntity.getSgstOnTds());
+//	    vendorInvoiceEntity.setTotalTdsDeducted(vendorInvoiceMasterDTO.getTotalTdsDeducted() != null ? vendorInvoiceMasterDTO.getTotalTdsDeducted() : vendorInvoiceEntity.getTotalTdsDeducted());
+//	    vendorInvoiceEntity.setBalance(vendorInvoiceMasterDTO.getBalance() != null ? vendorInvoiceMasterDTO.getBalance() : vendorInvoiceEntity.getBalance());
+//	    vendorInvoiceEntity.setPenalty(vendorInvoiceMasterDTO.getPenalty() != null ? vendorInvoiceMasterDTO.getPenalty() : vendorInvoiceEntity.getPenalty());
+//	    vendorInvoiceEntity.setPenaltyDeductionOnBase(vendorInvoiceMasterDTO.getPenaltyDeductionOnBase() != null ? vendorInvoiceMasterDTO.getPenaltyDeductionOnBase() : vendorInvoiceEntity.getPenaltyDeductionOnBase());
+//	    vendorInvoiceEntity.setGstOnPenalty(vendorInvoiceMasterDTO.getGstOnPenalty() != null ? vendorInvoiceMasterDTO.getGstOnPenalty() : vendorInvoiceEntity.getGstOnPenalty());
+//	    vendorInvoiceEntity.setTotalPenaltyDeduction(vendorInvoiceMasterDTO.getTotalPenaltyDeduction() != null ? vendorInvoiceMasterDTO.getTotalPenaltyDeduction() : vendorInvoiceEntity.getTotalPenaltyDeduction());
+//	    vendorInvoiceEntity.setCreditNote(vendorInvoiceMasterDTO.getCreditNote() != null ? vendorInvoiceMasterDTO.getCreditNote() : vendorInvoiceEntity.getCreditNote());
+//	    vendorInvoiceEntity.setTotalPaymentReceived(vendorInvoiceMasterDTO.getTotalPaymentReceived() != null ? vendorInvoiceMasterDTO.getTotalPaymentReceived() : vendorInvoiceEntity.getTotalPaymentReceived());
+//
+//	    vendorInvoiceEntity.setTotalCgst(vendorInvoiceMasterDTO.getTotalCgst() != null ? vendorInvoiceMasterDTO.getTotalCgst() : vendorInvoiceEntity.getTotalCgst());
+//	    vendorInvoiceEntity.setTotalSgst(vendorInvoiceMasterDTO.getTotalSgst() != null ? vendorInvoiceMasterDTO.getTotalSgst() : vendorInvoiceEntity.getTotalSgst());
+//	    vendorInvoiceEntity.setTotalIgst(vendorInvoiceMasterDTO.getTotalIgst() != null ? vendorInvoiceMasterDTO.getTotalIgst() : vendorInvoiceEntity.getTotalIgst());
+//	    vendorInvoiceEntity.setAmountExcluGst(vendorInvoiceMasterDTO.getAmountExcluGst() != null ? vendorInvoiceMasterDTO.getAmountExcluGst() : vendorInvoiceEntity.getAmountExcluGst());
+//	}
+//
+//	private void updateInvoiceDescriptionValues(VendorInvoiceMasterEntity vendorInvoiceEntity, List<InvoiceDescriptionValue> descriptionValues) {
+//	    // Clear existing descriptions before adding updated ones
+////	    invoiceDescriptionValueService.deleteAllByVendorInvoice(vendorInvoiceEntity);
+//
+//	    // Add the new descriptions
+//	    for (InvoiceDescriptionValue descAndBase : descriptionValues) {
+//	        if (!UtilValidate.isEmpty(descAndBase.getBaseValue())) {
+//	            InvoiceDescriptionValue descriptionValue = new InvoiceDescriptionValue();
+//	            descriptionValue.setVendorInvoice(vendorInvoiceEntity);
+//	            descriptionValue.setItemDescription(descAndBase.getItemDescription());
+//	            descriptionValue.setBaseValue(descAndBase.getBaseValue());
+//	            descriptionValue.setGstPer(descAndBase.getGstPer());
+//	            descriptionValue.setCgst(descAndBase.getCgst());
+//	            descriptionValue.setSgst(descAndBase.getSgst());
+//	            descriptionValue.setIgst(descAndBase.getIgst());
+//	            descriptionValue.setAmtInclGst(descAndBase.getAmtInclGst());
+//	            invoiceDescriptionValueService.save(descriptionValue);
+//	        }
+//	    }
+//	}
+
 
 
 	

@@ -14,7 +14,9 @@ import lombok.Data;
 public class ClientInvoiceMasterDTO {
 
 	private Long id;
-	private String clientId;
+//	private String clientId;
+	private long clientId;  // Change from String to Long
+
 	private String clientName;
 	private String projectName;
 	private String discom;
@@ -70,6 +72,8 @@ public class ClientInvoiceMasterDTO {
     
     private String accountManagerEmail;
     private String projectManagerEmail;
+     
+
     
 //    public String getAccountManagerEmail() {
 //    	return getAccountManagerEmail();

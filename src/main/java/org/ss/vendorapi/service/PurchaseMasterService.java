@@ -3,6 +3,7 @@ package org.ss.vendorapi.service;
 import java.util.List;
 
 import org.ss.vendorapi.entity.PurchaseMasterEntity;
+import org.ss.vendorapi.entity.PurchaseMasterView;
 
 public interface PurchaseMasterService {
 
@@ -17,6 +18,6 @@ public interface PurchaseMasterService {
 	public void savePurchase(PurchaseMasterEntity purchaseMaster);
 //	public String getPoNoByProjectName(String projectName);
 	public List<PurchaseMasterEntity> findByProjectName(String projectName);
-	
+	List<PurchaseMasterView> findAll1();
 	
 }
