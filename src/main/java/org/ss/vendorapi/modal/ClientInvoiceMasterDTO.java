@@ -28,6 +28,9 @@ public class ClientInvoiceMasterDTO {
 	
 	@JsonFormat(pattern="dd/MM/yyyy")
 	private LocalDate invoiceDueDate;
+	
+	@JsonFormat(pattern="dd/MM/yyyy")
+	private LocalDate paymentDate;
 //	private String gstPer;
 //	private String gstAmount;
 //	private String invoiceAmountExcluGst;

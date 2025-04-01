@@ -3,6 +3,7 @@ package org.ss.vendorapi.controller;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -574,7 +575,7 @@ public class VendorInvoiceMasterController {
 	
 
     //************************************************************************************************************************************************************************************
-   //***********************************************************************************************get api **************************************************************************************
+   //***********************************************************************************************get api**************************************************************************************
 	
 	@EncryptResponse
 	@GetMapping("/getAllVendorInvoice")
@@ -1166,15 +1167,15 @@ public class VendorInvoiceMasterController {
 
 	}
 	
-	
 	@EncryptResponse
 	@GetMapping("/getVendorInvoice/{invoiceNo}")
 	public ResponseEntity<?> getVendorInvoiceByInvoiceNo(@PathVariable("invoiceNo") String invoiceNo) {
 	    try {
-	    	// Decode the invoice number to handle URL encoding
+	        // Decode the invoice number to handle URL encoding
 	        String decodedInvoiceNo = URLDecoder.decode(invoiceNo, StandardCharsets.UTF_8);
+	        
 	        // Fetch the invoice by invoiceNo
-	        Optional<VendorInvoiceMasterEntity> invoiceOptional = vendorInvoiceMasterService.findByInvoiceNo(invoiceNo);
+	        Optional<VendorInvoiceMasterEntity> invoiceOptional = vendorInvoiceMasterService.findByInvoiceNo(decodedInvoiceNo);
 
 	        if (invoiceOptional.isEmpty()) {
 	            return CommonUtils.createResponse(Constants.FAIL, "Vendor Invoice Not Found", HttpStatus.NOT_FOUND);
@@ -1186,26 +1187,88 @@ public class VendorInvoiceMasterController {
 	        VendorInvioceMasterDTO dto = new VendorInvioceMasterDTO();
 	        BeanUtils.copyProperties(invoice, dto);
 
-	        // Handle nested descriptionsAndBaseValues mapping
+	        // Get client info correctly
+	        if (invoice.getClientName() != null) {
+	            try {
+	                Long clientId = Long.parseLong(invoice.getClientName());
+	                ClientMasterEntity client = vendorInvoiceMasterService.findClientById(clientId);
+	                if (client != null) {
+	                    dto.setClientId(client.getId());
+	                    dto.setClientName(client.getClientName());
+	                } else {
+	                    dto.setClientId(null);
+	                    dto.setClientName("Unknown");
+	                }
+	            } catch (NumberFormatException e) {
+	                dto.setClientId(null);
+	                dto.setClientName("Invalid Client ID");
+	            }
+	        }
+
+	        // Handle nested invoiceDescriptionValue mapping properly
 	        if (invoice.getInvoiceDescriptionValue() != null && !invoice.getInvoiceDescriptionValue().isEmpty()) {
 	            List<InvoiceDescriptionValue> descriptionAndBaseValues = invoice.getInvoiceDescriptionValue().stream()
 	                .map(desc -> {
-	                	InvoiceDescriptionValue value = new InvoiceDescriptionValue();
+	                    InvoiceDescriptionValue value = new InvoiceDescriptionValue();
 	                    value.setItemDescription(desc.getItemDescription() != null ? desc.getItemDescription() : "");
 	                    value.setBaseValue(desc.getBaseValue() != null ? desc.getBaseValue() : "0");
+	                    value.setGstPer(desc.getGstPer() != null ? desc.getGstPer() : 0.0);
+	                    value.setCgst(desc.getCgst() != null ? desc.getCgst() : 0.0);
+	                    value.setSgst(desc.getSgst() != null ? desc.getSgst() : 0.0);
+	                    value.setIgst(desc.getIgst() != null ? desc.getIgst() : 0.0);
+	                    value.setAmtInclGst(desc.getAmtInclGst() != null ? desc.getAmtInclGst() : 0.0);
 	                    return value;
 	                })
 	                .collect(Collectors.toList());
 	            dto.setInvoiceDescriptionValue(descriptionAndBaseValues);
 	        }
 
-	        return new ResponseEntity<>(dto, HttpStatus.OK);
+	        // Return response as a list (to match the expected JSON format)
+	        return new ResponseEntity<>(Collections.singletonList(dto), HttpStatus.OK);
 
 	    } catch (Exception ex) {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 
-		
 	
+	
+//	@EncryptResponse
+//	@GetMapping("/getVendorInvoice/{invoiceNo}")
+//	public ResponseEntity<?> getVendorInvoiceByInvoiceNo(@PathVariable("invoiceNo") String invoiceNo) {
+//	    try {
+//	    	// Decode the invoice number to handle URL encoding
+//	        String decodedInvoiceNo = URLDecoder.decode(invoiceNo, StandardCharsets.UTF_8);
+//	        // Fetch the invoice by invoiceNo
+//	        Optional<VendorInvoiceMasterEntity> invoiceOptional = vendorInvoiceMasterService.findByInvoiceNo(invoiceNo);
+//
+//	        if (invoiceOptional.isEmpty()) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "Vendor Invoice Not Found", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        VendorInvoiceMasterEntity invoice = invoiceOptional.get();
+//	        
+//	        // Map entity to DTO
+//	        VendorInvioceMasterDTO dto = new VendorInvioceMasterDTO();
+//	        BeanUtils.copyProperties(invoice, dto);
+//
+//	        // Handle nested descriptionsAndBaseValues mapping
+//	        if (invoice.getInvoiceDescriptionValue() != null && !invoice.getInvoiceDescriptionValue().isEmpty()) {
+//	            List<InvoiceDescriptionValue> descriptionAndBaseValues = invoice.getInvoiceDescriptionValue().stream()
+//	                .map(desc -> {
+//	                	InvoiceDescriptionValue value = new InvoiceDescriptionValue();
+//	                    value.setItemDescription(desc.getItemDescription() != null ? desc.getItemDescription() : "");
+//	                    value.setBaseValue(desc.getBaseValue() != null ? desc.getBaseValue() : "0");
+//	                    return value;
+//	                })
+//	                .collect(Collectors.toList());
+//	            dto.setInvoiceDescriptionValue(descriptionAndBaseValues);
+//	        }
+//
+//	        return new ResponseEntity<>(dto, HttpStatus.OK);
+//
+//	    } catch (Exception ex) {
+//	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
 	}

@@ -61,12 +61,6 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 	    @Column(name = "invoice_description")
 	    private String invoiceDescription;
 
-//	    @Column(name = "gst_per")
-//	    private String gstPer;
-
-//	    @Column(name = "invoice_amount_exclu_gst")
-//	    private String invoiceAmountExcluGst;
-
 	    @Column(name = "invoice_amount_inclu_gst")
 	    private String invoiceAmountIncluGst;
 	    

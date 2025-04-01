@@ -171,6 +171,13 @@ public class ClientInvoiceMasterController {
 	        if (clientInvoiceDTO.getBalance() != null) {
 	            clientInvoice.setBalance(clientInvoiceDTO.getBalance());
 	        }
+	        
+	        if (clientInvoiceDTO.getPaymentDate() != null) {  
+	            clientInvoice.setPaymentDate(clientInvoiceDTO.getPaymentDate());
+	        } else {
+	            clientInvoice.setPaymentDate(null); // Ensures it's stored as null if not provided
+	        }
+	        
 	        if (clientInvoiceDTO.getGstBaseValue() != null) {
 	            clientInvoice.setGstBaseValue(clientInvoiceDTO.getGstBaseValue());
 	        }
@@ -189,6 +196,8 @@ public class ClientInvoiceMasterController {
 	        if (clientInvoiceDTO.getAmountExcluGst() != null) {
 	            clientInvoice.setAmountExcluGst(String.valueOf(clientInvoiceDTO.getAmountExcluGst()));
 	        }
+	       
+
 //	        clientInvoice.setAmountExcluGst(clientInvoiceDTO.getAmountExcluGst());
 	        clientInvoice.setMilestone(String.valueOf(clientInvoiceDTO.getMilestone()));
 
@@ -531,7 +540,9 @@ public class ClientInvoiceMasterController {
 	            invoiceMap.put("totalPenaltyDeduction", invoice.getTotalPenaltyDeduction() != null ? invoice.getTotalPenaltyDeduction() : "Not provided");
 	            invoiceMap.put("creditNote", invoice.getCreditNote() != null ? invoice.getCreditNote() : "Not provided");
 	            invoiceMap.put("totalPaymentReceived", invoice.getTotalPaymentReceived() != null ? invoice.getTotalPaymentReceived() : "Not provided");
-
+	         // Include paymentDate field
+	            invoiceMap.put("paymentDate", invoice.getPaymentDate() != null ? invoice.getPaymentDate() : "Not provided");
+	            
 //	             Include client invoice descriptions if present
 	            if (invoice.getClientInvoiceDescriptionValue() != null) {
 	                List<Map<String, Object>> descriptionValues = new ArrayList<>();
@@ -561,7 +572,7 @@ public class ClientInvoiceMasterController {
 	        return CommonUtils.createResponse(Constants.FAIL, "An error occurred while fetching invoices: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
-
+	
 
 	 
 	 
@@ -750,6 +761,13 @@ public class ClientInvoiceMasterController {
 	    // Restore the original client details
 	    invoiceEntity.setClientId(existingClientId);
 	    invoiceEntity.setClientName(existingClientName);
+	    
+	    // Update paymentDate (non-mandatory field)
+	    if (dto.getPaymentDate() != null) {  
+	        invoiceEntity.setPaymentDate(dto.getPaymentDate());
+	    } else {
+	        invoiceEntity.setPaymentDate(null); // Ensures it's stored as null if not provided
+	    }
 
 	    // Update the Client Invoice Description Values
 	    if (dto.getClientInvoiceDescriptionValue() != null) {

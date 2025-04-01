@@ -29,8 +29,8 @@ public class VendorInvioceMasterDTO {
     private Date invoiceDueDate;
 
     private String invoiceDescription;
-    private String gstPer;
-    private String invoiceAmountExcluGst;
+//    private String gstPer;
+//    private String invoiceAmountExcluGst;
     private String invoiceAmountIncluGst;
     private Double invoiceAmtIncluGst;
     private String status;
@@ -60,7 +60,7 @@ public class VendorInvioceMasterDTO {
     private Date startDate;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
-    private Date EndDate;
+    private Date endDate;
 
     private String modeOfPayment;
 

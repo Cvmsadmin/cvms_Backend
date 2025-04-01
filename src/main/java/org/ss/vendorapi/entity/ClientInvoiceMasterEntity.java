@@ -151,7 +151,10 @@ public class ClientInvoiceMasterEntity implements Serializable {
 
     @Column(name = "billable_state")
     private String billableState;
-
+    
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate paymentDate;
+      
     @OneToMany(mappedBy = "clientInvoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ClientInvoiceDescriptionValue> clientInvoiceDescriptionValue;
 

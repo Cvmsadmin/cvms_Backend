@@ -127,7 +127,7 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
                     "<tr><td><b>Invoice Due Date</b></td><td>%s</td></tr>" +
                     "<tr><td><b>Total Amount (Incl. GST)</b></td><td>%s</td></tr>" +
                     "</table>" +
-                    "<p>The invoice is attached for your reference.</p>" +
+//                    "<p>The invoice is attached for your reference.</p>" +
                     "<p>Best regards,<br><b>CVMS Admin</b></p>" +
                     "</body></html>",
                     invoiceDetails.getClientName(),
@@ -152,11 +152,11 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
             }
 
             // Also send the email to the same hardcoded email address instead of project manager email
-            try {
-                emailService.sendEmail(hardcodedEmail, subject, body);
-            } catch (MessagingException | jakarta.mail.MessagingException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                emailService.sendEmail(hardcodedEmail, subject, body);
+//            } catch (MessagingException | jakarta.mail.MessagingException e) {
+//                e.printStackTrace();
+//            }
 //            try {
 //                emailService.sendEmail(invoiceDetails.getAccountManagerEmail1(), subject, body);
 //            } catch (MessagingException | jakarta.mail.MessagingException e) {
