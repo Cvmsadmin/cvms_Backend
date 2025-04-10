@@ -89,7 +89,6 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
         return clientMasterRepository.findByClientName(clientName); 
     }
 
-
     public void sendInvoiceEmail(ClientInvoiceMasterDTO clientInvoiceDTO) {
         // Get the invoice details from the repository (assuming you want the most recent details)
         List<ClientInvoiceDetailsEntity> invoiceDetailsList = clientInvoiceDetailsRepo.getClientInvoiceDetails();
@@ -176,6 +175,10 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
 		NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
         return formatter.format(invoiceAmount);
 	}
+	
+	   public ClientInvoiceMasterEntity saveInvoice(ClientInvoiceMasterEntity invoice) {
+	        return clientInvoiceMasterRepository.save(invoice);
+	    }
 
 
 

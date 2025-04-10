@@ -226,6 +226,7 @@ public class VendorInvoiceMasterController {
 	        vendorInvoiceMaster.setTotalPenaltyDeduction(vendorInvoiceDTO.getTotalPenaltyDeduction());
 	        vendorInvoiceMaster.setCreditNote(vendorInvoiceDTO.getCreditNote());
 	        vendorInvoiceMaster.setTotalPaymentReceived(vendorInvoiceDTO.getTotalPaymentReceived());
+//	        vendorInvoiceMaster.setpaymentDate(vendorInvoiceDTO.getpaymentDate());
 
 	        // Additional Fields (like CGST, SGST, IGST)
 	        vendorInvoiceMaster.setTotalCgst(vendorInvoiceDTO.getTotalCgst());

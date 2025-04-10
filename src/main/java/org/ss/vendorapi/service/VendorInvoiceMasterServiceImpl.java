@@ -21,8 +21,6 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
 	@Autowired
     private ClientMasterRepository clientMasterRepository; 
 
-
-
 	@Override
 	public VendorInvoiceMasterEntity save(VendorInvoiceMasterEntity vendorInvoiceMasterEntity) {
 		vendorInvoiceMasterEntity.setActive(1);
@@ -30,12 +28,10 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
 		return vendorinviceMasterRepository.save(vendorInvoiceMasterEntity);
 	}
 
-
 	@Override
 	public List<VendorInvoiceMasterEntity> getAllVendorInvoices() {
 		return vendorinviceMasterRepository.findAll();
 	}
-
 
 	@Override
 	public VendorInvoiceMasterEntity update(VendorInvoiceMasterEntity vendorInvoiceMasterEntity) {
@@ -43,18 +39,15 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
 		return vendorinviceMasterRepository.save(vendorInvoiceMasterEntity);
 	}
 
-
 	@Override
 	public VendorInvoiceMasterEntity findById(Long id) {
 		return vendorinviceMasterRepository.findById(id).orElse(null);
 	}
 
-
 	@Override
 	public List<VendorInvoiceMasterEntity> findAll() {
 	    return vendorinviceMasterRepository.findAll();
 	}
-
 
 	@Override
     public Optional<VendorInvoiceMasterEntity> findByInvoiceNo(String invoiceNo) {
@@ -70,9 +63,5 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
 //        return vendorinviceMasterRepository.getPayableInvoiceStats();
 		return null;
     }
-	
-
-
-
 
 }

@@ -27,6 +27,9 @@ public class VendorInvioceMasterDTO {
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date invoiceDueDate;
+    
+//    @JsonFormat(pattern = "dd/MM/yyyy")
+//    private Date paymentDate;
 
     private String invoiceDescription;
 //    private String gstPer;
@@ -56,10 +59,10 @@ public class VendorInvioceMasterDTO {
     private String penalty;
     private String creditNote;
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern="dd/MM/yyyy", timezone = "Asia/Kolkata")
     private Date startDate;
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern="dd/MM/yyyy", timezone = "Asia/Kolkata")
     private Date endDate;
 
     private String modeOfPayment;

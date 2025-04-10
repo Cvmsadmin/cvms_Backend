@@ -1,6 +1,7 @@
 package org.ss.vendorapi.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.ss.vendorapi.entity.PurchaseMasterEntity;
 import org.ss.vendorapi.entity.PurchaseMasterView;
@@ -19,5 +20,6 @@ public interface PurchaseMasterService {
 //	public String getPoNoByProjectName(String projectName);
 	public List<PurchaseMasterEntity> findByProjectName(String projectName);
 	List<PurchaseMasterView> findAll1();
+	Optional<PurchaseMasterEntity> findOptionalByPoNo(String poNo);
 	
 }

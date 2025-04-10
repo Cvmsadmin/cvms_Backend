@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -79,6 +80,14 @@ public class PurchaseMasterController {
 	                UtilValidate.isEmpty(purchaseRequestDTO.getStatus()) ||
 	                purchaseRequestDTO.getPrDate() == null) {
 	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
+	        }
+	        
+//	     // 🛑 Check for duplicate poNo before saving if status is PoApproved
+	        if ("PoApproved".equalsIgnoreCase(purchaseRequestDTO.getStatus()) && purchaseRequestDTO.getPoNo() != null) {
+	            Optional<PurchaseMasterEntity> existingPo = purchaseMasterService.findOptionalByPoNo(purchaseRequestDTO.getPoNo());
+	            if (existingPo.isPresent()) {
+	                return CommonUtils.createResponse(Constants.FAIL, "PO Number already exists!", HttpStatus.CONFLICT);
+	            }
 	        }
 
 	        // Create and populate PurchaseMasterEntity

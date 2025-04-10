@@ -125,11 +125,11 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 	    @OneToMany(mappedBy = "vendorInvoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	    private List<InvoiceDescriptionValue> InvoiceDescriptionValue;
 	    
-		@JsonFormat(pattern="dd/MM/yyyy")
+		@JsonFormat(pattern="dd/MM/yyyy", timezone = "Asia/Kolkata")
 		@Column(name = "start_date")
 		private Date startDate;
 	    
-		@JsonFormat(pattern="dd/MM/yyyy")
+		@JsonFormat(pattern="dd/MM/yyyy", timezone = "Asia/Kolkata")
 		@Column(name = "end_date")
 		private Date endDate;
 
@@ -148,6 +148,7 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 
 	    @Column(name = "amount_exclu_gst")
 	    private Double amountExcluGst;
+	    
 	    	    	    
 	}
 

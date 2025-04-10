@@ -28,9 +28,10 @@ public class PurchaseBOMMasterEntity extends ParentEntity implements Serializabl
 	private static final long serialVersionUID=1L;
 
 	@Id
-	@Column(name="id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // or GenerationType.SEQUENCE if using sequence
+	@Column(name = "id")
 	private Long id;
+
 
 	@Column(name="PURCHASE_ID")
 	private String purchaseId;

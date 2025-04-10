@@ -20,6 +20,7 @@ public class EmailService {
  
     @Autowired
     private JavaMailSender mailSender;
+    
     public void sendEmail(String to, String subject, String text) throws MessagingException, jakarta.mail.MessagingException {
 
         jakarta.mail.internet.MimeMessage message = mailSender.createMimeMessage();

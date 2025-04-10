@@ -39,9 +39,9 @@ public class PurchaseRequestDTO {
 	@JsonFormat(pattern="dd/MM/yyyy")
 	private Date poApproveDate;
 
-	@JsonFormat(pattern="dd/MM/yyyy")
+	@JsonFormat(pattern="dd/MM/yyyy", timezone = "Asia/Kolkata")
 	private Date startDate;
 	
-	@JsonFormat(pattern="dd/MM/yyyy")
-	private Date EndDate;
+	@JsonFormat(pattern="dd/MM/yyyy", timezone = "Asia/Kolkata")
+	private Date endDate;
 }

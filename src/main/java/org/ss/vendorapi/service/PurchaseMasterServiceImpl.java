@@ -1,6 +1,7 @@
 package org.ss.vendorapi.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,12 @@ public class PurchaseMasterServiceImpl implements PurchaseMasterService{
 	public List<PurchaseMasterView> findAll1() {
 		return purchaseMasterRepoView.findAll();
 	}
+	
+	@Override
+	public Optional<PurchaseMasterEntity> findOptionalByPoNo(String poNo) {
+	    return Optional.ofNullable(purchaseMasterRepository.findByPoNo(poNo));
+	}
+
 
 
 //	@Override

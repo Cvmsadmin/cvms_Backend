@@ -25,6 +25,8 @@ import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
 import org.ss.vendorapi.util.Parameters;
 import org.ss.vendorapi.util.UtilValidate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @CrossOrigin(origins="*")
 @RestController
@@ -37,29 +39,57 @@ public class RoleMasterController {
 	@Autowired
 	private RoleResourceMasterService roleResourceMasterService;
 
-	
+
 	@EncryptResponse
 	@GetMapping("/getAllRoles")
-	public ResponseEntity<?> getAllRoleDetails(){
-		Map<String, Object> statusMap=new HashMap<String, Object>();
+	public ResponseEntity<?> getAllRoleDetails() {
+	    Logger logger = LoggerFactory.getLogger(this.getClass());
+	    Map<String, Object> statusMap = new HashMap<>();
 
-		try {
-			List<RoleMasterEntity> roleList=roleMasterService.findAll();
+	    try {
+	        logger.info("Fetching all roles from RoleMasterEntity");
 
-			statusMap.put("RoleMasterEntity",roleList);
-			statusMap.put(Parameters.status, "Success");
-			statusMap.put(Parameters.statusCode, "RME_200");
-			statusMap.put(Parameters.statusMsg,"SuccessFully Found");
+	        List<RoleMasterEntity> roleList = roleMasterService.findAll();
 
-			return new ResponseEntity<>(statusMap,HttpStatus.OK);
+	        statusMap.put("RoleMasterEntity", roleList);
+	        statusMap.put(Parameters.status, "Success");
+	        statusMap.put(Parameters.statusCode, "RME_200");
+	        statusMap.put(Parameters.statusMsg, "Successfully Found");
 
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}
+	        logger.info("Successfully fetched {} roles", roleList.size());
 
-		return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
+	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+	    } catch (Exception e) {
+	        logger.error("Error occurred while fetching roles: {}", e.getMessage(), e);
+	    }
+
+	    return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
 	}
+
+
+	
+//	@EncryptResponse
+//	@GetMapping("/getAllRoles")
+//	public ResponseEntity<?> getAllRoleDetails(){
+//		Map<String, Object> statusMap=new HashMap<String, Object>();
+//
+//		try {
+//			List<RoleMasterEntity> roleList=roleMasterService.findAll();
+//
+//			statusMap.put("RoleMasterEntity",roleList);
+//			statusMap.put(Parameters.status, "Success");
+//			statusMap.put(Parameters.statusCode, "RME_200");
+//			statusMap.put(Parameters.statusMsg,"SuccessFully Found");
+//
+//			return new ResponseEntity<>(statusMap,HttpStatus.OK);
+//
+//		}
+//		catch(Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//		return new ResponseEntity<>(statusMap,HttpStatus.EXPECTATION_FAILED);
+//	}
 
 	
 	@EncryptResponse
