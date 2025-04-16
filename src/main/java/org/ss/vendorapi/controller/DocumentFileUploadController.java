@@ -25,6 +25,7 @@ import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.FileUploadRequestModal;
 import org.ss.vendorapi.entity.FileUploadRequestModal.DocumentType;
 import org.ss.vendorapi.repository.DocumentUploadRepository;
+import org.ss.vendorapi.service.InvoiceEmailSchedulerService;
 //import org.ss.vendorapi.service.SftpService;
 import org.ss.vendorapi.service.SftpUploaderService;
  
@@ -39,6 +40,10 @@ public class DocumentFileUploadController {
     @Autowired
     private DocumentUploadRepository documentUploadRepository;
     
+    @Autowired
+    private InvoiceEmailSchedulerService invoiceEmailSchedulerService;
+
+        
     @EncryptResponse
     @PostMapping("/uploadClientDocs")
     public ResponseEntity<?> uploadFiles(
@@ -47,8 +52,9 @@ public class DocumentFileUploadController {
             @RequestParam("projectName") String projectName,
             @RequestParam("documentTypes") List<DocumentType> documentTypes,
             @RequestParam("applicantId") String applicantId,
-            @RequestParam(value = "PONO", required = false) String PONO) {  // Add PONO parameter
-
+            @RequestParam(value = "PONO", required = false) String PONO,  
+            @RequestParam(value = "invoiceNo", required = false) String invoiceNo) {  // Added invoiceNo for Invoice document type
+        
         Map<String, Object> response = new HashMap<>();
         List<String> uploadResults = new ArrayList<>();
 
@@ -72,17 +78,21 @@ public class DocumentFileUploadController {
                 continue;
             }
 
-            String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+            String newFileName = "";
 
-            // If document type is PO, append PONO to the file name
-            if (documentType == DocumentType.PO && PONO != null && !PONO.isEmpty()) {
-                newFileName = "PO_" + PONO + getFileExtension(file.getOriginalFilename());
+            // If the document type is INVOICE, name the file based on invoiceNo
+            if (documentType == DocumentType.INVOICE && invoiceNo != null && !invoiceNo.trim().isEmpty()) {
+                // Replace '/' with '-' in the invoiceNo
+                String correctedInvoiceNo = invoiceNo.replaceAll("/", "-").trim();
+                newFileName = "Invoice_" + correctedInvoiceNo + ".pdf";  // Invoice file naming pattern
+            } else {
+                newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
             }
 
             String remotePath = "/opt/cvmsdocuments/client/" + clientName + "/" + projectName + "/" + newFileName;
 
             try {
-                // Upload file to SFTP with newFileName
+                // Upload file to SFTP with the new file name
                 String uploadStatus = sftpUploaderService.uploadFileToServer(file, "/opt/cvmsdocuments/client", clientName, projectName, newFileName);
 
                 // Save file info to database
@@ -93,11 +103,15 @@ public class DocumentFileUploadController {
                 documentUploadRepository.save(fileRecord);
 
                 uploadResults.add("File uploaded successfully for document type: " + documentType);
+                
+                if (documentType == DocumentType.INVOICE && invoiceNo != null && !invoiceNo.trim().isEmpty()) {
+                    invoiceEmailSchedulerService.scheduleInvoiceEmail(invoiceNo, 60000); // Delay: 60 seconds
+                }
+                
             } catch (Exception e) {
                 uploadResults.add("File upload failed for document type: " + documentType + ". Error: " + e.getMessage());
                 allUploadsSuccessful = false;
             }
-
         }
 
         // Build response
@@ -113,6 +127,86 @@ public class DocumentFileUploadController {
         return new ResponseEntity<>(response, allUploadsSuccessful ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    
+    
+    
+    
+//  ****************************************************************************************************************************************************  
+//    @EncryptResponse
+//    @PostMapping("/uploadClientDocs")
+//    public ResponseEntity<?> uploadFiles(
+//            @RequestParam("files") List<MultipartFile> files,
+//            @RequestParam("clientName") String clientName,
+//            @RequestParam("projectName") String projectName,
+//            @RequestParam("documentTypes") List<DocumentType> documentTypes,
+//            @RequestParam("applicantId") String applicantId,
+//            @RequestParam(value = "PONO", required = false) String PONO) {  // Add PONO parameter
+//
+//        Map<String, Object> response = new HashMap<>();
+//        List<String> uploadResults = new ArrayList<>();
+//
+//        // Validate input
+//        if (files.size() != documentTypes.size()) {
+//            response.put("status", "FAIL");
+//            response.put("statusMsg", "The number of files and document types must match.");
+//            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//        }
+//
+//        boolean allUploadsSuccessful = true;
+//
+//        // Process each file
+//        for (int i = 0; i < files.size(); i++) {
+//            MultipartFile file = files.get(i);
+//            DocumentType documentType = documentTypes.get(i);
+//
+//            if (file.isEmpty()) {
+//                uploadResults.add("File is empty for document type: " + documentType);
+//                allUploadsSuccessful = false;
+//                continue;
+//            }
+//
+//            String newFileName = documentType.name() + getFileExtension(file.getOriginalFilename());
+//
+//            // If document type is PO, append PONO to the file name
+//            if (documentType == DocumentType.PO && PONO != null && !PONO.isEmpty()) {
+//                newFileName = "PO_" + PONO + getFileExtension(file.getOriginalFilename());
+//            }
+//
+//            String remotePath = "/opt/cvmsdocuments/client/" + clientName + "/" + projectName + "/" + newFileName;
+//
+//            try {
+//                // Upload file to SFTP with newFileName
+//                String uploadStatus = sftpUploaderService.uploadFileToServer(file, "/opt/cvmsdocuments/client", clientName, projectName, newFileName);
+//
+//                // Save file info to database
+//                FileUploadRequestModal fileRecord = new FileUploadRequestModal();
+//                fileRecord.setApplicantId(applicantId);
+//                fileRecord.setDocumentType(documentType);
+//                fileRecord.setDocumentPath(remotePath);
+//                documentUploadRepository.save(fileRecord);
+//
+//                uploadResults.add("File uploaded successfully for document type: " + documentType);
+//            } catch (Exception e) {
+//                uploadResults.add("File upload failed for document type: " + documentType + ". Error: " + e.getMessage());
+//                allUploadsSuccessful = false;
+//            }
+//
+//        }
+//
+//        // Build response
+//        if (allUploadsSuccessful) {
+//            response.put("status", "SUCCESS");
+//            response.put("statusMsg", "All files uploaded successfully.");
+//        } else {
+//            response.put("status", "FAIL");
+//            response.put("statusMsg", "Some files failed to upload.");
+//        }
+//        response.put("details", uploadResults);
+//
+//        return new ResponseEntity<>(response, allUploadsSuccessful ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
+
+//    *****************************************************************************************************************************************
     
 //    @EncryptResponse
 //    @PostMapping("/uploadClientDocs")

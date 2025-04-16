@@ -47,7 +47,7 @@ public class FileUploadRequestModal extends ParentEntity implements Serializable
     
     public enum DocumentType {
 
-        CM, VM, DWA, NDA, PAN, GST_CERTIFICATE, PO, MAF, E_WAY_BILL, INVOICE_UPLOAD,
+        CM, VM, DWA, NDA, PAN, GST_CERTIFICATE, PO, MAF, E_WAY_BILL, INVOICE,
 
         DELIVERY_ACCEPTANCE, PROPOSAL_UPLOAD, MISCELLANEOUS, AGREEMENT, RFP, BOM, BOQ, NIT, FRS, ROCS
     }

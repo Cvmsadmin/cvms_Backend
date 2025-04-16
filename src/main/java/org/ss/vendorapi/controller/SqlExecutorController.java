@@ -48,5 +48,20 @@ public class SqlExecutorController {
                                  .body(Collections.singletonMap("error", e.getMessage()));
         }
     }
+    
+    @PostMapping("/runonly")
+    public ResponseEntity<?> runDynamicQuery1(@RequestBody Map<String, String> request) {
+    	String reportName = request.get("reportName");
+        String reportQuery = request.get("reportQuery");
+
+        try {
+            List<Map<String, Object>> result = sqlExecutorService.executeQuery(reportName, reportQuery);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", e.getMessage()));
+        }
+    }
+
 
 }

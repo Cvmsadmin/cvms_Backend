@@ -182,4 +182,9 @@ public class ClientInvoiceMasterEntity implements Serializable {
         this.clientInvoiceDescriptionValue = clientInvoiceDescriptionValue;
     }
 
+	public String getFileName() {
+	
+		return null;
+	}
+
 }

@@ -18,19 +18,19 @@ public class SqlExecutorService {
     @Autowired
     private SqlExecutorRepository sqlExecutorRepository;
 
-    public List<Map<String, Object>> executeQueryAndSave(String reportName, String reportQuery) {
-        // Optionally validate or restrict query here
-        if (!isSelectQuery(reportQuery)) {
-            throw new RuntimeException("Only SELECT queries are allowed.");
-        }
-        
-        SqlExecutorEntity entity = new SqlExecutorEntity();
-        entity.setReportName(reportName);
-        entity.setReportQuery(reportQuery);
-        sqlExecutorRepository.save(entity);
-        
-        return jdbcTemplate.queryForList(reportQuery);
-    }
+	    public List<Map<String, Object>> executeQueryAndSave(String reportName, String reportQuery) {
+	        // Optionally validate or restrict query here
+	        if (!isSelectQuery(reportQuery)) {
+	            throw new RuntimeException("Only SELECT queries are allowed.");
+	        }
+	        
+	        SqlExecutorEntity entity = new SqlExecutorEntity();
+	        entity.setReportName(reportName);
+	        entity.setReportQuery(reportQuery);
+	        sqlExecutorRepository.save(entity);
+	        
+	        return jdbcTemplate.queryForList(reportQuery);
+	    }
 
     private boolean isSelectQuery(String reportQuery) {
         return reportQuery != null && reportQuery.trim().toLowerCase().startsWith("select");
@@ -39,5 +39,18 @@ public class SqlExecutorService {
     public List<SqlExecutorEntity> getAllReports() {
         return sqlExecutorRepository.findAll();
     }
+
+    
+    
+    public List<Map<String, Object>> executeQuery(String reportName, String reportQuery) {
+        // Optionally validate or restrict query here
+        if (!isSelectQuery(reportQuery)) {
+            throw new RuntimeException("Only SELECT queries are allowed.");
+        }
+
+        // Just execute the query and return the result
+        return jdbcTemplate.queryForList(reportQuery);
+    }
+
 
 }

@@ -1,18 +1,13 @@
 
 package org.ss.vendorapi.service; 
 import javax.mail.MessagingException;
-
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailSender;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
-
 import org.springframework.mail.javamail.MimeMessageHelper;
-
 import org.springframework.stereotype.Service;
-import java.io.File;
-import org.springframework.core.io.FileSystemResource;
 
  
 @Service
@@ -34,6 +29,26 @@ public class EmailService {
 
     }
     
+    
+   public void sendEmailWithAttachment(String to, String subject, String htmlBody, String fileName, byte[] fileBytes)
+            throws MessagingException, jakarta.mail.MessagingException {
+
+        jakarta.mail.internet.MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setFrom("CVMSADMIN@INFINITE.COM");
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(htmlBody, true);
+
+        if (fileBytes != null && fileBytes.length > 0) {
+            helper.addAttachment(fileName, new ByteArrayResource(fileBytes));
+        }
+
+        mailSender.send(message);
+        System.out.println("Email with SFTP attachment sent successfully!");
+    }
+//    
     
 //    public void sendEmailWithAttachment(String to, String subject, String body, String attachmentPath) throws MessagingException {
 //        try {

@@ -1,6 +1,5 @@
 package org.ss.vendorapi.controller;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,14 +28,17 @@ import org.ss.vendorapi.entity.ClientInvoiceDescriptionValue;
 import org.ss.vendorapi.entity.ClientInvoiceDetailsEntity;
 import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
 import org.ss.vendorapi.entity.ClientMasterEntity;
+import org.ss.vendorapi.entity.FileUploadRequestModal;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.ClientInvoiceMasterDTO;
 import org.ss.vendorapi.repository.ClientInvoiceDetailsRepo;
 import org.ss.vendorapi.repository.ClientMasterRepository;
+import org.ss.vendorapi.repository.DocumentUploadRepository;
 import org.ss.vendorapi.service.ClientInvoiceDescriptionValueService;
 import org.ss.vendorapi.service.ClientInvoiceMasterService;
 import org.ss.vendorapi.service.DataValidationService;
 import org.ss.vendorapi.service.EmailService;
+import org.ss.vendorapi.service.SftpUploaderService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
 import org.ss.vendorapi.util.UtilValidate;
@@ -68,6 +70,9 @@ public class ClientInvoiceMasterController {
 	private EmailService emailService;
 	
 	@Autowired
+	private SftpUploaderService sftpUploaderService;
+	
+	@Autowired
 	private ClientInvoiceDetailsRepo clientInvoiceDetailsRepo;
 		
 //	@Autowired
@@ -79,7 +84,10 @@ public class ClientInvoiceMasterController {
 	private ClientInvoiceDescriptionValueService clientInvoiceDescriptionValueService;
 
 	
-	@EncryptResponse
+	@Autowired
+	private DocumentUploadRepository documentUploadRepository;
+	
+	@EncryptResponse 	
 	@PostMapping("/addClientInvoices")
 	public ResponseEntity<?> addClientInvoices(@RequestBody ClientInvoiceMasterDTO clientInvoiceDTO, HttpServletRequest request) {
 	    Map<String, Object> responseMap = new HashMap<>();
@@ -242,7 +250,7 @@ public class ClientInvoiceMasterController {
 	            }
 	        }          
 	        // Send email notification
-	        clientInvoiceService.sendInvoiceEmail(clientInvoiceDTO);
+//	        clientInvoiceService.sendInvoiceEmail(clientInvoiceDTO);
 
 	        // Return success response
 	        Map<String, String> response = new HashMap<>();
@@ -253,6 +261,209 @@ public class ClientInvoiceMasterController {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+	
+	
+//	@EncryptResponse
+//	@PostMapping("/sendInvoiceEmailWithAttachment")
+//	public ResponseEntity<?> sendInvoiceEmailWithAttachment(@RequestBody Map<String, String> requestMap) {
+//	    String invoiceNo = requestMap.get("invoiceNo");
+//
+//	    if (invoiceNo == null || invoiceNo.trim().isEmpty()) {
+//	        return CommonUtils.createResponse(Constants.FAIL, "Invoice No is required", HttpStatus.BAD_REQUEST);
+//	    }
+//
+//	    try {
+//	        // Fetch invoice entity
+//	        ClientInvoiceMasterEntity invoice = clientInvoiceService.findByInvoiceNo(invoiceNo);
+//	        if (invoice == null) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "Invoice not found", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Convert to DTO
+//	        ClientInvoiceMasterDTO invoiceDTO = clientInvoiceService.convertToDto(invoice);
+//
+//	        // Fetch uploaded file info from FileUploadRequestModal (assuming applicantId = invoiceNo or similar)
+//	        FileUploadRequestModal uploadedInvoiceDoc = documentUploadRepository.findByApplicantIdAndDocumentType(
+//	            invoiceNo, FileUploadRequestModal.DocumentType.INVOICE_UPLOAD
+//	        );
+//
+//	        if (uploadedInvoiceDoc == null || uploadedInvoiceDoc.getDocumentPath() == null) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "Invoice document not uploaded or missing", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Get the file name from the path
+//	        String documentPath = uploadedInvoiceDoc.getDocumentPath();
+//	        String fileName = Paths.get(documentPath).getFileName().toString();  // Extract file name from path
+//
+//	        // Download the file from the server
+//	        byte[] fileBytes = sftpUploaderService.downloadFileFromServer(documentPath);
+//
+//	        if (fileBytes == null || fileBytes.length == 0) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "File not found or empty", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Send the invoice email with attachment
+//	        clientInvoiceService.sendInvoiceEmailWithAttachment(invoiceDTO, fileName, fileBytes);
+//
+//	        return ResponseEntity.ok(Collections.singletonMap("message", "Email sent with attachment."));
+//
+//	    } catch (Exception e) {
+//	        e.printStackTrace();
+//	        return CommonUtils.createResponse(Constants.FAIL, "Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+
+//***************************************************************************************************************************************************	
+//	@EncryptResponse
+//	@PostMapping("/sendInvoiceEmailWithAttachment")
+//	public ResponseEntity<?> sendInvoiceEmailWithAttachment(@RequestBody Map<String, String> requestMap) {
+//	    String invoiceNo = requestMap.get("invoiceNo");
+//
+//	    if (invoiceNo == null || invoiceNo.trim().isEmpty()) {
+//	        return CommonUtils.createResponse(Constants.FAIL, "Invoice No is required", HttpStatus.BAD_REQUEST);
+//	    }
+//
+//	    try {
+//	        // Fetch invoice from DB using invoiceNo
+//	        ClientInvoiceMasterEntity invoice = clientInvoiceService.findByInvoiceNo(invoiceNo);
+//	        if (invoice == null) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "Invoice not found", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Convert to DTO
+//	        ClientInvoiceMasterDTO invoiceDTO = clientInvoiceService.convertToDto(invoice);
+//
+//	        // Build dynamic filename
+//	        String clientName = invoice.getClientName();
+//	        String projectName = invoice.getProjectName();
+//	        String fileName = "Invoice_" + invoiceNo + ".pdf";  // You define the pattern here
+//
+//	        // Build remote path
+//	        String remoteFilePath = "/opt/cvmsdocuments/client/" + clientName + "/" + projectName + "/" + fileName;
+//
+//	        // Download file
+//	        byte[] fileBytes = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+//
+//	        if (fileBytes == null || fileBytes.length == 0) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "File not found or empty", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Send email
+//	        clientInvoiceService.sendInvoiceEmailWithAttachment(invoiceDTO, fileName, fileBytes);
+//
+//	        return ResponseEntity.ok(Collections.singletonMap("message", "Email sent with attachment."));
+//
+//	    } catch (Exception e) {
+//	        return CommonUtils.createResponse(Constants.FAIL, "Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+//************************************************************************************************************************************************
+	
+//	&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&   Real one
+//	@EncryptResponse
+//	@PostMapping("/sendInvoiceEmailWithAttachment")
+//	public ResponseEntity<?> sendInvoiceEmailWithAttachment(@RequestBody Map<String, String> requestMap) {
+//	    String invoiceNo = requestMap.get("invoiceNo");
+//
+//	    if (invoiceNo == null || invoiceNo.trim().isEmpty()) {
+//	        return CommonUtils.createResponse(Constants.FAIL, "Invoice No is required", HttpStatus.BAD_REQUEST);
+//	    }
+//
+//	    try {
+//	        // Fetch invoice from DB using invoiceNo
+//	        ClientInvoiceMasterEntity invoice = clientInvoiceService.findByInvoiceNo(invoiceNo);
+//	        if (invoice == null) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "Invoice not found", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Convert to DTO
+//	        ClientInvoiceMasterDTO invoiceDTO = clientInvoiceService.convertToDto(invoice);
+//
+//	        // Replace '/' with '-' in invoiceNo for filename
+//	        String correctedInvoiceNo = invoiceNo.replaceAll("/", "-").trim();
+//	        
+//	        // Build dynamic filename
+//	        String clientName = invoice.getClientName();
+//	        String projectName = invoice.getProjectName();
+//	        String fileName = "Invoice_" + correctedInvoiceNo + ".pdf";  // Invoice file naming pattern
+//
+//	        // Build remote path
+//	        String remoteFilePath = "/opt/cvmsdocuments/client/" + clientName + "/" + projectName + "/" + fileName;
+//	        
+//	        System.out.println(remoteFilePath);
+//
+//	        // Download file
+//	        byte[] fileBytes = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+//
+//	        if (fileBytes == null || fileBytes.length == 0) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "File not found or empty", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Send email with attachment
+//	        clientInvoiceService.sendInvoiceEmailWithAttachment(invoiceDTO, fileName, fileBytes);
+//
+//	        return ResponseEntity.ok(Collections.singletonMap("message", "Email sent with attachment."));
+//
+//	    } catch (Exception e) {
+//	        return CommonUtils.createResponse(Constants.FAIL, "Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+	
+	@EncryptResponse
+	@PostMapping("/sendInvoiceEmailWithAttachment")
+	public ResponseEntity<?> sendInvoiceEmailWithAttachment(@RequestBody Map<String, String> requestMap) {
+	    String invoiceNo = requestMap.get("invoiceNo");
+
+	    if (invoiceNo == null || invoiceNo.trim().isEmpty()) {
+	        return CommonUtils.createResponse(Constants.FAIL, "Invoice No is required", HttpStatus.BAD_REQUEST);
+	    }
+
+	    try {
+	        // Replace '/' with '-' for file name construction
+	        String correctedInvoiceNo = invoiceNo.replaceAll("/", "-").trim();
+
+	        // ✅ Fetch invoice details from ClientInvoiceDetailsEntity table
+	        List<ClientInvoiceDetailsEntity> invoiceDetailsList = clientInvoiceDetailsRepo.getClientInvoiceDetails();
+
+	        if (invoiceDetailsList.isEmpty()) {
+	            return CommonUtils.createResponse(Constants.FAIL, "Invoice details not found", HttpStatus.NOT_FOUND);
+	        }
+
+	        // ✅ Optionally filter by invoiceNo (you can add a query method in the repo for this)
+	        ClientInvoiceDetailsEntity invoiceDetails = invoiceDetailsList.stream()
+	            .filter(i -> correctedInvoiceNo.equals(i.getInvoiceNo().replaceAll("/", "-")))
+	            .findFirst()
+	            .orElse(null);
+
+	        if (invoiceDetails == null) {
+	            return CommonUtils.createResponse(Constants.FAIL, "Invoice not found in invoice details table", HttpStatus.NOT_FOUND);
+	        }
+
+	        String clientName = invoiceDetails.getClientName();
+	        String projectName = invoiceDetails.getProjectName();
+	        String fileName = "Invoice_" + correctedInvoiceNo + ".pdf";
+
+	        String remoteFilePath = "/opt/cvmsdocuments/client/" + clientName + "/" + projectName + "/" + fileName;
+
+	        // ✅ Download file
+	        byte[] fileBytes = sftpUploaderService.downloadFileFromServer(remoteFilePath);
+	        if (fileBytes == null || fileBytes.length == 0) {
+	            return CommonUtils.createResponse(Constants.FAIL, "File not found or empty", HttpStatus.NOT_FOUND);
+	        }
+
+	        // ✅ Delegate to service method already present in ClientInvoiceMasterServiceImpl
+	        clientInvoiceService.sendInvoiceEmailWithAttachment(invoiceDetails, fileName, fileBytes);
+
+	        return ResponseEntity.ok(Collections.singletonMap("message", "Email sent with attachment."));
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return CommonUtils.createResponse(Constants.FAIL, "Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
+
 
 //**************************************************************************&
 
@@ -1242,63 +1453,168 @@ public class ClientInvoiceMasterController {
 		}
 
 	}
-	
+//	
 	@GetMapping("/getClientInvoice/{invoiceNo}")
 	public ResponseEntity<?> getClientInvoice(@PathVariable String invoiceNo) {
 	    try {
+	        invoiceNo = invoiceNo.trim();
+	        String correctedInvoiceNo = invoiceNo.replaceAll("=", "/").trim();
+	        invoiceNo = correctedInvoiceNo;
 	        // Fetch invoice by invoiceNo
-	    	invoiceNo = invoiceNo.trim();
-	        ClientInvoiceMasterEntity clientInvoice = clientInvoiceService.findByInvoiceNo(invoiceNo);
+	        ClientInvoiceMasterEntity invoice = clientInvoiceService.findByInvoiceNo(invoiceNo);
 
-	        // Check if the invoice exists
-	        if (clientInvoice == null) {
+	        if (invoice == null) {
 	            return new ResponseEntity<>(Map.of("message", "Invoice not found"), HttpStatus.NOT_FOUND);
 	        }
 
-	        // Prepare response data
-	        Map<String, Object> responseMap = new HashMap<>();
-	        responseMap.put("clientName", clientInvoice.getClientName());
-	        responseMap.put("projectName", clientInvoice.getProjectName());
-	        responseMap.put("discom", clientInvoice.getDiscom());
-	        responseMap.put("invoiceDate", clientInvoice.getInvoiceDate());
-	        responseMap.put("invoiceNo", clientInvoice.getInvoiceNo());
-	        responseMap.put("invoiceDescription", clientInvoice.getInvoiceDescription());
-	        responseMap.put("invoiceDueDate", clientInvoice.getInvoiceDueDate());
-	        responseMap.put("invoiceAmountIncluGst", clientInvoice.getInvoiceAmountIncluGst());
-	        responseMap.put("status", clientInvoice.getStatus());
-	        responseMap.put("invoiceBaseValue", clientInvoice.getInvoiceBaseValue());
-	        responseMap.put("gstBaseValue", clientInvoice.getGstBaseValue());
-	        responseMap.put("invoiceInclusiveOfGst", clientInvoice.getInvoiceInclusiveOfGst());
-	        responseMap.put("tdsPer", clientInvoice.getTdsPer());
-	        responseMap.put("tdsBaseValue", clientInvoice.getTdsBaseValue());
-	        responseMap.put("cgstOnTds", clientInvoice.getCgstOnTds());
-	        responseMap.put("sgstOnTds", clientInvoice.getSgstOnTds());
-	        responseMap.put("totalTdsDeducted", clientInvoice.getTotalTdsDeducted());
-	        responseMap.put("balance", clientInvoice.getBalance());
-	        responseMap.put("penalty", clientInvoice.getPenalty());
-	        responseMap.put("penaltyDeductionOnBase", clientInvoice.getPenaltyDeductionOnBase());
-	        responseMap.put("gstOnPenalty", clientInvoice.getGstOnPenalty());
-	        responseMap.put("totalPenaltyDeduction", clientInvoice.getTotalPenaltyDeduction());
-	        responseMap.put("creditNote", clientInvoice.getCreditNote());
-	        responseMap.put("totalPaymentReceived", clientInvoice.getTotalPaymentReceived());
-	        responseMap.put("billableState", clientInvoice.getBillableState());
+	        Map<String, Object> invoiceMap = new HashMap<>();
 
-	        // Fetch and map DescriptionAndBaseValue
-	        List<ClientInvoiceDescriptionValue> descriptions = clientInvoiceDescriptionValueService.findByInvoiceNo(invoiceNo);
-	        List<Map<String, Object>> descriptionList = descriptions.stream().map(desc -> {
-	            Map<String, Object> descMap = new HashMap<>();
-	            descMap.put("itemDescription", desc.getItemDescription());
-	            descMap.put("baseValue", desc.getBaseValue());
-	            return descMap;
-	        }).toList();
+	        // Handle invoice ID
+	        invoiceMap.put("id", invoice.getId());
 
-	        responseMap.put("descriptionsAndBaseValues", descriptionList);
+	        // Fetch client details from ClientMasterEntity using clientId
+            String clientName = invoice.getClientName();
+            if (clientName != null && !clientName.trim().isEmpty()) {
+                Optional<ClientMasterEntity> clientMasterEntity = clientMasterRepository.findById(Long.parseLong(clientName));
+                if (clientMasterEntity.isPresent()) {
+                    invoiceMap.put("clientName", clientMasterEntity.get().getClientName());
+                    invoiceMap.put("clientId", clientMasterEntity.get().getId());
+                } else {
+                    invoiceMap.put("clientName", "Not found");
+                    invoiceMap.put("clientId", "Not found");
+                }
+            } else {
+                invoiceMap.put("clientName", "Not provided");
+                invoiceMap.put("clientId", "Not provided");
+            } 
 
-	        return new ResponseEntity<>(responseMap, HttpStatus.OK);
+	        // Add all invoice details with null-checks
+	        invoiceMap.put("projectName", invoice.getProjectName() != null ? invoice.getProjectName() : "Not provided");
+	        invoiceMap.put("discom", invoice.getDiscom() != null ? invoice.getDiscom() : "Not provided");
+	        invoiceMap.put("invoiceNo", invoice.getInvoiceNo() != null ? invoice.getInvoiceNo() : "Not provided");
+	        invoiceMap.put("invoiceDescription", invoice.getInvoiceDescription() != null ? invoice.getInvoiceDescription() : "Not provided");
+	        invoiceMap.put("invoiceDate", invoice.getInvoiceDate() != null ? invoice.getInvoiceDate() : "Not provided");
+	        invoiceMap.put("invoiceDueDate", invoice.getInvoiceDueDate() != null ? invoice.getInvoiceDueDate() : "Not provided");
+
+	        invoiceMap.put("invoiceAmountIncluGst", invoice.getInvoiceAmountIncluGst() != null ? invoice.getInvoiceAmountIncluGst() : "Not provided");
+	        invoiceMap.put("milestone", invoice.getMilestone() != null ? invoice.getMilestone() : "Not provided");
+	        invoiceMap.put("billableState", invoice.getBillableState() != null ? invoice.getBillableState() : "Not provided");
+	        invoiceMap.put("status", invoice.getStatus() != null ? invoice.getStatus() : "Not provided");
+	        invoiceMap.put("amountExcluGst", invoice.getAmountExcluGst() != null ? invoice.getAmountExcluGst() : "Not provided");
+	        invoiceMap.put("totalCgst", invoice.getTotalCgst() != null ? invoice.getTotalCgst() : "Not provided");
+	        invoiceMap.put("totalSgst", invoice.getTotalSgst() != null ? invoice.getTotalSgst() : "Not provided");
+	        invoiceMap.put("totalIgst", invoice.getTotalIgst() != null ? invoice.getTotalIgst() : "Not provided");
+	        invoiceMap.put("invoiceBaseValue", invoice.getInvoiceBaseValue() != null ? invoice.getInvoiceBaseValue() : "Not provided");
+	        invoiceMap.put("gstBaseValue", invoice.getGstBaseValue() != null ? invoice.getGstBaseValue() : "Not provided");
+	        invoiceMap.put("invoiceInclusiveOfGst", invoice.getInvoiceInclusiveOfGst() != null ? invoice.getInvoiceInclusiveOfGst() : "Not provided");
+	        invoiceMap.put("tdsPer", invoice.getTdsPer() != null ? invoice.getTdsPer() : "Not provided");
+	        invoiceMap.put("tdsBaseValue", invoice.getTdsBaseValue() != null ? invoice.getTdsBaseValue() : "Not provided");
+	        invoiceMap.put("tdsOnGst", invoice.getTdsOnGst() != null ? invoice.getTdsOnGst() : "Not provided");
+	        invoiceMap.put("cgstOnTds", invoice.getCgstOnTds() != null ? invoice.getCgstOnTds() : "Not provided");
+	        invoiceMap.put("sgstOnTds", invoice.getSgstOnTds() != null ? invoice.getSgstOnTds() : "Not provided");
+	        invoiceMap.put("totalTdsDeducted", invoice.getTotalTdsDeducted() != null ? invoice.getTotalTdsDeducted() : "Not provided");
+	        invoiceMap.put("balance", invoice.getBalance() != null ? invoice.getBalance() : "Not provided");
+	        invoiceMap.put("penalty", invoice.getPenalty() != null ? invoice.getPenalty() : "Not provided");
+	        invoiceMap.put("penaltyDeductionOnBase", invoice.getPenaltyDeductionOnBase() != null ? invoice.getPenaltyDeductionOnBase() : "Not provided");
+	        invoiceMap.put("gstOnPenalty", invoice.getGstOnPenalty() != null ? invoice.getGstOnPenalty() : "Not provided");
+	        invoiceMap.put("totalPenaltyDeduction", invoice.getTotalPenaltyDeduction() != null ? invoice.getTotalPenaltyDeduction() : "Not provided");
+	        invoiceMap.put("creditNote", invoice.getCreditNote() != null ? invoice.getCreditNote() : "Not provided");
+	        invoiceMap.put("totalPaymentReceived", invoice.getTotalPaymentReceived() != null ? invoice.getTotalPaymentReceived() : "Not provided");
+	        invoiceMap.put("paymentDate", invoice.getPaymentDate() != null ? invoice.getPaymentDate() : "Not provided");
+
+	        // Include client invoice descriptions if present
+	        if (invoice.getClientInvoiceDescriptionValue() != null) {
+	            List<Map<String, Object>> descriptionValues = new ArrayList<>();
+	            for (ClientInvoiceDescriptionValue description : invoice.getClientInvoiceDescriptionValue()) {
+	                Map<String, Object> descriptionMap = new HashMap<>();
+	                descriptionMap.put("itemDescription", description.getItemDescription() != null ? description.getItemDescription() : "Not provided");
+	                descriptionMap.put("baseValue", description.getBaseValue() != null ? description.getBaseValue() : "Not provided");
+	                descriptionMap.put("gstPer", description.getGstPer() != null ? description.getGstPer() : "Not provided");
+	                descriptionMap.put("cgst", description.getCgst() != null ? description.getCgst() : "Not provided");
+	                descriptionMap.put("sgst", description.getSgst() != null ? description.getSgst() : "Not provided");
+	                descriptionMap.put("igst", description.getIgst() != null ? description.getIgst() : "Not provided");
+	                descriptionMap.put("amtInclGst", description.getAmtInclGst() != null ? description.getAmtInclGst() : "Not provided");
+	                descriptionValues.add(descriptionMap);
+	            }
+	            invoiceMap.put("clientInvoiceDescriptionValue", descriptionValues);
+	        }
+
+	        return new ResponseEntity<>(invoiceMap, HttpStatus.OK);
+
 	    } catch (Exception ex) {
-	        return new ResponseEntity<>(Map.of("error", ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+	        return new ResponseEntity<>(Map.of("error", "An error occurred while fetching the invoice: " + ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
+
+//	@GetMapping("/getClientInvoice/{invoiceNo}")
+//	public ResponseEntity<?> getClientInvoice(@PathVariable String invoiceNo) {
+//	    try {
+//	        System.out.println("Original invoiceNo from path: " + invoiceNo);
+//
+//	        // Replace '=' with '/' to reconstruct the original invoice number
+//	        String correctedInvoiceNo = invoiceNo.replaceAll("=", "/").trim();
+//	        System.out.println("Corrected invoiceNo: " + correctedInvoiceNo);
+//
+//	        // Fetch invoice by corrected invoice number
+//	        ClientInvoiceMasterEntity clientInvoice = clientInvoiceService.findByInvoiceNo(correctedInvoiceNo);
+//
+//	        // Check if the invoice exists
+//	        if (clientInvoice == null) {
+//	            return new ResponseEntity<>(Map.of("message", "Invoice not found"), HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Prepare response data
+//	        Map<String, Object> responseMap = new HashMap<>();
+//	        responseMap.put("clientName", clientInvoice.getClientName());
+//	        responseMap.put("projectName", clientInvoice.getProjectName());
+//	        responseMap.put("discom", clientInvoice.getDiscom());
+//	        responseMap.put("invoiceDate", clientInvoice.getInvoiceDate());
+//	        responseMap.put("invoiceNo", clientInvoice.getInvoiceNo());
+//	        responseMap.put("invoiceDescription", clientInvoice.getInvoiceDescription());
+//	        responseMap.put("invoiceDueDate", clientInvoice.getInvoiceDueDate());
+//	        responseMap.put("invoiceAmountIncluGst", clientInvoice.getInvoiceAmountIncluGst());
+//	        responseMap.put("status", clientInvoice.getStatus());
+//	        responseMap.put("invoiceBaseValue", clientInvoice.getInvoiceBaseValue());
+//	        responseMap.put("gstBaseValue", clientInvoice.getGstBaseValue());
+//	        responseMap.put("invoiceInclusiveOfGst", clientInvoice.getInvoiceInclusiveOfGst());
+//	        responseMap.put("tdsPer", clientInvoice.getTdsPer());
+//	        responseMap.put("tdsBaseValue", clientInvoice.getTdsBaseValue());
+//	        responseMap.put("cgstOnTds", clientInvoice.getCgstOnTds());
+//	        responseMap.put("sgstOnTds", clientInvoice.getSgstOnTds());
+//	        responseMap.put("totalTdsDeducted", clientInvoice.getTotalTdsDeducted());
+//	        responseMap.put("balance", clientInvoice.getBalance());
+//	        responseMap.put("penalty", clientInvoice.getPenalty());
+//	        responseMap.put("penaltyDeductionOnBase", clientInvoice.getPenaltyDeductionOnBase());
+//	        responseMap.put("gstOnPenalty", clientInvoice.getGstOnPenalty());
+//	        responseMap.put("totalPenaltyDeduction", clientInvoice.getTotalPenaltyDeduction());
+//	        responseMap.put("creditNote", clientInvoice.getCreditNote());
+//	        responseMap.put("totalPaymentReceived", clientInvoice.getTotalPaymentReceived());
+//	        responseMap.put("billableState", clientInvoice.getBillableState());
+//
+//	     // Fetch and map DescriptionAndBaseValue
+//	        System.out.println("Fetching descriptions for invoice: " + correctedInvoiceNo);
+//	        List<ClientInvoiceDescriptionValue> descriptions = clientInvoiceDescriptionValueService.findByInvoiceNo(correctedInvoiceNo);
+//
+//	        if (descriptions == null || descriptions.isEmpty()) {
+//	            System.out.println("No description data found for invoice: " + correctedInvoiceNo);
+//	        }
+//
+//	        List<Map<String, Object>> descriptionList = descriptions.stream().map(desc -> {
+//	            Map<String, Object> descMap = new HashMap<>();
+//	            descMap.put("itemDescription", desc.getItemDescription());
+//	            descMap.put("baseValue", desc.getBaseValue());
+//	            return descMap;
+//	        }).toList();
+//
+//	        responseMap.put("descriptionsAndBaseValues", descriptionList);
+//
+//	        return new ResponseEntity<>(responseMap, HttpStatus.OK);
+//	    } catch (Exception ex) {
+//	        ex.printStackTrace();
+//	        return new ResponseEntity<>(Map.of("error", ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
 
 
 
