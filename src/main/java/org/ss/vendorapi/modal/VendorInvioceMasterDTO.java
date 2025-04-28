@@ -89,80 +89,24 @@ public class VendorInvioceMasterDTO {
     public Double getAmountExcluGst() {
         return amountExcluGst;
     }
+    
+    
 
-//	private String vendorId;
-//	private Long id;
-//	private String vendorName;
-//	private Long clientId;
-//	private String clientName;
-//	private String projectName;
-//	@JsonFormat(pattern="dd/MM/yyyy")
-//	private Date invoiceDate;
-//	private String invoiceNo;
-//	private String poNo;
-//	@JsonFormat(pattern="dd/MM/yyyy")
-//	private Date invoiceDueDate;
-//	private String invoiceDescription;
-//	private String gstPer;
-//	private String invoiceAmountExcluGst;
-//	private String invoiceAmountIncluGst;
-//	private String status;
-//	
-//	private List<InvoiceDescriptionValue> InvoiceDescriptionValue;
-//	private String invoiceBaseValue;
-//	private String gstBaseValue;
-//	private String invoiceInclusiveOfGst;
-//	private String tdsBaseValue;
-//	private String cgstOnTds;
-//	private String sgstOnTds;
-//	private String totalTdsDeducted;
-//	private String balance;
-//	private String penaltyDeductionOnBase;
-//	private String gstOnPenalty;
-//	private String totalPenaltyDeduction;
-//	private String totalPaymentReceived;
-//	private String TdsPer;
-//	private String TdsOnGst;
-//	private String IgstOnTds;
-//	private String Penalty;
-//	private String CreditNote;
-//	
-//	@JsonFormat(pattern="dd/MM/yyyy")
-//	private Date startDate;
-//	
-//	@JsonFormat(pattern="dd/MM/yyyy")
-//	private Date EndDate;
-//	
-//	private String modeOfPayment;
-//
-//	public Double getTotalCgst() {		
-//		return getTotalCgst();
-//	}
-//
-//	public Double getTotalSgst() {
-//		return getTotalSgst();
-//	}
-//
-//	public Double getTotalIgst() {		
-//		return getTotalIgst();
-//	}
-//
-//	public Double getAmountExcluGst() {
-//		return getAmountExcluGst();
-//	}
+    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "Asia/Kolkata")
+    private Date paymentRequestSentDate;
+
+    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "Asia/Kolkata")
+    private Date buApprovalDate;
+
+    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "Asia/Kolkata")
+    private Date dateOfSubmissionToFinance;
+
+    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "Asia/Kolkata") 
+    private Date paymentDate;
+
+    private String paymentAdviceNo;
 		
 }	
 	
 	
-//	@JsonFormat(pattern="dd/MM/yyyy")
-//	private Date date;
-//	private String tdsDeducted;
-//	private String amount;
-//	private String penalty;
-//	private String laborCess;
-//	private String totalAmount;
-	//	    private byte[] invoiceUpload;
-	//	    private byte[] po;
-	//	    private byte[] deliveryAcceptance;
-	//	    private byte[] eWayBill;
-	//	    private byte[] miscellaneous;
+

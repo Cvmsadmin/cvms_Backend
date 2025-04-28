@@ -19,16 +19,21 @@ public class CorsFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 //        response.addHeader("Access-Control-Allow-Origin", "*");
+//    	 response.setHeader("Access-Control-Allow-Origin", "https://cvms.infinite.com");
         response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.addHeader("Access-Control-Allow-Headers", "*");
         response.addHeader("Access-Control-Expose-Headers", "Authorization");
         response.addHeader("Access-Control-Allow-Credentials", "true");
 
-        if (request.getMethod().equals("OPTIONS")) {
+//        if (request.getMethod().equals("OPTIONS")) {
+//            response.setStatus(HttpServletResponse.SC_OK);
+//        } else {
+        
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
-        } else {
+            return;
+        }
             filterChain.doFilter(request, response);
         }
     }
-}
 

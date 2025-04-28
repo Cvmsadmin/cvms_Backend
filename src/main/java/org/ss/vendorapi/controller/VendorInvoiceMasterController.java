@@ -233,6 +233,31 @@ public class VendorInvoiceMasterController {
 	        vendorInvoiceMaster.setTotalSgst(vendorInvoiceDTO.getTotalSgst());
 	        vendorInvoiceMaster.setTotalIgst(vendorInvoiceDTO.getTotalIgst());
 	        vendorInvoiceMaster.setAmountExcluGst(vendorInvoiceDTO.getAmountExcluGst());
+	        
+	        vendorInvoiceMaster.setTotalIgst(vendorInvoiceDTO.getTotalIgst());
+	        vendorInvoiceMaster.setAmountExcluGst(vendorInvoiceDTO.getAmountExcluGst());
+
+	        // Optional: Set only if not null or not empty
+	        if (vendorInvoiceDTO.getPaymentRequestSentDate() != null) {
+	            vendorInvoiceMaster.setPaymentRequestSentDate(vendorInvoiceDTO.getPaymentRequestSentDate());
+	        }
+
+	        if (vendorInvoiceDTO.getBuApprovalDate() != null) {
+	            vendorInvoiceMaster.setBuApprovalDate(vendorInvoiceDTO.getBuApprovalDate());
+	        }
+
+	        if (vendorInvoiceDTO.getDateOfSubmissionToFinance() != null) {
+	            vendorInvoiceMaster.setDateOfSubmissionToFinance(vendorInvoiceDTO.getDateOfSubmissionToFinance());
+	        }
+
+	        if (vendorInvoiceDTO.getPaymentDate() != null) {
+	            vendorInvoiceMaster.setPaymentDate(vendorInvoiceDTO.getPaymentDate());
+	        }
+
+	        if (!UtilValidate.isEmpty(vendorInvoiceDTO.getPaymentAdviceNo())) {
+	            vendorInvoiceMaster.setPaymentAdviceNo(vendorInvoiceDTO.getPaymentAdviceNo());
+	        }
+
 
 	        // Save vendor invoice
 	        vendorInvoiceMaster = vendorInvoiceMasterService.save(vendorInvoiceMaster);
@@ -615,17 +640,43 @@ public class VendorInvoiceMasterController {
 	                // Map nested descriptionsAndBaseValues from descriptionValues
 	                if (invoice.getInvoiceDescriptionValue() != null && !invoice.getInvoiceDescriptionValue().isEmpty()) {
 	                    List<InvoiceDescriptionValue> descriptionAndBaseValues = invoice.getInvoiceDescriptionValue().stream()
-	                        .map(desc -> {
-	                            InvoiceDescriptionValue value = new InvoiceDescriptionValue();
-	                            value.setItemDescription(desc.getItemDescription() != null ? desc.getItemDescription() : ""); // Fallback to empty string
-	                            value.setBaseValue(desc.getBaseValue() != null ? desc.getBaseValue() : "0"); // Fallback to "0" if null
-	                            value.setGstPer(desc.getGstPer());
-	                            value.setCgst(desc.getCgst());
-	                            value.setSgst(desc.getSgst());
-	                            value.setIgst(desc.getIgst());
-	                            value.setAmtInclGst(desc.getAmtInclGst());
-	                            return value;
-	                        })
+	                    		.map(desc -> {
+	                    		    InvoiceDescriptionValue value = new InvoiceDescriptionValue();
+	                    		    value.setItemDescription(desc.getItemDescription() != null ? desc.getItemDescription() : ""); // Fallback to empty string
+	                    		    value.setBaseValue(desc.getBaseValue() != null ? desc.getBaseValue() : "0"); // Fallback to "0" if null
+	                    		    value.setGstPer(desc.getGstPer());
+	                    		    value.setCgst(desc.getCgst());
+	                    		    value.setSgst(desc.getSgst());
+	                    		    value.setIgst(desc.getIgst());
+
+	                    		    // Calculate amtInclGst if null
+	                    		    if (desc.getAmtInclGst() == null) {
+	                    		        try {
+	                    		            double baseVal = Double.parseDouble(desc.getBaseValue() != null ? desc.getBaseValue() : "0");
+	                    		            double gstPer = desc.getGstPer() != null ? desc.getGstPer() : 0.0;
+	                    		            double amtInclGst = baseVal + (baseVal * gstPer / 100.0);
+	                    		            value.setAmtInclGst(amtInclGst);
+	                    		        } catch (NumberFormatException e) {
+	                    		            value.setAmtInclGst(0.0); // Fallback in case of number format issues
+	                    		        }
+	                    		    } else {
+	                    		        value.setAmtInclGst(desc.getAmtInclGst());
+	                    		    }
+
+	                    		    return value;
+	                    		})
+
+//	                        .map(desc -> {
+//	                            InvoiceDescriptionValue value = new InvoiceDescriptionValue();
+//	                            value.setItemDescription(desc.getItemDescription() != null ? desc.getItemDescription() : ""); // Fallback to empty string
+//	                            value.setBaseValue(desc.getBaseValue() != null ? desc.getBaseValue() : "0"); // Fallback to "0" if null
+//	                            value.setGstPer(desc.getGstPer());
+//	                            value.setCgst(desc.getCgst());
+//	                            value.setSgst(desc.getSgst());
+//	                            value.setIgst(desc.getIgst());
+//	                            value.setAmtInclGst(desc.getAmtInclGst());
+//	                            return value;
+//	                        })
 	                        .collect(Collectors.toList());
 	                    dto.setInvoiceDescriptionValue(descriptionAndBaseValues);
 	                } else {
@@ -660,6 +711,13 @@ public class VendorInvoiceMasterController {
 	                dto.setTotalSgst(invoice.getTotalSgst());
 	                dto.setTotalIgst(invoice.getTotalIgst());
 	                dto.setAmountExcluGst(invoice.getAmountExcluGst());
+	                
+	                // New fields to be added to the response
+	                dto.setPaymentRequestSentDate(invoice.getPaymentRequestSentDate());
+	                dto.setBuApprovalDate(invoice.getBuApprovalDate());
+	                dto.setDateOfSubmissionToFinance(invoice.getDateOfSubmissionToFinance());
+	                dto.setPaymentDate(invoice.getPaymentDate());
+	                dto.setPaymentAdviceNo(invoice.getPaymentAdviceNo());
 
 	                return dto;
 	            })
@@ -671,6 +729,7 @@ public class VendorInvoiceMasterController {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
 
 	
 	
@@ -972,6 +1031,14 @@ public class VendorInvoiceMasterController {
 	        vendorInvoiceEntity.setTotalIgst(vendorInvoiceMasterDTO.getTotalIgst() != null ? vendorInvoiceMasterDTO.getTotalIgst() : vendorInvoiceEntity.getTotalIgst());
 	        vendorInvoiceEntity.setAmountExcluGst(vendorInvoiceMasterDTO.getAmountExcluGst() != null ? vendorInvoiceMasterDTO.getAmountExcluGst() : vendorInvoiceEntity.getAmountExcluGst());
 
+	        // Set new fields
+	        vendorInvoiceEntity.setPaymentRequestSentDate(vendorInvoiceMasterDTO.getPaymentRequestSentDate());
+	        vendorInvoiceEntity.setBuApprovalDate(vendorInvoiceMasterDTO.getBuApprovalDate());
+	        vendorInvoiceEntity.setDateOfSubmissionToFinance(vendorInvoiceMasterDTO.getDateOfSubmissionToFinance());
+	        vendorInvoiceEntity.setPaymentDate(vendorInvoiceMasterDTO.getPaymentDate());
+	        vendorInvoiceEntity.setPaymentAdviceNo(vendorInvoiceMasterDTO.getPaymentAdviceNo());
+	        
+	        
 	        // Save the updated vendor invoice
 	        vendorInvoiceMasterService.update(vendorInvoiceEntity);
 

@@ -149,7 +149,31 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 	    @Column(name = "amount_exclu_gst")
 	    private Double amountExcluGst;
 	    
-	    	    	    
+	    	
+	 // Optional fields
+	    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "Asia/Kolkata")
+	    @Column(name = "payment_request_sent_date")
+	    private Date paymentRequestSentDate;
+
+	    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "Asia/Kolkata")
+	    @Column(name = "bu_approval_date")
+	    private Date buApprovalDate;
+
+	    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "Asia/Kolkata")
+	    @Column(name = "submission_to_finance_date")
+	    private Date dateOfSubmissionToFinance;
+
+	    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "Asia/Kolkata")
+	    @Column(name = "payment_date")
+	    private Date paymentDate;
+
+	    @Column(name = "payment_advice_no")
+	    private String paymentAdviceNo;
+
+//	    public void setPaymentRequestSentDate(Date paymentRequestSentDate) {
+//	        this.paymentRequestSentDate = paymentRequestSentDate;
+//	    }
+
 	}
 
 

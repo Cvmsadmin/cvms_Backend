@@ -44,7 +44,7 @@ public class DocumentFileUploadController {
     private InvoiceEmailSchedulerService invoiceEmailSchedulerService;
 
         
-    @EncryptResponse
+//    @EncryptResponse
     @PostMapping("/uploadClientDocs")
     public ResponseEntity<?> uploadFiles(
             @RequestParam("files") List<MultipartFile> files,
