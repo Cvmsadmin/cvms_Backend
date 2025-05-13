@@ -211,10 +211,6 @@ public class UserMasterController{
 	}
 
 
-
-
-
-
 	@EncryptResponse
 	@GetMapping("/getAllUsers")
 	public ResponseEntity<?> getAllUsers() {
