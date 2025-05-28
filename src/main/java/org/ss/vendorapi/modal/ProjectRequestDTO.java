@@ -3,6 +3,7 @@ package org.ss.vendorapi.modal;
 import java.util.Date;
 import java.util.List;
 
+import org.ss.vendorapi.entity.MilestoneCategory;
 import org.ss.vendorapi.entity.MilestoneMasterEntity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -15,6 +16,7 @@ import lombok.Setter;
 public class ProjectRequestDTO {
 	
 	private List<MilestoneMasterEntity> moe;
+    private List<MilestoneCategory> parts;     // Milestone Categories
 	private Long id;
 	private String clientName;
     private String projectName;
@@ -49,6 +51,9 @@ public class ProjectRequestDTO {
     private Date singOfDate;
     private String contractPrice;
 	public String projectId;
+
+
+
        
 
 }

@@ -24,12 +24,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.advice.EncryptResponse;
 import org.ss.vendorapi.entity.ClientMasterEntity;
+import org.ss.vendorapi.entity.MilestoneCategory;
 import org.ss.vendorapi.entity.MilestoneMasterEntity;
 import org.ss.vendorapi.entity.ProfitLossMasterEntity;
 import org.ss.vendorapi.entity.ProjectMasterEntity;
 import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.modal.ProjectRequestDTO;
 import org.ss.vendorapi.service.ClientMasterService;
+import org.ss.vendorapi.service.MilestoneCategoryService;
 import org.ss.vendorapi.service.MilestoneMasterService;
 import org.ss.vendorapi.service.ProjectMasterService;
 import org.ss.vendorapi.service.UserMasterService;
@@ -41,6 +43,7 @@ import org.ss.vendorapi.util.StatusMessageConstants;
 import org.ss.vendorapi.util.UtilValidate;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -59,15 +62,19 @@ public class ProjectMasterController {
 	@Autowired
 	private UserMasterService userMasterService;
 
-
 	@Autowired
 	private MilestoneMasterService milestoneMasterService;
+	
+	@Autowired
+	private MilestoneCategoryService milestoneCategoryService;
+
 
 	@Autowired
 	private ClientMasterService clientMasterService;
 
 	@EncryptResponse
 	@PostMapping("/addProject")
+	@Transactional  // Ensures atomicity
 	public ResponseEntity<?> addProject(@RequestBody ProjectRequestDTO projectRequestDTO, HttpServletRequest request) {
 		String methodName = request.getRequestURI();
 		//	        logger.logMethodStart(methodName);
@@ -157,6 +164,8 @@ public class ProjectMasterController {
 				milestoneMasterEntity.setGstRate(milestoneMasterDto.getGstRate());
 				milestoneMasterEntity.setGstAmount(milestoneMasterDto.getGstAmount());
 				milestoneMasterEntity.setStatus(milestoneMasterDto.getStatus());  
+			    milestoneMasterEntity.setServiceTypes(milestoneMasterDto.getServiceTypes());
+	            milestoneMasterEntity.setPaymentPer(milestoneMasterDto.getPaymentPer());
 //	            milestoneMasterEntity.setCompletionDate(milestoneMasterDto.getCompletionDate()); 
 				 // Only set completion date if it's not empty
 	            if (milestoneMasterDto.getCompletionDate() != null && !milestoneMasterDto.getCompletionDate().toString().trim().isEmpty()) {
@@ -171,7 +180,20 @@ public class ProjectMasterController {
 					System.out.println(ex.getMessage());
 				}
 			}
+				// Save MilestoneCategory entries (parts)
+			        if (projectRequestDTO.getParts() != null && !projectRequestDTO.getParts().isEmpty()) {
+			            for (MilestoneCategory part : projectRequestDTO.getParts()) {
+			                MilestoneCategory milestoneCategory = new MilestoneCategory();
+			                milestoneCategory.setPartition(part.getPartition());
+			                milestoneCategory.setPartitionAmount(part.getPartitionAmount());
+			                milestoneCategory.setPartitionPer(part.getPartitionPer());
+			                milestoneCategory.setProjectId(projectMasterEntity.getId());
+			                milestoneCategory.setProjectName(projectMasterEntity.getProjectName());
 
+			                // Save using service/repo (you should have one)
+			                milestoneCategoryService.saveCategory(milestoneCategory);  // assumes this method exists
+			            }
+			        }
 
 			if(projectMasterEntity!=null) {
 				statusMap.put(Parameters.statusMsg, StatusMessageConstants.PROJECT_CREATED_SUCCESSFULLY);

@@ -7,7 +7,7 @@ public class ClientInvoiceDescriptionValueDTO {
 	
 	 private Long id;
 	 private String itemDescription;
-	 private Double baseValue;
+	 private String baseValue;
 	 private Double gstPer;
 	 private Double cgst;
 	 private Double sgst;

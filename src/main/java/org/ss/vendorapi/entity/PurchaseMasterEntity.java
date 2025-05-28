@@ -89,5 +89,7 @@ public class PurchaseMasterEntity extends ParentEntity implements Serializable{
 	@JsonFormat(pattern="dd/MM/yyyy", timezone = "Asia/Kolkata")
 	@Column(name = "end_date")
 	private Date endDate;
+	
+	
       
 }

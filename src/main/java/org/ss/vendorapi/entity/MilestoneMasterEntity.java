@@ -36,18 +36,15 @@ public class MilestoneMasterEntity extends ParentEntity implements Serializable{
 	private String serialNumber;
 	private String days;
 	private String deliverables;
-
 	private String amountExclGst;
 	private String gstRate;
 	private String gstAmount;
-	private String amountInclGst;
-	
-	private String status;  //new field
+	private String amountInclGst;	
+	private String status; 
 	
 	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "completiondate")  // explicitly set the column name as in your DB
 	private Date completiondate;
-
 		
 	public String getAmountIncluGst() {		
 		return amountInclGst;
@@ -64,9 +61,24 @@ public class MilestoneMasterEntity extends ParentEntity implements Serializable{
 	public void setCompletionDate(Date completionDate) {
 	    this.completiondate = completionDate;
 	}
-
 	
+	@Column(name = "servicetypes")
+	private String serviceTypes;    //new field
+	
+	@Column(name = "payment_per")
+	private Double paymentPer;     //new field
 
+	public Double getPaymentPer() {
+	    return this.paymentPer;
+	}	
+	
+	public String getServiceTypes() {	
+		 return this.serviceTypes;
+	}
+
+	public void setServiceTypes(String serviceTypes) {
+	    this.serviceTypes = serviceTypes;
+	}
 	
 }
 

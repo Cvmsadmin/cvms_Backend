@@ -82,7 +82,7 @@ public class PurchaseMasterController {
 	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
 	        }
 	        
-//	     // 🛑 Check for duplicate poNo before saving if status is PoApproved
+// 🛑 Check for duplicate poNo before saving if status is PoApproved
 	        if ("PoApproved".equalsIgnoreCase(purchaseRequestDTO.getStatus()) && purchaseRequestDTO.getPoNo() != null) {
 	            Optional<PurchaseMasterEntity> existingPo = purchaseMasterService.findOptionalByPoNo(purchaseRequestDTO.getPoNo());
 	            if (existingPo.isPresent()) {

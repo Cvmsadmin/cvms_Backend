@@ -114,14 +114,14 @@ public class SecurityConfig {
 	    mailSender.setHost("smtp.office365.com");
 	    mailSender.setPort(587);
 	    mailSender.setUsername("CVMSADMIN@INFINITE.COM");
-	    mailSender.setPassword("Admin@cvms");
+	    mailSender.setPassword("Admin@cvms");  //Admin@cvms1 github
 	    Properties props = mailSender.getJavaMailProperties();
 	    props.put("mail.transport.protocol", "smtp");
 	    props.put("mail.smtp.auth", "true");
 	    props.put("mail.smtp.starttls.enable", "true"); // Enable TLS
 	    props.put("mail.smtp.from", "CVMSADMIN@INFINITE.COM");
 
-	    // Add timeouts
+	    // Add timeouts	
 
 	    props.put("mail.smtp.connectiontimeout", "10000"); // 5 seconds
 	    props.put("mail.smtp.timeout", "10000"); // 5 seconds

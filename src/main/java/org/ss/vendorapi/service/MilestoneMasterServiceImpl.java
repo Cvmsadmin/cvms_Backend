@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.ss.vendorapi.entity.MilestoneCategory;
 import org.ss.vendorapi.entity.MilestoneMasterEntity;
 import org.ss.vendorapi.repository.MilestoneMasterRepository;
 
@@ -43,6 +44,8 @@ public class MilestoneMasterServiceImpl implements MilestoneMasterService{
 	public List<MilestoneMasterEntity> findByProjectId(String projectId) {
 		return milestoneMasterRepository.findByProjectId(projectId);
 	}
+
+
 
 }
 

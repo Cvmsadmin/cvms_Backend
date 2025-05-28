@@ -227,7 +227,7 @@ public class ClientInvoiceMasterController {
 	                }
 	                
 	                if (description.getBaseValue() != null) {
-	                    descriptionValue.setBaseValue(Double.valueOf(description.getBaseValue()));
+	                    descriptionValue.setBaseValue(String.valueOf(description.getBaseValue()));
 	                }
 	                if (description.getGstPer() != null) {
 	                    descriptionValue.setGstPer(Double.valueOf(description.getGstPer()));

@@ -45,7 +45,7 @@ public class ClientInvoiceDescriptionValue {
     private String itemDescription;
     
     @Column(name = "base_value")
-    private Double baseValue;
+    private String baseValue;
     
     @Column(name = "gst_per")
     private Double gstPer;
