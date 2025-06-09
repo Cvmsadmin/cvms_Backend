@@ -60,7 +60,7 @@ public class ClientInvoiceMasterDTO {
 	private String creditNote;
 	
 	private String tdsOnGst;
-	private String milestone;
+//	private String milestone;
 	
 	private String billableState;
 	private List<ClientInvoiceDescriptionValue> clientInvoiceDescriptionValue;

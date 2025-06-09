@@ -12,6 +12,7 @@ public interface MilestoneMasterService {
 	public List<MilestoneMasterEntity> findAll();
 	public MilestoneMasterEntity findById(Long id);
 	public List<MilestoneMasterEntity> findByProjectId(String projectId);
+	public List<MilestoneMasterEntity> getMilestonesByProjectId(Long projectId);
 	
 
 }

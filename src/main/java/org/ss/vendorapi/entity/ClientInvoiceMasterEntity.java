@@ -131,8 +131,8 @@ public class ClientInvoiceMasterEntity implements Serializable {
     @Column(name = "total_payment_received")
     private Double totalPaymentReceived;
 
-    @Column(name = "milestone")
-    private String milestone;
+//    @Column(name = "milestone")
+//    private String milestone;
 
     private String tdsOnGst;
 

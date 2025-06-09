@@ -1,5 +1,6 @@
 package org.ss.vendorapi.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -30,11 +31,14 @@ import org.ss.vendorapi.entity.ProfitLossMasterEntity;
 import org.ss.vendorapi.entity.ProjectMasterEntity;
 import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.modal.ProjectRequestDTO;
+import org.ss.vendorapi.repository.ProjectMasterRepository;
+import org.ss.vendorapi.service.ClientInvoiceMasterService;
 import org.ss.vendorapi.service.ClientMasterService;
 import org.ss.vendorapi.service.MilestoneCategoryService;
 import org.ss.vendorapi.service.MilestoneMasterService;
 import org.ss.vendorapi.service.ProjectMasterService;
 import org.ss.vendorapi.service.UserMasterService;
+import org.ss.vendorapi.service.VendorInvoiceMasterService;
 import org.ss.vendorapi.util.CommonUtils;
 import org.ss.vendorapi.util.Constants;
 import org.ss.vendorapi.util.Parameters;
@@ -71,6 +75,15 @@ public class ProjectMasterController {
 
 	@Autowired
 	private ClientMasterService clientMasterService;
+	
+	@Autowired
+	private ClientInvoiceMasterService clientInvoiceMasterService;
+	
+	@Autowired
+	private VendorInvoiceMasterService vendorInvoiceMasterService;
+	
+	@Autowired
+	private ProjectMasterRepository projectMasterRepository;
 
 	@EncryptResponse
 	@PostMapping("/addProject")
@@ -582,12 +595,147 @@ public class ProjectMasterController {
 //	    }
 	
 	
+	@EncryptResponse
+	@GetMapping("/getPartsByProjectId/{projectId}")
+	public ResponseEntity<?> getPartsByProjectId(@PathVariable Long projectId) {
+	    try {
+	        List<MilestoneCategory> parts = milestoneCategoryService.getPartsByProjectId(projectId);
+	        if (parts.isEmpty()) {
+	            return CommonUtils.createResponse(Constants.FAIL, "No parts found for this project ID.", HttpStatus.NOT_FOUND);
+	        }
+	        return new ResponseEntity<>(parts, HttpStatus.OK);
+	    } catch (Exception e) {
+	        return CommonUtils.createResponse(Constants.FAIL, e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
 	
 	
+//	@EncryptResponse
+//	@GetMapping("/getMilestoneByPartsId/{partsId}")
+//	public ResponseEntity<?> getMilestoneByPartsId(@PathVariable Long partsId) {
+//	    try {
+//	        // Step 1: Fetch the part
+//	        MilestoneCategory part = milestoneCategoryService.getById(partsId);
+//	        if (part == null) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "Part not found", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Step 2: Fetch milestones by projectId from the part
+//	        List<MilestoneMasterEntity> milestones = milestoneMasterService.getMilestonesByProjectId(part.getProjectId());
+//
+//	        if (milestones.isEmpty()) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "No milestones found", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        return new ResponseEntity<>(milestones, HttpStatus.OK);
+//
+//	    } catch (Exception e) {
+//	        return CommonUtils.createResponse(Constants.FAIL, e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+
 	
-	
-	
-	
+	@EncryptResponse
+	@GetMapping("/getMilestonesByProjectAndPartition")
+	public ResponseEntity<?> getMilestonesByProjectAndPartition(
+	        @RequestParam Long projectId,
+	        @RequestParam String partition) {
+	    try {
+	        // Step 1: Get the part (MilestoneCategory) for the given projectId and partition
+	        MilestoneCategory part = milestoneCategoryService.getByProjectIdAndPartition(projectId, partition);
+	        if (part == null) {
+	            return CommonUtils.createResponse(Constants.FAIL, "Partition not found", HttpStatus.NOT_FOUND);
+	        }
+
+	        // Step 2: Get all milestones for the projectId
+	        List<MilestoneMasterEntity> milestones = milestoneMasterService.getMilestonesByProjectId(projectId);
+
+	        // Step 3: Filter milestones that belong to the given partition
+	        List<MilestoneMasterEntity> filtered = milestones.stream()
+	                .filter(m -> partition.equalsIgnoreCase(m.getServiceTypes()))
+	                .collect(Collectors.toList());
+
+	        if (filtered.isEmpty()) {
+	            return CommonUtils.createResponse(Constants.FAIL, "No milestones found for the given partition", HttpStatus.NOT_FOUND);
+	        }
+
+	        return new ResponseEntity<>(filtered, HttpStatus.OK);
+
+	    } catch (Exception e) {
+	        return CommonUtils.createResponse(Constants.FAIL, e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
+//	@EncryptResponse
+//	@GetMapping("/getInvoiceSumsByProjectId/{projectId}")
+//	public ResponseEntity<?> getInvoiceSumsByProjectId(@PathVariable Long projectId) {
+//	    Map<String, Object> responseMap = new HashMap<>();
+//	    try {
+//	        // Get project name from project ID
+//	        String projectName = projectMasterRepository.findProjectNameById(projectId);
+//	        if (projectName == null) {
+//	            return new ResponseEntity<>("Project not found", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Sum from ClientInvoiceMasterEntity
+//	        Double clientAmountExcluGst = clientInvoiceMasterService.getClientAmountExcluGstByProjectName(projectName);
+//
+//	        // Sum from VendorInvoiceMasterEntity
+//	        Double vendorAmountExcluGst = vendorInvoiceMasterService.getVendorAmountExcluGstByProjectName(projectName);
+//
+//	        responseMap.put("clientAmountExcluGstSum", clientAmountExcluGst != null ? clientAmountExcluGst : 0.0);
+//	        responseMap.put("vendorAmountExcluGstSum", vendorAmountExcluGst != null ? vendorAmountExcluGst : 0.0);
+//	        responseMap.put(Parameters.statusMsg, "Invoice sums fetched successfully.");
+//	        responseMap.put(Parameters.status, Constants.SUCCESS);
+//	        responseMap.put(Parameters.statusCode, "RU_200");
+//	        return new ResponseEntity<>(responseMap, HttpStatus.OK);
+//
+//	    } catch (Exception ex) {
+//	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+
+
+	@EncryptResponse
+	@GetMapping("/getInvoiceSumsByProjectId/{projectId}")
+	public ResponseEntity<?> getInvoiceSumsByProjectId(
+	        @PathVariable Long projectId,
+	        @RequestParam(required = false) String startDate,
+	        @RequestParam(required = false) String endDate) {
+
+	    Map<String, Object> responseMap = new HashMap<>();
+	    try {
+	        // Get project name from project ID
+	        String projectName = projectMasterRepository.findProjectNameById(projectId);
+	        if (projectName == null) {
+	            return new ResponseEntity<>("Project not found", HttpStatus.NOT_FOUND);
+	        }
+
+	        // Convert date strings to LocalDate
+	        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : null;
+	        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : null;
+
+	        // Sum from ClientInvoiceMasterEntity
+	        Double clientAmountExcluGst = clientInvoiceMasterService
+	                .getClientAmountExcluGstByProjectNameAndDate(projectName, start, end);
+
+	        // Sum from VendorInvoiceMasterEntity
+	        Double vendorAmountExcluGst = vendorInvoiceMasterService
+	                .getVendorAmountExcluGstByProjectNameAndDate(projectName, start, end);
+
+	        responseMap.put("clientAmountExcluGstSum", clientAmountExcluGst != null ? clientAmountExcluGst : 0.0);
+	        responseMap.put("vendorAmountExcluGstSum", vendorAmountExcluGst != null ? vendorAmountExcluGst : 0.0);
+	        responseMap.put(Parameters.statusMsg, "Invoice sums fetched successfully.");
+	        responseMap.put(Parameters.status, Constants.SUCCESS);
+	        responseMap.put(Parameters.statusCode, "RU_200");
+	        return new ResponseEntity<>(responseMap, HttpStatus.OK);
+
+	    } catch (Exception ex) {
+	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
+
 	
 	
 	

@@ -61,6 +61,12 @@ public class ClientInvoiceDescriptionValue {
     
     @Column(name = "amt_incl_gst")
     private Double amtInclGst;
+    
+  @Column(name = "milestone")
+  private String milestone;
+    
+  @Column(name = "sub_milestone")
+  private String subMilestone;
 
 
 //	public void setClientInvoiceMaster(ClientInvoiceMasterEntity existingInvoice) {

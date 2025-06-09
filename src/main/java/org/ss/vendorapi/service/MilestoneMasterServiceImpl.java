@@ -44,6 +44,10 @@ public class MilestoneMasterServiceImpl implements MilestoneMasterService{
 	public List<MilestoneMasterEntity> findByProjectId(String projectId) {
 		return milestoneMasterRepository.findByProjectId(projectId);
 	}
+	
+	public List<MilestoneMasterEntity> getMilestonesByProjectId(Long projectId) {
+        return milestoneMasterRepository.findByProjectId(String.valueOf(projectId));
+    }
 
 
 

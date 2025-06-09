@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Where(clause="ACTIVE=1")
+//@Where(clause="ACTIVE=1")
 @Table(name = "milestone_category")
 public class MilestoneCategory {
 

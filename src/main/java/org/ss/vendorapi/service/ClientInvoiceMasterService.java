@@ -1,5 +1,6 @@
 package org.ss.vendorapi.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,8 +28,15 @@ public interface ClientInvoiceMasterService {
 //	public ClientInvoiceMasterDTO convertToDto(ClientInvoiceMasterEntity invoice);
 	public void sendInvoiceEmailWithAttachment(ClientInvoiceDetailsEntity invoiceDetails, String fileName,
 			byte[] fileBytes);
+	
 
+	Double getClientAmountExcluGstByProjectName(String projectName);
+
+
+	Double getClientAmountExcluGstByProjectNameAndDate(String projectName, LocalDate startDate, LocalDate endDate);
+	public List<ClientInvoiceMasterEntity> getInvoicesByProjectName(String projectId);
 	
 //	List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName);
+
 
 }

@@ -36,6 +36,7 @@ import org.ss.vendorapi.entity.VendorInvoiceMasterEntity;
 import org.ss.vendorapi.modal.ClientInvoiceMasterDTO;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.VendorInvioceMasterDTO;
+import org.ss.vendorapi.repository.ProjectMasterRepository;
 import org.ss.vendorapi.service.DataValidationService;
 import org.ss.vendorapi.service.InvoiceDescriptionValueService;
 import org.ss.vendorapi.service.VendorInvoiceMasterService;
@@ -65,6 +66,9 @@ public class VendorInvoiceMasterController {
 
 	@Autowired 
 	private VendorInvoiceMasterService vendorInvoiceMasterService;
+	
+	@Autowired
+	private ProjectMasterRepository projectMasterRepository;
 
 
 	//	************************************************************************************************************************************************************************************
@@ -1339,4 +1343,118 @@ public class VendorInvoiceMasterController {
 //	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 //	    }
 //	}
+	
+	@EncryptResponse
+	@GetMapping("/getVendorInvoicesByProjectId/{projectId}")
+	public ResponseEntity<?> getVendorInvoicesByProjectId(@PathVariable("projectId") Long projectId) {
+	    try {
+	        // Get project name from project ID
+	        String projectName = projectMasterRepository.findProjectNameById(projectId);
+	        if (projectName == null || projectName.trim().isEmpty()) {
+	            return CommonUtils.createResponse(Constants.FAIL, "Project not found for the given ID", HttpStatus.NOT_FOUND);
+	        }
+
+	        // Fetch vendor invoices by project name
+	        List<VendorInvoiceMasterEntity> vendorInvoices = vendorInvoiceMasterService.findByProjectName(projectName);
+
+	        if (vendorInvoices.isEmpty()) {
+	            return CommonUtils.createResponse(Constants.FAIL, "No Vendor Invoices Found", HttpStatus.NOT_FOUND);
+	        }
+
+	        // Sort by ID descending
+	        vendorInvoices.sort(Comparator.comparing(VendorInvoiceMasterEntity::getId).reversed());
+
+	        // Map entities to DTOs
+	        List<VendorInvioceMasterDTO> vendorInvoiceDTOs = vendorInvoices.stream().map(invoice -> {
+	            VendorInvioceMasterDTO dto = new VendorInvioceMasterDTO();
+	            BeanUtils.copyProperties(invoice, dto);
+
+	            // Client info
+	            if (invoice.getClientName() != null) {
+	                ClientMasterEntity client = vendorInvoiceMasterService.findClientById(Long.parseLong(invoice.getClientName()));
+	                if (client != null) {
+	                    dto.setClientId(client.getId());
+	                    dto.setClientName(client.getClientName());
+	                } else {
+	                    dto.setClientId(null);
+	                    dto.setClientName("Unknown");
+	                }
+	            }
+
+	            // Description values
+	            if (invoice.getInvoiceDescriptionValue() != null && !invoice.getInvoiceDescriptionValue().isEmpty()) {
+	                List<InvoiceDescriptionValue> descList = invoice.getInvoiceDescriptionValue().stream().map(desc -> {
+	                    InvoiceDescriptionValue value = new InvoiceDescriptionValue();
+	                    value.setItemDescription(desc.getItemDescription() != null ? desc.getItemDescription() : "");
+	                    value.setBaseValue(desc.getBaseValue() != null ? desc.getBaseValue() : "0");
+	                    value.setGstPer(desc.getGstPer());
+	                    value.setCgst(desc.getCgst());
+	                    value.setSgst(desc.getSgst());
+	                    value.setIgst(desc.getIgst());
+
+	                    if (desc.getAmtInclGst() == null) {
+	                        try {
+	                            double baseVal = Double.parseDouble(desc.getBaseValue() != null ? desc.getBaseValue() : "0");
+	                            double gstPer = desc.getGstPer() != null ? desc.getGstPer() : 0.0;
+	                            value.setAmtInclGst(baseVal + (baseVal * gstPer / 100.0));
+	                        } catch (NumberFormatException e) {
+	                            value.setAmtInclGst(0.0);
+	                        }
+	                    } else {
+	                        value.setAmtInclGst(desc.getAmtInclGst());
+	                    }
+
+	                    return value;
+	                }).collect(Collectors.toList());
+	                dto.setInvoiceDescriptionValue(descList);
+	            } else {
+	                List<InvoiceDescriptionValue> defaultList = new ArrayList<>();
+	                InvoiceDescriptionValue defaultValue = new InvoiceDescriptionValue();
+	                defaultValue.setItemDescription("");
+	                defaultValue.setBaseValue("1000");
+	                defaultList.add(defaultValue);
+	                dto.setInvoiceDescriptionValue(defaultList);
+	            }
+
+	            // Additional fields
+	            dto.setInvoiceBaseValue(invoice.getInvoiceBaseValue());
+	            dto.setGstBaseValue(invoice.getGstBaseValue());
+	            dto.setInvoiceInclusiveOfGst(invoice.getInvoiceInclusiveOfGst());
+	            dto.setTdsBaseValue(invoice.getTdsBaseValue());
+	            dto.setTdsPer(invoice.getTdsPer());
+	            dto.setTdsOnGst(invoice.getTdsOnGst());
+	            dto.setIgstOnTds(invoice.getIgstOnTds());
+	            dto.setCgstOnTds(invoice.getCgstOnTds());
+	            dto.setSgstOnTds(invoice.getSgstOnTds());
+	            dto.setTotalTdsDeducted(invoice.getTotalTdsDeducted());
+	            dto.setBalance(invoice.getBalance());
+	            dto.setPenalty(invoice.getPenalty());
+	            dto.setPenaltyDeductionOnBase(invoice.getPenaltyDeductionOnBase());
+	            dto.setGstOnPenalty(invoice.getGstOnPenalty());
+	            dto.setTotalPenaltyDeduction(invoice.getTotalPenaltyDeduction());
+	            dto.setCreditNote(invoice.getCreditNote());
+	            dto.setTotalPaymentReceived(invoice.getTotalPaymentReceived());
+	            dto.setTotalCgst(invoice.getTotalCgst());
+	            dto.setTotalSgst(invoice.getTotalSgst());
+	            dto.setTotalIgst(invoice.getTotalIgst());
+	            dto.setAmountExcluGst(invoice.getAmountExcluGst());
+
+	            dto.setPaymentRequestSentDate(invoice.getPaymentRequestSentDate());
+	            dto.setBuApprovalDate(invoice.getBuApprovalDate());
+	            dto.setDateOfSubmissionToFinance(invoice.getDateOfSubmissionToFinance());
+	            dto.setPaymentDate(invoice.getPaymentDate());
+	            dto.setPaymentAdviceNo(invoice.getPaymentAdviceNo());
+
+	            return dto;
+	        }).collect(Collectors.toList());
+
+	        return new ResponseEntity<>(vendorInvoiceDTOs, HttpStatus.OK);
+
+	    } catch (Exception ex) {
+	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
+	
+	
 	}

@@ -2,6 +2,7 @@ package org.ss.vendorapi.service;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -376,8 +377,39 @@ public class ClientInvoiceMasterServiceImpl implements ClientInvoiceMasterServic
 	      NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
 	      return formatter.format(invoiceAmount);
 	  }
+	        
+	        @Override
+	        public Double getClientAmountExcluGstByProjectName(String projectName) {
+	            return clientInvoiceMasterRepository.getClientAmountExcluGstByProjectName(projectName);
+	        }
 
-		
+	        @Override
+	        public Double getClientAmountExcluGstByProjectNameAndDate(String projectName, LocalDate startDate, LocalDate endDate) {
+	            try {
+	                Double sum = clientInvoiceMasterRepository.getClientAmountExcluGstByProjectNameAndDate(projectName, startDate, endDate);
+	                return (sum != null) ? sum : 0.0;
+	            } catch (Exception ex) {
+	                ex.printStackTrace();
+	                return 0.0;
+	            }
+	        }
+
+	        public List<ClientInvoiceMasterEntity> getInvoicesByProjectName(String projectName) {
+	            return clientInvoiceMasterRepository.findByProjectName(projectName);
+	        }
+
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
 	}
 
 

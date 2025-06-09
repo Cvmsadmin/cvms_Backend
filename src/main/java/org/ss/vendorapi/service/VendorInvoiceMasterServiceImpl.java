@@ -1,5 +1,6 @@
 package org.ss.vendorapi.service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -63,5 +64,34 @@ public class VendorInvoiceMasterServiceImpl implements VendorInvoiceMasterServic
 //        return vendorinviceMasterRepository.getPayableInvoiceStats();
 		return null;
     }
+	
+	
+	@Override
+	public Double getVendorAmountExcluGstByProjectName(String projectName) {
+	    return vendorinviceMasterRepository.getVendorAmountExcluGstByProjectName(projectName);
+	}
+
+//	 @Override
+//	    public Double getVendorAmountExcluGstByProjectNameAndDate(String projectName, LocalDate startDate, LocalDate endDate) {
+//	        return vendorinviceMasterRepository.getSumByProjectNameAndDate(projectName, startDate, endDate);
+//	    }
+
+
+	 @Override
+	    public Double getVendorAmountExcluGstByProjectNameAndDate(String projectName, LocalDate startDate, LocalDate endDate) {
+	        try {
+	            Double sum = vendorinviceMasterRepository.getVendorAmountExcluGstByProjectNameAndDate(projectName, startDate, endDate);
+	            return (sum != null) ? sum : 0.0;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return 0.0;
+	        }
+	    }
+
+	 @Override
+	    public List<VendorInvoiceMasterEntity> findByProjectName(String projectName) {
+	        return vendorinviceMasterRepository.findByProjectName(projectName);
+	    }
+
 
 }

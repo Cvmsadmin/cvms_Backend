@@ -1,5 +1,7 @@
 package org.ss.vendorapi.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.ss.vendorapi.entity.MilestoneCategory;
@@ -17,5 +19,20 @@ public class MilestoneCategoryServiceImpl implements MilestoneCategoryService {
 		 milestoneCategoryRepository.save(milestoneCategory);
 
 	}
+	
+    public List<MilestoneCategory> getPartsByProjectId(Long projectId) {
+	        return milestoneCategoryRepository.findByProjectId(projectId);
+	    }
+
+
+    public MilestoneCategory getById(Long id) {
+        return milestoneCategoryRepository.findById(id).orElse(null);
+    }
+    
+    @Override
+    public MilestoneCategory getByProjectIdAndPartition(Long projectId, String partition) {
+        return milestoneCategoryRepository.findByProjectIdAndPartition(projectId, partition);
+    }
+
 
 }

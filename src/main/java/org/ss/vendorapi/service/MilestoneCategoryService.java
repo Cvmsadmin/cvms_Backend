@@ -1,5 +1,7 @@
 package org.ss.vendorapi.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.ss.vendorapi.entity.MilestoneCategory;
 
@@ -7,5 +9,11 @@ import org.ss.vendorapi.entity.MilestoneCategory;
 public interface MilestoneCategoryService {
 	
 	public void saveCategory(MilestoneCategory milestoneCategory);
+
+	public List<MilestoneCategory> getPartsByProjectId(Long projectId);
+
+	public MilestoneCategory getById(Long partsId);
+
+	public MilestoneCategory getByProjectIdAndPartition(Long projectId, String partition);
 
 }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -34,6 +35,7 @@ import org.ss.vendorapi.modal.ClientInvoiceMasterDTO;
 import org.ss.vendorapi.repository.ClientInvoiceDetailsRepo;
 import org.ss.vendorapi.repository.ClientMasterRepository;
 import org.ss.vendorapi.repository.DocumentUploadRepository;
+import org.ss.vendorapi.repository.ProjectMasterRepository;
 import org.ss.vendorapi.service.ClientInvoiceDescriptionValueService;
 import org.ss.vendorapi.service.ClientInvoiceMasterService;
 import org.ss.vendorapi.service.DataValidationService;
@@ -82,10 +84,12 @@ public class ClientInvoiceMasterController {
 	
 	@Autowired
 	private ClientInvoiceDescriptionValueService clientInvoiceDescriptionValueService;
-
 	
 	@Autowired
 	private DocumentUploadRepository documentUploadRepository;
+	
+	@Autowired
+	private ProjectMasterRepository projectMasterRepository;
 	
 	@EncryptResponse 	
 	@PostMapping("/addClientInvoices")
@@ -207,7 +211,7 @@ public class ClientInvoiceMasterController {
 	       
 
 //	        clientInvoice.setAmountExcluGst(clientInvoiceDTO.getAmountExcluGst());
-	        clientInvoice.setMilestone(String.valueOf(clientInvoiceDTO.getMilestone()));
+//	        clientInvoice.setMilestone(String.valueOf(clientInvoiceDTO.getMilestone()));
 
 	        // Save ClientInvoiceMasterEntity first
 	        clientInvoice = clientInvoiceService.save(clientInvoice);
@@ -243,6 +247,15 @@ public class ClientInvoiceMasterController {
 	                }
 	                if (description.getAmtInclGst() != null) {
 	                    descriptionValue.setAmtInclGst(Double.valueOf(description.getAmtInclGst()));
+	                }
+	                
+	                // Newly added fields
+	                if (description.getMilestone() != null) {
+	                    descriptionValue.setMilestone(String.valueOf(description.getMilestone()));
+	                }
+
+	                if (description.getSubMilestone() != null) {
+	                    descriptionValue.setSubMilestone(description.getSubMilestone());
 	                }
 
 	                // Save the description value
@@ -728,7 +741,7 @@ public class ClientInvoiceMasterController {
 
 	            // Include the new fields in the response format as per your requirements
 	            invoiceMap.put("invoiceAmountIncluGst", invoice.getInvoiceAmountIncluGst() != null ? invoice.getInvoiceAmountIncluGst() : "Not provided");
-	            invoiceMap.put("milestone", invoice.getMilestone() != null ? invoice.getMilestone() : "Not provided");
+//	            invoiceMap.put("milestone", invoice.getMilestone() != null ? invoice.getMilestone() : "Not provided");
 	            invoiceMap.put("billableState", invoice.getBillableState() != null ? invoice.getBillableState() : "Not provided");
 	            invoiceMap.put("status", invoice.getStatus() != null ? invoice.getStatus() : "Not provided");
 	            invoiceMap.put("amountExcluGst", invoice.getAmountExcluGst() != null ? invoice.getAmountExcluGst() : "Not provided");
@@ -766,6 +779,10 @@ public class ClientInvoiceMasterController {
 	                    descriptionMap.put("sgst", description.getSgst() != null ? description.getSgst() : "Not provided");
 	                    descriptionMap.put("igst", description.getIgst() != null ? description.getIgst() : "Not provided");
 	                    descriptionMap.put("amtInclGst", description.getAmtInclGst() != null ? description.getAmtInclGst() : "Not provided");
+	                    
+	                 // New fields added
+	                    descriptionMap.put("milestone", description.getMilestone() != null ? description.getMilestone() : "Not provided");
+	                    descriptionMap.put("subMilestone", description.getSubMilestone() != null ? description.getSubMilestone() : "Not provided");
 	                    descriptionValues.add(descriptionMap);
 	                }
 	                invoiceMap.put("clientInvoiceDescriptionValue", descriptionValues);
@@ -961,7 +978,7 @@ public class ClientInvoiceMasterController {
 	    invoiceEntity.setInvoiceDueDate(dto.getInvoiceDueDate());
 	    invoiceEntity.setInvoiceAmountIncluGst(dto.getInvoiceAmountIncluGst());
 	    invoiceEntity.setInvoiceAmtIncluGst(dto.getInvoiceAmtIncluGst() != null ? Double.valueOf(dto.getInvoiceAmtIncluGst()) : null);
-	    invoiceEntity.setMilestone(dto.getMilestone() != null ? dto.getMilestone().toString() : null);
+//	    invoiceEntity.setMilestone(dto.getMilestone() != null ? dto.getMilestone().toString() : null); 
 	    invoiceEntity.setBillableState(dto.getBillableState());
 	    invoiceEntity.setStatus(dto.getStatus());
 	    invoiceEntity.setAmountExcluGst(dto.getAmountExcluGst());
@@ -992,6 +1009,10 @@ public class ClientInvoiceMasterController {
 	            descEntity.setSgst(descDTO.getSgst());
 	            descEntity.setIgst(descDTO.getIgst());
 	            descEntity.setAmtInclGst(descDTO.getAmtInclGst());
+	                        
+	            // New fields added
+	            descEntity.setMilestone(descDTO.getMilestone());
+	            descEntity.setSubMilestone(descDTO.getSubMilestone());
 	            descEntity.setClientInvoice(invoiceEntity);  // Set the parent reference
 	            invoiceEntity.getClientInvoiceDescriptionValue().add(descEntity);  // Add new item
 	        }
@@ -1497,7 +1518,7 @@ public class ClientInvoiceMasterController {
 	        invoiceMap.put("invoiceDueDate", invoice.getInvoiceDueDate() != null ? invoice.getInvoiceDueDate() : "Not provided");
 
 	        invoiceMap.put("invoiceAmountIncluGst", invoice.getInvoiceAmountIncluGst() != null ? invoice.getInvoiceAmountIncluGst() : "Not provided");
-	        invoiceMap.put("milestone", invoice.getMilestone() != null ? invoice.getMilestone() : "Not provided");
+//	        invoiceMap.put("milestone", invoice.getMilestone() != null ? invoice.getMilestone() : "Not provided");
 	        invoiceMap.put("billableState", invoice.getBillableState() != null ? invoice.getBillableState() : "Not provided");
 	        invoiceMap.put("status", invoice.getStatus() != null ? invoice.getStatus() : "Not provided");
 	        invoiceMap.put("amountExcluGst", invoice.getAmountExcluGst() != null ? invoice.getAmountExcluGst() : "Not provided");
@@ -1534,6 +1555,11 @@ public class ClientInvoiceMasterController {
 	                descriptionMap.put("sgst", description.getSgst() != null ? description.getSgst() : "Not provided");
 	                descriptionMap.put("igst", description.getIgst() != null ? description.getIgst() : "Not provided");
 	                descriptionMap.put("amtInclGst", description.getAmtInclGst() != null ? description.getAmtInclGst() : "Not provided");
+	                
+	                // New fields added
+	                descriptionMap.put("milestone", description.getMilestone() != null ? description.getMilestone() : "Not provided");
+	                descriptionMap.put("subMilestone", description.getSubMilestone() != null ? description.getSubMilestone() : "Not provided");
+	                
 	                descriptionValues.add(descriptionMap);
 	            }
 	            invoiceMap.put("clientInvoiceDescriptionValue", descriptionValues);
@@ -1615,6 +1641,195 @@ public class ClientInvoiceMasterController {
 //	        return new ResponseEntity<>(Map.of("error", ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 //	    }
 //	}
+
+	
+//	@GetMapping("/getClientInvoicesByProjectId/{projectId}")
+//	public ResponseEntity<?> getClientInvoicesByProjectId(@PathVariable("projectId") String projectId) {
+//	    try {
+//	        List<ClientInvoiceMasterEntity> filteredInvoices = clientInvoiceService.getInvoicesByProjectName(projectId);
+//
+//	        if (filteredInvoices.isEmpty()) {
+//	            return CommonUtils.createResponse(Constants.SUCCESS, "No invoices found for the given project ID.", HttpStatus.OK);
+//	        }
+//
+//	        List<Map<String, Object>> responseList = filteredInvoices.stream().map(invoice -> {
+//	            Map<String, Object> invoiceMap = new HashMap<>();
+//
+//	            invoiceMap.put("id", invoice.getId());
+//
+//	            String clientName = invoice.getClientName();
+//	            if (clientName != null && !clientName.trim().isEmpty()) {
+//	                Optional<ClientMasterEntity> clientMasterEntity = clientMasterRepository.findById(Long.parseLong(clientName));
+//	                if (clientMasterEntity.isPresent()) {
+//	                    invoiceMap.put("clientName", clientMasterEntity.get().getClientName());
+//	                    invoiceMap.put("clientId", clientMasterEntity.get().getId());
+//	                } else {
+//	                    invoiceMap.put("clientName", "Not found");
+//	                    invoiceMap.put("clientId", "Not found");
+//	                }
+//	            } else {
+//	                invoiceMap.put("clientName", "Not provided");
+//	                invoiceMap.put("clientId", "Not provided");
+//	            }
+//
+//	            invoiceMap.put("projectName", invoice.getProjectName());
+//	            invoiceMap.put("discom", invoice.getDiscom());
+//	            invoiceMap.put("invoiceNo", invoice.getInvoiceNo());
+//	            invoiceMap.put("invoiceDescription", invoice.getInvoiceDescription());
+//	            invoiceMap.put("invoiceDate", invoice.getInvoiceDate());
+//	            invoiceMap.put("invoiceDueDate", invoice.getInvoiceDueDate());
+//
+//	            invoiceMap.put("invoiceAmountIncluGst", invoice.getInvoiceAmountIncluGst());
+//	            invoiceMap.put("billableState", invoice.getBillableState());
+//	            invoiceMap.put("status", invoice.getStatus());
+//	            invoiceMap.put("amountExcluGst", invoice.getAmountExcluGst());
+//	            invoiceMap.put("totalCgst", invoice.getTotalCgst());
+//	            invoiceMap.put("totalSgst", invoice.getTotalSgst());
+//	            invoiceMap.put("totalIgst", invoice.getTotalIgst());
+//	            invoiceMap.put("invoiceBaseValue", invoice.getInvoiceBaseValue());
+//	            invoiceMap.put("gstBaseValue", invoice.getGstBaseValue());
+//	            invoiceMap.put("invoiceInclusiveOfGst", invoice.getInvoiceInclusiveOfGst());
+//	            invoiceMap.put("tdsPer", invoice.getTdsPer());
+//	            invoiceMap.put("tdsBaseValue", invoice.getTdsBaseValue());
+//	            invoiceMap.put("tdsOnGst", invoice.getTdsOnGst());
+//	            invoiceMap.put("cgstOnTds", invoice.getCgstOnTds());
+//	            invoiceMap.put("sgstOnTds", invoice.getSgstOnTds());
+//	            invoiceMap.put("totalTdsDeducted", invoice.getTotalTdsDeducted());
+//	            invoiceMap.put("balance", invoice.getBalance());
+//	            invoiceMap.put("penalty", invoice.getPenalty());
+//	            invoiceMap.put("penaltyDeductionOnBase", invoice.getPenaltyDeductionOnBase());
+//	            invoiceMap.put("gstOnPenalty", invoice.getGstOnPenalty());
+//	            invoiceMap.put("totalPenaltyDeduction", invoice.getTotalPenaltyDeduction());
+//	            invoiceMap.put("creditNote", invoice.getCreditNote());
+//	            invoiceMap.put("totalPaymentReceived", invoice.getTotalPaymentReceived());
+//	            invoiceMap.put("paymentDate", invoice.getPaymentDate());
+//
+//	            if (invoice.getClientInvoiceDescriptionValue() != null) {
+//	                List<Map<String, Object>> descriptionValues = new ArrayList<>();
+//	                for (ClientInvoiceDescriptionValue description : invoice.getClientInvoiceDescriptionValue()) {
+//	                    Map<String, Object> descriptionMap = new HashMap<>();
+//	                    descriptionMap.put("itemDescription", description.getItemDescription());
+//	                    descriptionMap.put("baseValue", description.getBaseValue());
+//	                    descriptionMap.put("gstPer", description.getGstPer());
+//	                    descriptionMap.put("cgst", description.getCgst());
+//	                    descriptionMap.put("sgst", description.getSgst());
+//	                    descriptionMap.put("igst", description.getIgst());
+//	                    descriptionMap.put("amtInclGst", description.getAmtInclGst());
+//	                    descriptionMap.put("milestone", description.getMilestone());
+//	                    descriptionMap.put("subMilestone", description.getSubMilestone());
+//	                    descriptionValues.add(descriptionMap);
+//	                }
+//	                invoiceMap.put("clientInvoiceDescriptionValue", descriptionValues);
+//	            }
+//
+//	            return invoiceMap;
+//	        }).toList();
+//
+//	        return new ResponseEntity<>(responseList, HttpStatus.OK);
+//
+//	    } catch (Exception e) {
+//	        return CommonUtils.createResponse(Constants.FAIL, "Error while fetching client invoices: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+
+
+	@GetMapping("/getClientInvoicesByProjectId/{projectId}")
+	public ResponseEntity<?> getClientInvoicesByProjectId(@PathVariable("projectId") Long projectId) {
+	    try {
+	        // Step 1: Get project name from project ID
+	        String projectName = projectMasterRepository.findProjectNameById(projectId);
+	        if (projectName == null) {
+	            return CommonUtils.createResponse(Constants.FAIL, "Project not found for ID: " + projectId, HttpStatus.NOT_FOUND);
+	        }
+
+	        // Step 2: Fetch client invoices by project name
+	        List<ClientInvoiceMasterEntity> filteredInvoices = clientInvoiceService.getInvoicesByProjectName(projectName);
+
+	        if (filteredInvoices.isEmpty()) {
+	            return CommonUtils.createResponse(Constants.SUCCESS, "No invoices found for the given project ID.", HttpStatus.OK);
+	        }
+
+	        // Step 3: Build response
+	        List<Map<String, Object>> responseList = filteredInvoices.stream().map(invoice -> {
+	            Map<String, Object> invoiceMap = new HashMap<>();
+
+	            invoiceMap.put("id", invoice.getId());
+
+	            String clientName = invoice.getClientName();
+	            if (clientName != null && !clientName.trim().isEmpty()) {
+	                Optional<ClientMasterEntity> clientMasterEntity = clientMasterRepository.findById(Long.parseLong(clientName));
+	                if (clientMasterEntity.isPresent()) {
+	                    invoiceMap.put("clientName", clientMasterEntity.get().getClientName());
+	                    invoiceMap.put("clientId", clientMasterEntity.get().getId());
+	                } else {
+	                    invoiceMap.put("clientName", "Not found");
+	                    invoiceMap.put("clientId", "Not found");
+	                }
+	            } else {
+	                invoiceMap.put("clientName", "Not provided");
+	                invoiceMap.put("clientId", "Not provided");
+	            }
+
+	            invoiceMap.put("projectName", invoice.getProjectName());
+	            invoiceMap.put("discom", invoice.getDiscom());
+	            invoiceMap.put("invoiceNo", invoice.getInvoiceNo());
+	            invoiceMap.put("invoiceDescription", invoice.getInvoiceDescription());
+	            invoiceMap.put("invoiceDate", invoice.getInvoiceDate());
+	            invoiceMap.put("invoiceDueDate", invoice.getInvoiceDueDate());
+	            invoiceMap.put("invoiceAmountIncluGst", invoice.getInvoiceAmountIncluGst());
+	            invoiceMap.put("billableState", invoice.getBillableState());
+	            invoiceMap.put("status", invoice.getStatus());
+	            invoiceMap.put("amountExcluGst", invoice.getAmountExcluGst());
+	            invoiceMap.put("totalCgst", invoice.getTotalCgst());
+	            invoiceMap.put("totalSgst", invoice.getTotalSgst());
+	            invoiceMap.put("totalIgst", invoice.getTotalIgst());
+	            invoiceMap.put("invoiceBaseValue", invoice.getInvoiceBaseValue());
+	            invoiceMap.put("gstBaseValue", invoice.getGstBaseValue());
+	            invoiceMap.put("invoiceInclusiveOfGst", invoice.getInvoiceInclusiveOfGst());
+	            invoiceMap.put("tdsPer", invoice.getTdsPer());
+	            invoiceMap.put("tdsBaseValue", invoice.getTdsBaseValue());
+	            invoiceMap.put("tdsOnGst", invoice.getTdsOnGst());
+	            invoiceMap.put("cgstOnTds", invoice.getCgstOnTds());
+	            invoiceMap.put("sgstOnTds", invoice.getSgstOnTds());
+	            invoiceMap.put("totalTdsDeducted", invoice.getTotalTdsDeducted());
+	            invoiceMap.put("balance", invoice.getBalance());
+	            invoiceMap.put("penalty", invoice.getPenalty());
+	            invoiceMap.put("penaltyDeductionOnBase", invoice.getPenaltyDeductionOnBase());
+	            invoiceMap.put("gstOnPenalty", invoice.getGstOnPenalty());
+	            invoiceMap.put("totalPenaltyDeduction", invoice.getTotalPenaltyDeduction());
+	            invoiceMap.put("creditNote", invoice.getCreditNote());
+	            invoiceMap.put("totalPaymentReceived", invoice.getTotalPaymentReceived());
+	            invoiceMap.put("paymentDate", invoice.getPaymentDate());
+
+	            if (invoice.getClientInvoiceDescriptionValue() != null) {
+	                List<Map<String, Object>> descriptionValues = new ArrayList<>();
+	                for (ClientInvoiceDescriptionValue description : invoice.getClientInvoiceDescriptionValue()) {
+	                    Map<String, Object> descriptionMap = new HashMap<>();
+	                    descriptionMap.put("itemDescription", description.getItemDescription());
+	                    descriptionMap.put("baseValue", description.getBaseValue());
+	                    descriptionMap.put("gstPer", description.getGstPer());
+	                    descriptionMap.put("cgst", description.getCgst());
+	                    descriptionMap.put("sgst", description.getSgst());
+	                    descriptionMap.put("igst", description.getIgst());
+	                    descriptionMap.put("amtInclGst", description.getAmtInclGst());
+	                    descriptionMap.put("milestone", description.getMilestone());
+	                    descriptionMap.put("subMilestone", description.getSubMilestone());
+	                    descriptionValues.add(descriptionMap);
+	                }
+	                invoiceMap.put("clientInvoiceDescriptionValue", descriptionValues);
+	            }
+
+	            return invoiceMap;
+	        }).toList();
+
+	        return new ResponseEntity<>(responseList, HttpStatus.OK);
+
+	    } catch (Exception e) {
+	        return CommonUtils.createResponse(Constants.FAIL, "Error while fetching client invoices: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
+
 
 
 

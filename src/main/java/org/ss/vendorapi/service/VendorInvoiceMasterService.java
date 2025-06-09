@@ -1,5 +1,6 @@
 package org.ss.vendorapi.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,5 +21,12 @@ public interface VendorInvoiceMasterService {
 	
 	Optional<VendorInvoiceMasterEntity> findByInvoiceNo(String invoiceNo);
 	ClientMasterEntity findClientById(Long clientId);
+	
+	Double getVendorAmountExcluGstByProjectName(String projectName);
+	
+	
+	public Double getVendorAmountExcluGstByProjectNameAndDate(String projectName, LocalDate startDate, LocalDate endDate);
+	public List<VendorInvoiceMasterEntity> findByProjectName(String projectName);
+
 	
 }
