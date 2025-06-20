@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
+import org.ss.vendorapi.modal.ClientInvoiceProjection;
 import org.ss.vendorapi.modal.PayableInvoiceStatsDTO;
 //import org.ss.vendorapi.modal.ReceivableInvoiceStatsDTO;
 
@@ -32,20 +33,25 @@ public interface ClientInvoiceMasterRepository extends JpaRepository<ClientInvoi
             "AND (c.invoice_date >= COALESCE(:startDate, CAST(NULL AS DATE))) " +
             "AND (c.invoice_date <= COALESCE(:endDate, CAST(NULL AS DATE)))",
     nativeQuery = true)
-Double getClientAmountExcluGstByProjectNameAndDate(
- @Param("projectName") String projectName,
- @Param("startDate") LocalDate startDate,
- @Param("endDate") LocalDate endDate);
+      Double getClientAmountExcluGstByProjectNameAndDate(
+       @Param("projectName") String projectName,
+       @Param("startDate") LocalDate startDate,
+       @Param("endDate") LocalDate endDate);
 
 	
 	 List<ClientInvoiceMasterEntity> findByProjectName(String projectName);
+	 
+	 
+	 @Query(value = "SELECT * FROM get_user_client_invoice_dd(:managerId)", nativeQuery = true)
+	 List<Object[]> findInvoicesByManagerId(@Param("managerId") Long managerId);
+	 
+	 
+//	 @Query(value = "SELECT id, client_name, project_name, invoice_no, invoice_description, status, invoice_date, invoice_amount_inclu_gst FROM get_user_client_invoice_dd(:managerId)", nativeQuery = true)
+//	 List<Object[]> findInvoicesByManagerId(@Param("managerId") Long managerId);
 
 
-//	Double getClientAmountExcluGstByProjectId(Long projectId);
-
-
-
-	
+//	List<ClientInvoiceProjection> findInvoicesByManagerId(Long managerId);
+//	Double getClientAmountExcluGstByProjectId(Long projectId)  	
 //	List<User> findUsersByclientNameAndprojectName(String clientName, String projectName, List<String> asList);
 
 

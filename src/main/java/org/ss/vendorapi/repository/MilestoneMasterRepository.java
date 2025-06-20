@@ -10,4 +10,6 @@ import org.ss.vendorapi.entity.PurchaseBOMMasterEntity;
 @Repository
 public interface MilestoneMasterRepository extends JpaRepository<MilestoneMasterEntity, Long> {
 	public List<MilestoneMasterEntity> findByProjectId(String projectId);
+
+	public void deleteByProjectId(String projectId);
 }

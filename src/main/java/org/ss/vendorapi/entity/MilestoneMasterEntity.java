@@ -44,7 +44,7 @@ public class MilestoneMasterEntity extends ParentEntity implements Serializable{
 	
 	@JsonFormat(pattern="dd/MM/yyyy")
 	@Column(name = "completiondate")  // explicitly set the column name as in your DB
-	private Date completiondate;
+	private Date completionDate;
 		
 	public String getAmountIncluGst() {		
 		return amountInclGst;
@@ -55,11 +55,11 @@ public class MilestoneMasterEntity extends ParentEntity implements Serializable{
 	}
 
 	public Date getCompletionDate() {		
-		return completiondate;
+		return completionDate;
 	}
 
 	public void setCompletionDate(Date completionDate) {
-	    this.completiondate = completionDate;
+	    this.completionDate = completionDate;
 	}
 	
 	@Column(name = "servicetypes")

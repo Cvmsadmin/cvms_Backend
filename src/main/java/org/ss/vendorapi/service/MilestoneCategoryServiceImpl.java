@@ -34,5 +34,29 @@ public class MilestoneCategoryServiceImpl implements MilestoneCategoryService {
         return milestoneCategoryRepository.findByProjectIdAndPartition(projectId, partition);
     }
 
+    @Override
+    public void deleteByProjectId(String projectId) {
+        try {
+            List<MilestoneCategory> categories = milestoneCategoryRepository.findByProjectId(Long.parseLong(projectId));
+            if (categories != null && !categories.isEmpty()) {
+                milestoneCategoryRepository.deleteAll(categories);
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid projectId format: must be a number", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while deleting milestone categories for projectId: " + projectId, e);
+        }
+    }
+
+    
+    @Override
+    public void deleteByProjectId(Long projectId) {
+        List<MilestoneCategory> categories = milestoneCategoryRepository.findByProjectId(projectId);
+        if (categories != null && !categories.isEmpty()) {
+            milestoneCategoryRepository.deleteAll(categories);
+        }
+    }
+
+	
 
 }

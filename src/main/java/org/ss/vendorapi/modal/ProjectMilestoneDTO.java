@@ -27,6 +27,6 @@ public class ProjectMilestoneDTO {
     
     private String status;
     
-    @JsonFormat(pattern="dd/MM/yyyy")
-    private String completionDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    private Date completionDate;
 }

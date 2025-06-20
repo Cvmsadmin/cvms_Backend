@@ -10,9 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-
-
-
 @Entity
 @Table(name = "Milestone_Payment_Details")
 public class EmailNotificationView {
@@ -21,8 +18,6 @@ public class EmailNotificationView {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generate ID for JPA
     private Long id; // Synthetic ID (not mapped to the database)
 	
-	
-
 	  private String email;
 	  private String client_name;
 	  private String project_name;

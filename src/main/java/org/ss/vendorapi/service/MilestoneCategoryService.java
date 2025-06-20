@@ -16,4 +16,14 @@ public interface MilestoneCategoryService {
 
 	public MilestoneCategory getByProjectIdAndPartition(Long projectId, String partition);
 
+	
+	void deleteByProjectId(String projectId);
+
+	
+	void deleteByProjectId(Long projectId);
+
+
+	
+//	void saveCategory(MilestoneCategory milestoneCategory);
+
 }

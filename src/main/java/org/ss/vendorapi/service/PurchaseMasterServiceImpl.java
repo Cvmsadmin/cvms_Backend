@@ -71,6 +71,12 @@ public class PurchaseMasterServiceImpl implements PurchaseMasterService{
 	    return Optional.ofNullable(purchaseMasterRepository.findByPoNo(poNo));
 	}
 
+//	@Override
+//	public List<PurchaseMasterEntity> findByProjectId(Long projectId) {
+//	    return purchaseMasterRepository.findByProjectId(projectId);
+//	}
+
+
 
 
 //	@Override

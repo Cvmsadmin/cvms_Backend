@@ -32,6 +32,7 @@ import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.entity.FileUploadRequestModal;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.ClientInvoiceMasterDTO;
+import org.ss.vendorapi.modal.ClientInvoiceProjection;
 import org.ss.vendorapi.repository.ClientInvoiceDetailsRepo;
 import org.ss.vendorapi.repository.ClientMasterRepository;
 import org.ss.vendorapi.repository.DocumentUploadRepository;
@@ -63,7 +64,7 @@ public class ClientInvoiceMasterController {
 	private DataValidationService dataValidationService;
 
 	@Autowired 
-	private ClientInvoiceMasterService clientInvoiceService;
+	private ClientInvoiceMasterService clientInvoiceMasterService;
 	
 	@Autowired
 	private ClientMasterRepository clientMasterRepository;
@@ -101,7 +102,7 @@ public class ClientInvoiceMasterController {
 	            return CommonUtils.createResponse(Constants.FAIL, "Invoice No cannot be null or empty.", HttpStatus.BAD_REQUEST);
 	        }
 	        
-	        ClientInvoiceMasterEntity existingInvoice = clientInvoiceService.findByInvoiceNo(clientInvoiceDTO.getInvoiceNo());
+	        ClientInvoiceMasterEntity existingInvoice = clientInvoiceMasterService.findByInvoiceNo(clientInvoiceDTO.getInvoiceNo());
 	        if (existingInvoice != null) {
 	            return CommonUtils.createResponse(Constants.FAIL, "Invoice with this Invoice No. already exists.", HttpStatus.CONFLICT);
 	        }
@@ -214,7 +215,7 @@ public class ClientInvoiceMasterController {
 //	        clientInvoice.setMilestone(String.valueOf(clientInvoiceDTO.getMilestone()));
 
 	        // Save ClientInvoiceMasterEntity first
-	        clientInvoice = clientInvoiceService.save(clientInvoice);
+	        clientInvoice = clientInvoiceMasterService.save(clientInvoice);
 
 	        // Save descriptions and base values AFTER clientInvoice is saved
 	     // Save descriptions and base values AFTER clientInvoice is saved
@@ -466,7 +467,7 @@ public class ClientInvoiceMasterController {
 	        }
 
 	        // ✅ Delegate to service method already present in ClientInvoiceMasterServiceImpl
-	        clientInvoiceService.sendInvoiceEmailWithAttachment(invoiceDetails, fileName, fileBytes);
+	        clientInvoiceMasterService.sendInvoiceEmailWithAttachment(invoiceDetails, fileName, fileBytes);
 
 	        return ResponseEntity.ok(Collections.singletonMap("message", "Email sent with attachment."));
 
@@ -700,7 +701,7 @@ public class ClientInvoiceMasterController {
 	public ResponseEntity<?> getAllClientInvoices() {
 	    try {
 	        // Fetch all client invoices
-	        List<ClientInvoiceMasterEntity> clientInvoices = clientInvoiceService.findAll();
+	        List<ClientInvoiceMasterEntity> clientInvoices = clientInvoiceMasterService.findAll();
 
 	        // Sort client invoices by id in descending order
 	        if (clientInvoices != null) {
@@ -930,7 +931,7 @@ public class ClientInvoiceMasterController {
 		Map<String,Object> statusMap=new HashMap<>();
 		
 		try {
-			ClientInvoiceMasterEntity clientInvoiceEntity= clientInvoiceService.findByInvoiceNo(clientInvoiceDTO.getInvoiceNo());
+			ClientInvoiceMasterEntity clientInvoiceEntity= clientInvoiceMasterService.findByInvoiceNo(clientInvoiceDTO.getInvoiceNo());
 			if(clientInvoiceEntity!=null) {
 				statusMap.put("ClientInvoiceMasterEntity",clientInvoiceEntity);
 				statusMap.put("Status","Success");
@@ -960,7 +961,7 @@ public class ClientInvoiceMasterController {
 	    }
 
 	    // Find the existing invoice entity
-	    ClientInvoiceMasterEntity invoiceEntity = clientInvoiceService.findById(dto.getId());
+	    ClientInvoiceMasterEntity invoiceEntity = clientInvoiceMasterService.findById(dto.getId());
 	    if (invoiceEntity == null) {
 	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invoice not found");
 	    }
@@ -1019,7 +1020,7 @@ public class ClientInvoiceMasterController {
 	    }
 
 	    // Persist the updated entity
-	    clientInvoiceService.update(invoiceEntity);
+	    clientInvoiceMasterService.update(invoiceEntity);
 
 	    // Build response
 	    Map<String, Object> response = new HashMap<>();
@@ -1451,10 +1452,10 @@ public class ClientInvoiceMasterController {
 
 		try {
 
-			ClientInvoiceMasterEntity clientMaster = clientInvoiceService.findById(id);
+			ClientInvoiceMasterEntity clientMaster = clientInvoiceMasterService.findById(id);
 			if(clientMaster!=null) {
 //				clientMaster.setActive(0);
-				clientInvoiceService.update(clientMaster);
+				clientInvoiceMasterService.update(clientMaster);
 
 				statusMap.put("status", "SUCCESS");
 				statusMap.put("statusCode", "RME_200");
@@ -1482,7 +1483,7 @@ public class ClientInvoiceMasterController {
 	        String correctedInvoiceNo = invoiceNo.replaceAll("=", "/").trim();
 	        invoiceNo = correctedInvoiceNo;
 	        // Fetch invoice by invoiceNo
-	        ClientInvoiceMasterEntity invoice = clientInvoiceService.findByInvoiceNo(invoiceNo);
+	        ClientInvoiceMasterEntity invoice = clientInvoiceMasterService.findByInvoiceNo(invoiceNo);
 
 	        if (invoice == null) {
 	            return new ResponseEntity<>(Map.of("message", "Invoice not found"), HttpStatus.NOT_FOUND);
@@ -1743,7 +1744,7 @@ public class ClientInvoiceMasterController {
 	        }
 
 	        // Step 2: Fetch client invoices by project name
-	        List<ClientInvoiceMasterEntity> filteredInvoices = clientInvoiceService.getInvoicesByProjectName(projectName);
+	        List<ClientInvoiceMasterEntity> filteredInvoices = clientInvoiceMasterService.getInvoicesByProjectName(projectName);
 
 	        if (filteredInvoices.isEmpty()) {
 	            return CommonUtils.createResponse(Constants.SUCCESS, "No invoices found for the given project ID.", HttpStatus.OK);
@@ -1831,8 +1832,34 @@ public class ClientInvoiceMasterController {
 
 
 
+	@GetMapping("/getClientInvoiceByManagerId/{managerId}")
+    public ResponseEntity<?> getClientInvoiceByManagerId(@PathVariable Long managerId) {
+        try {
+            List<ClientInvoiceProjection> invoices = clientInvoiceMasterService.getInvoicesByManagerId(managerId);
+            if (invoices.isEmpty()) {
+                return ResponseEntity.ok("No invoices found for manager ID: " + managerId);
+            }
+            return ResponseEntity.ok(invoices);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error while fetching invoices: " + e.getMessage());
+        }
+    }
 
 
+//	 @GetMapping("/getClientInvoiceByManagerId/{managerId}")
+//	    public ResponseEntity<?> getClientInvoiceByManagerId(@PathVariable Long managerId) {
+//	        try {
+//	            List<Map<String, Object>> invoices = ClientInvoiceMasterService.getInvoicesByManagerId(managerId);
+//	            if (invoices.isEmpty()) {
+//	                return ResponseEntity.ok("No invoices found for manager ID: " + managerId);
+//	            }
+//	            return ResponseEntity.ok(invoices);
+//	        } catch (Exception e) {
+//	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//	                .body("Error while fetching invoices: " + e.getMessage());
+//	        }
+//	    }
 
 	
 	

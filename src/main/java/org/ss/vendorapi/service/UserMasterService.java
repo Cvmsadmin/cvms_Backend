@@ -30,9 +30,6 @@ public interface UserMasterService {
 	void save(UserMasterEntity user);
 	
 
-//	List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName);
-	
-	
-	
+//	List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName);	
 
 }

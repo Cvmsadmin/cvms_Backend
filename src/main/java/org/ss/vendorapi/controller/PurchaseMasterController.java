@@ -21,10 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.advice.EncryptResponse;
+import org.ss.vendorapi.entity.ProjectMasterEntity;
 import org.ss.vendorapi.entity.PurchaseBOMMasterEntity;
 import org.ss.vendorapi.entity.PurchaseMasterEntity;
 import org.ss.vendorapi.entity.PurchaseMasterView;
 import org.ss.vendorapi.modal.PurchaseRequestDTO;
+import org.ss.vendorapi.repository.ProjectMasterRepository;
 import org.ss.vendorapi.service.ClientMasterServiceImpl;
 import org.ss.vendorapi.service.PurchaseBOMService;
 import org.ss.vendorapi.service.PurchaseMasterService;
@@ -49,6 +51,9 @@ public class PurchaseMasterController {
 
 	@Autowired
 	private PurchaseMasterService purchaseMasterService;
+	
+	@Autowired
+	private ProjectMasterRepository projectMasterRepository;
 	
 	@Autowired
 	private ClientMasterServiceImpl clientService;
@@ -1103,28 +1108,73 @@ public class PurchaseMasterController {
 //	    }
 //	}
 
-	@GetMapping("/getPoNoByProjectName")
-	public ResponseEntity<Map<String, Object>> getPoNoByProjectName(@RequestParam String projectName) {
+//	@GetMapping("/getPoNoByProjectName")
+//	public ResponseEntity<Map<String, Object>> getPoNoByProjectName(@RequestParam String projectName) {
+//	    Map<String, Object> response = new HashMap<>();
+//
+//	    try {
+//	        // Fetch purchase records based on project name
+//	        List<PurchaseMasterEntity> purchases = purchaseMasterService.findByProjectName(projectName);
+//
+//	        if (purchases == null || purchases.isEmpty()) {
+//	            // If no records found, return 404 Not Found
+//	            response.put("message", "No purchases found for project name: " + projectName);
+//	            response.put("status", HttpStatus.NOT_FOUND);
+//	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Extract PO numbers from the purchases
+//	        List<String> poNumbers = new ArrayList<>();
+//	        for (PurchaseMasterEntity purchase : purchases) {
+//	            poNumbers.add(purchase.getPoNo());
+//	        }
+//
+//	        // Return PO numbers with 200 OK status
+//	        response.put("message", "PO numbers fetched successfully.");
+//	        response.put("poNumbers", poNumbers);
+//	        response.put("status", HttpStatus.OK);
+//	        return new ResponseEntity<>(response, HttpStatus.OK);
+//
+//	    } catch (Exception e) {
+//	        response.put("message", "Error while fetching PO numbers: " + e.getMessage());
+//	        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+//	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+
+	
+	@GetMapping("/getPoNoByProjectId")
+	public ResponseEntity<Map<String, Object>> getPoNoByProjectId(@RequestParam Long projectId) {
 	    Map<String, Object> response = new HashMap<>();
 
 	    try {
-	        // Fetch purchase records based on project name
+	        // Step 1: Get project name from ProjectMasterEntity
+	        Optional<ProjectMasterEntity> projectOpt = projectMasterRepository.findById(projectId);
+
+	        if (!projectOpt.isPresent()) {
+	            response.put("message", "Project not found for ID: " + projectId);
+	            response.put("status", HttpStatus.NOT_FOUND);
+	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	        }
+
+	        String projectName = projectOpt.get().getProjectName();
+
+	        // Step 2: Use project name to find matching purchases
 	        List<PurchaseMasterEntity> purchases = purchaseMasterService.findByProjectName(projectName);
 
 	        if (purchases == null || purchases.isEmpty()) {
-	            // If no records found, return 404 Not Found
 	            response.put("message", "No purchases found for project name: " + projectName);
 	            response.put("status", HttpStatus.NOT_FOUND);
 	            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	        }
 
-	        // Extract PO numbers from the purchases
 	        List<String> poNumbers = new ArrayList<>();
 	        for (PurchaseMasterEntity purchase : purchases) {
-	            poNumbers.add(purchase.getPoNo());
+	            if (purchase.getPoNo() != null && !purchase.getPoNo().isEmpty()) {
+	                poNumbers.add(purchase.getPoNo());
+	            }
 	        }
 
-	        // Return PO numbers with 200 OK status
 	        response.put("message", "PO numbers fetched successfully.");
 	        response.put("poNumbers", poNumbers);
 	        response.put("status", HttpStatus.OK);
@@ -1136,6 +1186,7 @@ public class PurchaseMasterController {
 	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
 
 	
 	

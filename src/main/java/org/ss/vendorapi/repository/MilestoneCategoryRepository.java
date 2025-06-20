@@ -11,4 +11,7 @@ public interface MilestoneCategoryRepository extends JpaRepository<MilestoneCate
 
 	MilestoneCategory findByProjectIdAndPartition(Long projectId, String partition);
 
+
+	
+
 }

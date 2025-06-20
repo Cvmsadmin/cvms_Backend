@@ -15,6 +15,8 @@ public interface PurchaseMasterRepository extends JpaRepository<PurchaseMasterEn
 		PurchaseMasterEntity findByPoNo(String poNo);
 
 		List<PurchaseMasterEntity> findByProjectName(String projectName);
+
+//		List<PurchaseMasterEntity> findByProjectId(Long projectId);
 		
 //		String findPoNoByProjectName(String projectName);
 		

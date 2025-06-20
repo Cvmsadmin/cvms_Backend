@@ -46,7 +46,7 @@ public class ProjectPaymentSummary implements Serializable{
 
 	private Long client_Id;
 
-//    private String projectId;
+//    private Long projectId;
     	
 //	@Column(name="sr_no")
 //    private String SrNo;
@@ -57,14 +57,21 @@ public class ProjectPaymentSummary implements Serializable{
 	@Column(name = "contract_price")
 	private String contractPrice;
 	
-	@Column(name = "total_received_amount")
-	private String totalReceivedAmount;
+	@Column(name = "received_amount")
+	private String receivedAmount;
 	
-	@Column(name = "balance_to_be_billed")
-	private String balanceToBeBilled;
+	@Column(name = "amount_remaining_to_be_billed")
+	private String amountRemainingToBeBilled;
 	
 //	@Column(name = "view_details")
 //	private String viewDetails;
+		
+	@Column(name = "remaing_balance")
+	private String remaingBalance;
+	
+	@Column(name = "billed_amount")
+	private String billedAmount;
+	
 	
 }
 

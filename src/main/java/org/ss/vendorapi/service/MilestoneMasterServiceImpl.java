@@ -49,6 +49,10 @@ public class MilestoneMasterServiceImpl implements MilestoneMasterService{
         return milestoneMasterRepository.findByProjectId(String.valueOf(projectId));
     }
 
+	
+	public void deleteByProjectId(String projectId) {
+	    milestoneMasterRepository.deleteByProjectId(projectId);
+	}
 
 
 }

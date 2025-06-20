@@ -2,15 +2,19 @@ package org.ss.vendorapi.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.ss.vendorapi.entity.ClientInvoiceDetailsEntity;
 import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
 import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.modal.ClientInvoiceMasterDTO;
+import org.ss.vendorapi.modal.ClientInvoiceProjection;
 
 public interface ClientInvoiceMasterService {
-
+	
 	
 	public ClientInvoiceMasterEntity save(ClientInvoiceMasterEntity clientInvoiceMasterEntity);
 	public ClientInvoiceMasterEntity update(ClientInvoiceMasterEntity clientInvoiceMasterEntity);
@@ -36,7 +40,12 @@ public interface ClientInvoiceMasterService {
 	Double getClientAmountExcluGstByProjectNameAndDate(String projectName, LocalDate startDate, LocalDate endDate);
 	public List<ClientInvoiceMasterEntity> getInvoicesByProjectName(String projectId);
 	
+	public List<ClientInvoiceProjection> getInvoicesByManagerId(Long managerId);
+
+	
+	
 //	List<String> getAuthorizedEmailsForClientAndProject(String clientName, String projectName);
+	
 
 
 }

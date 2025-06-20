@@ -22,4 +22,6 @@ public interface PurchaseMasterService {
 	List<PurchaseMasterView> findAll1();
 	Optional<PurchaseMasterEntity> findOptionalByPoNo(String poNo);
 	
+//	public List<PurchaseMasterEntity> findByProjectId(Long projectId);
+	
 }
