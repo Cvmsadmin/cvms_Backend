@@ -44,10 +44,12 @@ public class ProjectPaymentSummary implements Serializable{
 //	@Transient
 //	private Long id; 
 
-	private Long client_Id;
+	@Column(name = "client_Id")
+	private String clienId;
 
-//    private Long projectId;
-    	
+	@Column(name = "project_id")
+    private Long projectId;
+	
 //	@Column(name="sr_no")
 //    private String SrNo;
 	
