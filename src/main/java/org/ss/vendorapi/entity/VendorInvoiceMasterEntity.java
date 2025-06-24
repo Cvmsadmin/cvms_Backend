@@ -170,6 +170,11 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 	    @Column(name = "payment_advice_no")
 	    private String paymentAdviceNo;
 
+	    @Column(name = "service_type")
+	    private String serviceType;
+	    
+//	    @Column(name = "msme")
+//	    private String msme;
 //	    public void setPaymentRequestSentDate(Date paymentRequestSentDate) {
 //	        this.paymentRequestSentDate = paymentRequestSentDate;
 //	    }

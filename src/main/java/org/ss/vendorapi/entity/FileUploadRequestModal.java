@@ -49,7 +49,7 @@ public class FileUploadRequestModal extends ParentEntity implements Serializable
 
         CM, VM, DWA, NDA, PAN, GST_CERTIFICATE, PO, MAF, E_WAY_BILL, INVOICE,
 
-        DELIVERY_ACCEPTANCE, PROPOSAL_UPLOAD, MISCELLANEOUS, AGREEMENT, RFP, BOM, BOQ, NIT, FRS, ROCS
+        DELIVERY_ACCEPTANCE, PROPOSAL_UPLOAD, MISCELLANEOUS, AGREEMENT, RFP, BOM, BOQ, NIT, FRS, ROCS, MSME, DECLARATION
     }
  
 	public String getDocumentPath(String string) {

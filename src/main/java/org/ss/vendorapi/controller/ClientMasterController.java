@@ -25,6 +25,7 @@ import org.ss.vendorapi.entity.ClientMasterEntity;
 import org.ss.vendorapi.entity.ProjectMasterEntity;
 import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.modal.CustomerDetailsDTO;
+import org.ss.vendorapi.service.AuditLogService;
 // org.ss.vendorapi.entity.RoleMasterEntity; //import
 // org.ss.vendorapi.logging.UPPCLLogger; import
 import org.ss.vendorapi.service.ClientMasterService;
@@ -45,6 +46,8 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("v2/api") 
 public class ClientMasterController {
 
+	@Autowired
+	private AuditLogService auditLogService;
 
 	@Autowired 
 	private Environment env;
@@ -124,6 +127,19 @@ public class ClientMasterController {
 
 	        // Save the client to the database
 	        clientCreationEntityObj = clientMasterService.save(clientCreationEntityObj);
+	        
+//	        // ✅ Log audit if saved
+//	        if (clientCreationEntityObj != null) {
+//	            Long userId = (Long) request.getAttribute("userId");     // Replace with your session/JWT logic
+//	            String username = (String) request.getAttribute("username");
+//
+//	            auditLogService.logRequest(
+//	                userId,
+//	                username,
+//	                methodName,
+//	                "INSERT",
+//	                addClientMEntity
+//	            );	        
 
 	        if (clientCreationEntityObj != null) {
 	            statusMap.put(Parameters.statusMsg, StatusMessageConstants.CLIENT_REGISTERED_SUCCESSFULLY);

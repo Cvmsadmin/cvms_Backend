@@ -186,5 +186,18 @@ public class ClientInvoiceMasterEntity implements Serializable {
 	
 		return null;
 	}
+	
+		
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	private LocalDate create_date;
+	
+    @Column(name = "created_by")
+    private String createdBy;
+	
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+	private LocalDate update_date;
+    
+    @Column(name = "updated_by")
+    private String updatedBy;
 
 }

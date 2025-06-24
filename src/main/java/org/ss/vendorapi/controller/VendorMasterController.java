@@ -58,7 +58,6 @@ public class VendorMasterController {
 	@Autowired
 	private CityMasterService cityMasterService;
 	
-	
 	@EncryptResponse
 	@PostMapping("/addVendor")
 	public ResponseEntity<?> addVendor(@RequestBody CustomerDetailsDTO addVendorMEntity,HttpServletRequest request){
@@ -83,6 +82,7 @@ public class VendorMasterController {
 				    UtilValidate.isEmpty(addVendorMEntity.getEmail()) || 
 				    UtilValidate.isEmpty(addVendorMEntity.getGst()) || 
 				    UtilValidate.isEmpty(addVendorMEntity.getPanNo()) || 
+				    UtilValidate.isEmpty(addVendorMEntity.getMsme()) ||
 				    UtilValidate.isEmpty(addVendorMEntity.getTypeOfService())){
 				return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
 			}	
@@ -100,8 +100,7 @@ public class VendorMasterController {
 				addVendorMEntity.setCity(cityMasterEntity.getId().toString());
 			}
 			/** END :::   IF THE CITY IS OTHET THEN CREATE THE RESPECTIVE CITY IN CITY MASTER AND SAVE TO THE VENDO R*/
-			
-			
+						
 			vendorCreationEntityObj.setCity(addVendorMEntity.getCity());
 			vendorCreationEntityObj.setState(addVendorMEntity.getState());
 			vendorCreationEntityObj.setPinCode(addVendorMEntity.getPinCode());
@@ -112,6 +111,7 @@ public class VendorMasterController {
 			vendorCreationEntityObj.setTypeOfService(addVendorMEntity.getTypeOfService());
 			vendorCreationEntityObj.setGst(addVendorMEntity.getGst());
 			vendorCreationEntityObj.setPanNo(addVendorMEntity.getPanNo());
+			vendorCreationEntityObj.setMsme(addVendorMEntity.getMsme());
 			try
 			{
 				/* SAVE THE USER TO THE DB ENTITY */

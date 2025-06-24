@@ -21,6 +21,9 @@ public class ClientInvoiceMasterDTO {
 	private String projectName;
 	private String discom;
 	
+	private String createdBy;
+	private String updatedBy;
+
 	@JsonFormat(pattern="dd/MM/yyyy")
 	private LocalDate invoiceDate;
 	private String invoiceNo;

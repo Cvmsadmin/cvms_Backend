@@ -56,6 +56,10 @@ Double getVendorAmountExcluGstByProjectNameAndDate(
 
 	List<VendorInvoiceMasterEntity> findByProjectName(String projectName);
 
+//	List<Object[]> findVendorInvoicesByManagerId(Long managerId);
+
+	@Query(value = "SELECT * FROM get_user_vendor_invoice_dd(:managerId)", nativeQuery = true)
+	List<Object[]> findVendorInvoicesByManagerId(@Param("managerId") Long managerId);
 
 
 //	Double getVendorAmountExcluGstByProjectId(Long projectId);

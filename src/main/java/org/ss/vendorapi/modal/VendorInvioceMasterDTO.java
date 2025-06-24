@@ -18,6 +18,10 @@ public class VendorInvioceMasterDTO {
     private Long clientId;
     private String clientName;
     private String projectName;
+    
+    private String serviceType;
+    
+//    private String msme;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date invoiceDate;

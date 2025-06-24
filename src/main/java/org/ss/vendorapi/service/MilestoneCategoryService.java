@@ -22,6 +22,8 @@ public interface MilestoneCategoryService {
 	
 	void deleteByProjectId(Long projectId);
 
+	public List<MilestoneCategory> findByProjectId(Long id);
+
 
 	
 //	void saveCategory(MilestoneCategory milestoneCategory);

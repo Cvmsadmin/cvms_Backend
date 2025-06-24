@@ -57,6 +57,12 @@ public class MilestoneCategoryServiceImpl implements MilestoneCategoryService {
         }
     }
 
+    @Override
+    public List<MilestoneCategory> findByProjectId(Long projectId) {
+        return milestoneCategoryRepository.findByProjectId(projectId);
+    }
+
+
 	
 
 }

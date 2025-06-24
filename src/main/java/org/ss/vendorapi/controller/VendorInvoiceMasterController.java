@@ -36,6 +36,7 @@ import org.ss.vendorapi.entity.VendorInvoiceMasterEntity;
 import org.ss.vendorapi.modal.ClientInvoiceMasterDTO;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.VendorInvioceMasterDTO;
+import org.ss.vendorapi.modal.VendorInvoiceProjection;
 import org.ss.vendorapi.repository.ProjectMasterRepository;
 import org.ss.vendorapi.service.DataValidationService;
 import org.ss.vendorapi.service.InvoiceDescriptionValueService;
@@ -240,6 +241,8 @@ public class VendorInvoiceMasterController {
 	        
 	        vendorInvoiceMaster.setTotalIgst(vendorInvoiceDTO.getTotalIgst());
 	        vendorInvoiceMaster.setAmountExcluGst(vendorInvoiceDTO.getAmountExcluGst());
+	        vendorInvoiceMaster.setServiceType(vendorInvoiceDTO.getServiceType());
+//	        vendorInvoiceMaster.setMsme(vendorInvoiceDTO.getMsme());
 
 	        // Optional: Set only if not null or not empty
 	        if (vendorInvoiceDTO.getPaymentRequestSentDate() != null) {
@@ -1452,6 +1455,21 @@ public class VendorInvoiceMasterController {
 
 	    } catch (Exception ex) {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
+	
+	@GetMapping("/getVendorInvoiceByManagerId/{managerId}")
+	public ResponseEntity<?> getVendorInvoiceByManagerId(@PathVariable Long managerId) {
+	    try {
+	        List<VendorInvoiceProjection> invoices = vendorInvoiceMasterService.getVendorInvoicesByManagerId(managerId);
+	        if (invoices.isEmpty()) {
+	            return ResponseEntity.ok("No vendor invoices found for manager ID: " + managerId);
+	        }
+	        return ResponseEntity.ok(invoices);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                             .body("Error while fetching vendor invoices: " + e.getMessage());
 	    }
 	}
 

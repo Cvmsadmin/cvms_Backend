@@ -1,5 +1,6 @@
 package org.ss.vendorapi.controller;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -209,8 +210,12 @@ public class ClientInvoiceMasterController {
 	        if (clientInvoiceDTO.getAmountExcluGst() != null) {
 	            clientInvoice.setAmountExcluGst(String.valueOf(clientInvoiceDTO.getAmountExcluGst()));
 	        }
-	       
 
+	     // ✅ Newly added
+	        clientInvoice.setCreate_date(LocalDate.now()); // <-- Automatically set
+	        clientInvoice.setCreatedBy(clientInvoiceDTO.getCreatedBy()); // <-- From request body
+	        
+	        
 //	        clientInvoice.setAmountExcluGst(clientInvoiceDTO.getAmountExcluGst());
 //	        clientInvoice.setMilestone(String.valueOf(clientInvoiceDTO.getMilestone()));
 
@@ -1090,6 +1095,11 @@ public class ClientInvoiceMasterController {
 	    invoiceEntity.setTotalPenaltyDeduction(dto.getTotalPenaltyDeduction());
 	    invoiceEntity.setCreditNote(dto.getCreditNote());
 	    invoiceEntity.setTotalPaymentReceived(dto.getTotalPaymentReceived());
+	    
+	 // Set update date and updated by
+	    invoiceEntity.setUpdate_date(LocalDate.now());
+	    invoiceEntity.setUpdatedBy(dto.getUpdatedBy());
+
 
 	    // Update the Client Invoice Description Values
 	    if (dto.getClientInvoiceDescriptionValue() != null) {

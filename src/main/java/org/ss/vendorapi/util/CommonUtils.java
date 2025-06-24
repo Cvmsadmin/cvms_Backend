@@ -84,6 +84,8 @@ public class CommonUtils {
 		return reqFormat.format(dateObj);
 	}
 	
+	
+	
 	/*
 	 * This method is used for date formatting purpose. Used for any type of date formatting.
 	 */

@@ -122,4 +122,8 @@ public class CustomerDetailsDTO implements Serializable{
 	private String retypePassword;
 	private String role;
 	private String otherCityName;
+	private String msme;
+
+	private String alternatNumber;
+	
 }

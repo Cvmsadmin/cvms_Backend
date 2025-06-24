@@ -61,13 +61,15 @@ public class VendorMasterEntity extends ParentEntity implements Serializable  {
 //	@Convert(converter = ListToStringConverter.class)
 	@Column(name="type_of_service")
 	private String typeOfService;
-
 	
 	@Column(name="gst")
 	private String gst;
 	
 	@Column(name="pan_no")
 	private String panNo;
+	
+	 @Column(name = "msme")
+	 private String msme;
 	
 	// Custom getter and setter to handle comma-separated values
     public List<String> getTypeOfService() {
@@ -77,5 +79,9 @@ public class VendorMasterEntity extends ParentEntity implements Serializable  {
     public void setTypeOfService(List<String> typeOfService) {
         this.typeOfService = typeOfService != null ? String.join(",", typeOfService) : "";
     }
+    
+    @Column(name = "alternat_number")
+	private String alternatNumber;
+    
 
 }

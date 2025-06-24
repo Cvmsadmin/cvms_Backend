@@ -33,6 +33,7 @@ import org.ss.vendorapi.entity.ProfitLossMasterEntity;
 import org.ss.vendorapi.entity.ProjectMasterEntity;
 import org.ss.vendorapi.entity.UserMasterEntity;
 import org.ss.vendorapi.modal.ProjectRequestDTO;
+import org.ss.vendorapi.modal.ProjectResponseDTO;
 import org.ss.vendorapi.repository.ProjectMasterRepository;
 import org.ss.vendorapi.service.ClientInvoiceMasterService;
 import org.ss.vendorapi.service.ClientMasterService;
@@ -233,21 +234,46 @@ public class ProjectMasterController {
 	//	    *****************************************************************************************************************************************************************
 	//	    *****************************************************************************get api ****************************************************************************
 
+//	@EncryptResponse
+//	@GetMapping("/getAllProject")	    
+//	public ResponseEntity<?> getAllProject() {
+//		Map<String, Object> statusMap = new HashMap<>();
+//		try {
+//			List<ProjectMasterEntity> projectList = projectMasterService.findAll();
+//			statusMap.put("ProjectMasterEntity",projectList);
+//			statusMap.put(Parameters.statusMsg,  StatusMessageConstants.PROJECT_FOUND_SUCCESSFULLY);
+//			statusMap.put(Parameters.status, Constants.SUCCESS);
+//			statusMap.put(Parameters.statusCode, "RU_200");
+//			return new ResponseEntity<>(statusMap,HttpStatus.OK);
+//		} catch (Exception ex) {
+//			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//	}
+	
 	@EncryptResponse
 	@GetMapping("/getAllProject")	    
 	public ResponseEntity<?> getAllProject() {
-		Map<String, Object> statusMap = new HashMap<>();
-		try {
-			List<ProjectMasterEntity> projectList = projectMasterService.findAll();
-			statusMap.put("ProjectMasterEntity",projectList);
-			statusMap.put(Parameters.statusMsg,  StatusMessageConstants.PROJECT_FOUND_SUCCESSFULLY);
-			statusMap.put(Parameters.status, Constants.SUCCESS);
-			statusMap.put(Parameters.statusCode, "RU_200");
-			return new ResponseEntity<>(statusMap,HttpStatus.OK);
-		} catch (Exception ex) {
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	    Map<String, Object> statusMap = new HashMap<>();
+	    try {
+	        List<ProjectMasterEntity> projectList = projectMasterService.findAll();
+	        List<ProjectResponseDTO> projectResponseList = new ArrayList<>();
+
+	        for (ProjectMasterEntity project : projectList) {
+	            List<MilestoneCategory> parts = milestoneCategoryService.findByProjectId(project.getId()); 
+	            projectResponseList.add(new ProjectResponseDTO(project, parts));
+	        }
+
+	        statusMap.put("projects", projectResponseList);
+	        statusMap.put(Parameters.statusMsg, StatusMessageConstants.PROJECT_FOUND_SUCCESSFULLY);
+	        statusMap.put(Parameters.status, Constants.SUCCESS);
+	        statusMap.put(Parameters.statusCode, "RU_200");
+
+	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+	    } catch (Exception ex) {
+	        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
+
 	
 	
 	@EncryptResponse
