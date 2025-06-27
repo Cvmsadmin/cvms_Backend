@@ -1,8 +1,12 @@
 package org.ss.vendorapi.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.hibernate.annotations.Where;
 
@@ -17,6 +21,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -148,8 +153,7 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 
 	    @Column(name = "amount_exclu_gst")
 	    private Double amountExcluGst;
-	    
-	    	
+	    	    	
 	 // Optional fields
 	    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "Asia/Kolkata")
 	    @Column(name = "payment_request_sent_date")
@@ -170,14 +174,37 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 	    @Column(name = "payment_advice_no")
 	    private String paymentAdviceNo;
 
-	    @Column(name = "service_type")
-	    private String serviceType;
-	    
-//	    @Column(name = "msme")
-//	    private String msme;
-//	    public void setPaymentRequestSentDate(Date paymentRequestSentDate) {
-//	        this.paymentRequestSentDate = paymentRequestSentDate;
+//	    @Column(name = "type_of_service")
+//	    private Long typeOfService;
+
+	    @Column(name = "type_of_service")
+	    private String typeOfService;
+
+
+//	    @Transient
+//	    public List<Long> getTypeOfServiceList() {
+//	        if (this.typeOfService == null || this.typeOfService.isEmpty()) {
+//	            return new ArrayList<>();
+//	        }
+//	        return Arrays.stream(this.typeOfService.split(","))
+//	                     .map(Long::parseLong)
+//	                     .collect(Collectors.toList());
 //	    }
+
+
+	    @Transient
+	    public List<Long> getServiceTypeMappings() {
+	        if (this.typeOfService == null || this.typeOfService.trim().isEmpty()) {
+	            return new ArrayList<>();
+	        }
+	        return Arrays.stream(this.typeOfService.split(","))
+	                     .map(String::trim)
+	                     .filter(s -> !s.isEmpty())
+	                     .map(Long::parseLong)
+	                     .collect(Collectors.toList());
+	    }
+
+	
 
 	}
 

@@ -3,11 +3,13 @@ package org.ss.vendorapi.controller;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -27,17 +29,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ss.vendorapi.advice.EncryptResponse;
-import org.ss.vendorapi.entity.ClientInvoiceMasterEntity;
 import org.ss.vendorapi.entity.ClientMasterEntity;
 //import org.ss.vendorapi.entity.DescriptionAndBaseValue;
 import org.ss.vendorapi.entity.InvoiceDescriptionValue;
-import org.ss.vendorapi.entity.SalesOpportunityMasterEntity;
+import org.ss.vendorapi.entity.ServiceMasterEntity;
 import org.ss.vendorapi.entity.VendorInvoiceMasterEntity;
-import org.ss.vendorapi.modal.ClientInvoiceMasterDTO;
+import org.ss.vendorapi.entity.VendorInvoiceServiceTypeKey;
+import org.ss.vendorapi.entity.VendorInvoiceServiceTypeMapping;
+import org.ss.vendorapi.modal.ServiceDTO;
 //import org.ss.vendorapi.logging.UPPCLLogger;
 import org.ss.vendorapi.modal.VendorInvioceMasterDTO;
 import org.ss.vendorapi.modal.VendorInvoiceProjection;
 import org.ss.vendorapi.repository.ProjectMasterRepository;
+import org.ss.vendorapi.repository.ServiceMasterRepository;
+import org.ss.vendorapi.repository.VendorInvoiceServiceTypeMappingRepository;
 import org.ss.vendorapi.service.DataValidationService;
 import org.ss.vendorapi.service.InvoiceDescriptionValueService;
 import org.ss.vendorapi.service.VendorInvoiceMasterService;
@@ -46,8 +51,6 @@ import org.ss.vendorapi.util.Constants;
 import org.ss.vendorapi.util.Parameters;
 import org.ss.vendorapi.util.StatusMessageConstants;
 import org.ss.vendorapi.util.UtilValidate;
-
-import jakarta.servlet.http.HttpServletRequest;
 @CrossOrigin(origins="*")
 @RestController
 @RequestMapping("v2/api")
@@ -70,6 +73,14 @@ public class VendorInvoiceMasterController {
 	
 	@Autowired
 	private ProjectMasterRepository projectMasterRepository;
+	
+	@Autowired
+	private VendorInvoiceServiceTypeMappingRepository vendorInvoiceServiceTypeMappingRepository;
+	
+	@Autowired
+	private ServiceMasterRepository serviceMasterRepository;
+	
+
 
 
 	//	************************************************************************************************************************************************************************************
@@ -241,7 +252,7 @@ public class VendorInvoiceMasterController {
 	        
 	        vendorInvoiceMaster.setTotalIgst(vendorInvoiceDTO.getTotalIgst());
 	        vendorInvoiceMaster.setAmountExcluGst(vendorInvoiceDTO.getAmountExcluGst());
-	        vendorInvoiceMaster.setServiceType(vendorInvoiceDTO.getServiceType());
+
 //	        vendorInvoiceMaster.setMsme(vendorInvoiceDTO.getMsme());
 
 	        // Optional: Set only if not null or not empty
@@ -286,6 +297,27 @@ public class VendorInvoiceMasterController {
 	                }
 	            }
 	        }
+	        
+	        // Save typeOfService mappings
+	        if (vendorInvoiceDTO.getTypeOfService() != null && !vendorInvoiceDTO.getTypeOfService().isEmpty()) {
+	            for (ServiceDTO serviceDTO : vendorInvoiceDTO.getTypeOfService()) {
+	                VendorInvoiceServiceTypeKey key = new VendorInvoiceServiceTypeKey();
+	                key.setVendorInvoiceId(vendorInvoiceMaster.getId());
+	                key.setServiceId(serviceDTO.getId());
+
+	                VendorInvoiceServiceTypeMapping mapping = new VendorInvoiceServiceTypeMapping();
+	                mapping.setId(key);
+	                mapping.setVendorInvoice(vendorInvoiceMaster);
+
+	                ServiceMasterEntity service = serviceMasterRepository.findById(serviceDTO.getId()).orElse(null);
+	                mapping.setService(service);
+
+	                mapping.setServiceName(serviceDTO.getServiceName());
+	                mapping.setSrNo(serviceDTO.getSrNo());
+
+	                vendorInvoiceServiceTypeMappingRepository.save(mapping);
+	            }
+	        }
 
 	        statusMap.put(Parameters.statusMsg, StatusMessageConstants.VENDOR_INVOICE_GENERATED_SUCCESSFULLY);
 	        statusMap.put(Parameters.status, Constants.SUCCESS);
@@ -296,314 +328,6 @@ public class VendorInvoiceMasterController {
 	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
-
-	
-//	**************************************************************************new ************************************
-//	@EncryptResponse
-//	@PostMapping("/addVendorInvoices")
-//	public ResponseEntity<?> addVendorInvoices(@RequestBody VendorInvioceMasterDTO vendorInvoiceDTO) {
-//	    Map<String, Object> statusMap = new HashMap<>();
-//	    try {
-//	        // Validate mandatory fields
-//	        if (UtilValidate.isEmpty(vendorInvoiceDTO.getVendorName()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getClientName()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getProjectName()) ||
-//	            vendorInvoiceDTO.getInvoiceDate() == null ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceNo()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getPoNo()) ||
-//	            vendorInvoiceDTO.getInvoiceDueDate() == null ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceDescription()) ||
-////	            UtilValidate.isEmpty(vendorInvoiceDTO.getGstPer()) ||
-////	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceAmountExcluGst()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceAmountIncluGst()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getStatus())) {
-//	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
-//	        }
-//
-//	        // Map DTO to Entity
-//	        VendorInvoiceMasterEntity vendorInvoiceMaster = new VendorInvoiceMasterEntity();
-//	        vendorInvoiceMaster.setVendorName(vendorInvoiceDTO.getVendorName());
-//	        vendorInvoiceMaster.setClientName(vendorInvoiceDTO.getClientName());
-//	        vendorInvoiceMaster.setProjectName(vendorInvoiceDTO.getProjectName());
-//	        vendorInvoiceMaster.setInvoiceDate(vendorInvoiceDTO.getInvoiceDate());
-//	        vendorInvoiceMaster.setInvoiceNo(vendorInvoiceDTO.getInvoiceNo());
-//	        vendorInvoiceMaster.setPoNo(vendorInvoiceDTO.getPoNo());
-//	        vendorInvoiceMaster.setInvoiceDueDate(vendorInvoiceDTO.getInvoiceDueDate());
-//	        vendorInvoiceMaster.setInvoiceDescription(vendorInvoiceDTO.getInvoiceDescription());
-////	        vendorInvoiceMaster.setGstPer(vendorInvoiceDTO.getGstPer());
-////	        vendorInvoiceMaster.setInvoiceAmountExcluGst(vendorInvoiceDTO.getInvoiceAmountExcluGst());
-//	        vendorInvoiceMaster.setInvoiceAmountIncluGst(vendorInvoiceDTO.getInvoiceAmountIncluGst());
-//	        vendorInvoiceMaster.setStatus(vendorInvoiceDTO.getStatus());
-//	        
-//	        vendorInvoiceMaster.setStartDate(vendorInvoiceDTO.getStartDate());
-//	        vendorInvoiceMaster.setEndDate(vendorInvoiceDTO.getEndDate());
-//	        vendorInvoiceMaster.setModeOfPayment(vendorInvoiceDTO.getModeOfPayment());
-//
-//	        // Optional fields
-//	        vendorInvoiceMaster.setInvoiceBaseValue(vendorInvoiceDTO.getInvoiceBaseValue());
-//	        vendorInvoiceMaster.setGstBaseValue(vendorInvoiceDTO.getGstBaseValue());
-//	        vendorInvoiceMaster.setInvoiceInclusiveOfGst(vendorInvoiceDTO.getInvoiceInclusiveOfGst());
-//	        vendorInvoiceMaster.setTdsBaseValue(vendorInvoiceDTO.getTdsBaseValue());
-//	        vendorInvoiceMaster.setTdsPer(vendorInvoiceDTO.getTdsPer());
-//	        vendorInvoiceMaster.setTdsOnGst(vendorInvoiceDTO.getTdsOnGst());
-//	        vendorInvoiceMaster.setIgstOnTds(vendorInvoiceDTO.getIgstOnTds());
-//	        vendorInvoiceMaster.setCgstOnTds(vendorInvoiceDTO.getCgstOnTds());
-//	        vendorInvoiceMaster.setSgstOnTds(vendorInvoiceDTO.getSgstOnTds());
-//	        vendorInvoiceMaster.setTotalTdsDeducted(vendorInvoiceDTO.getTotalTdsDeducted());
-//	        vendorInvoiceMaster.setBalance(vendorInvoiceDTO.getBalance());
-//	        vendorInvoiceMaster.setPenalty(vendorInvoiceDTO.getPenalty());
-//	        vendorInvoiceMaster.setPenaltyDeductionOnBase(vendorInvoiceDTO.getPenaltyDeductionOnBase());
-//	        vendorInvoiceMaster.setGstOnPenalty(vendorInvoiceDTO.getGstOnPenalty());
-//	        vendorInvoiceMaster.setTotalPenaltyDeduction(vendorInvoiceDTO.getTotalPenaltyDeduction());
-//	        vendorInvoiceMaster.setCreditNote(vendorInvoiceDTO.getCreditNote());
-//	        vendorInvoiceMaster.setTotalPaymentReceived(vendorInvoiceDTO.getTotalPaymentReceived());
-//
-//	        // Save vendor invoice
-//	        vendorInvoiceMaster = vendorInvoiceMasterService.save(vendorInvoiceMaster);
-//
-//	        // Handle descriptions and base values
-//	        if (vendorInvoiceDTO.getInvoiceDescriptionValue() != null) {
-//	            for (InvoiceDescriptionValue descAndBase : vendorInvoiceDTO.getInvoiceDescriptionValue()) {
-//	                if (!UtilValidate.isEmpty(descAndBase.getBaseValue())) {
-//	                    InvoiceDescriptionValue descriptionValue = new InvoiceDescriptionValue();
-//	                    descriptionValue.setVendorInvoice(vendorInvoiceMaster);
-//	                    descriptionValue.setItemDescription(descAndBase.getItemDescription());
-//	                    descriptionValue.setBaseValue(descAndBase.getBaseValue());
-//	                    invoiceDescriptionValueService.save(descriptionValue);
-//	                }
-//	            }
-//	        }
-//
-//	        statusMap.put(Parameters.statusMsg, StatusMessageConstants.VENDOR_INVOICE_GENERATED_SUCCESSFULLY);
-//	        statusMap.put(Parameters.status, Constants.SUCCESS);
-//	        statusMap.put(Parameters.statusCode, "RU_200");
-//	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
-//
-//	    } catch (Exception ex) {
-//	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//	    }
-//	}
-
-
-
-	
-	
-//	*************************************************************************************************************************************
-	
-//	@EncryptResponse
-//	@PostMapping("/addVendorInvoices")
-//	public ResponseEntity<?> addVendorInvoices(@RequestBody VendorInvioceMasterDTO vendorInvoiceDTO, HttpServletRequest request) {
-//
-//	    ResponseEntity<?> responseEntity = null;
-//	    String methodName = request.getRequestURI();
-//	    Map<String, Object> statusMap = new HashMap<>();
-//
-//	    try {
-//	        // Validate all fields, including the missing ones
-//	        if (UtilValidate.isEmpty(vendorInvoiceDTO.getVendorName()) || 
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getClientName()) || 
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getProjectName()) ||
-//	            vendorInvoiceDTO.getInvoiceDate() == null ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceNo()) || 
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getPoNo()) || 
-//	            vendorInvoiceDTO.getInvoiceDueDate() == null || 
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceDescription()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getGstPer()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceAmountExcluGst()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceAmountIncluGst()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getStatus()) ||
-//	            
-//	            // Additional validation for new fields
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceBaseValue()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getGstBaseValue()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceInclusiveOfGst()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getTdsBaseValue()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getTdsPer()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getTdsOnGst()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getIgstOnTds()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getCgstOnTds()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getSgstOnTds()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getTotalTdsDeducted()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getBalance()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getPenalty()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getPenaltyDeductionOnBase()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getGstOnPenalty()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getTotalPenaltyDeduction()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getCreditNote()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getTotalPaymentReceived())) {
-//	                
-//	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
-//	        }
-//
-//	        VendorInvoiceMasterEntity vendorInvoiceMaster = new VendorInvoiceMasterEntity();
-//
-//	        // Populate fields from DTO to entity, including new fields
-//	        vendorInvoiceMaster.setVendorName(vendorInvoiceDTO.getVendorName());
-//	        vendorInvoiceMaster.setClientName(vendorInvoiceDTO.getClientName());
-//	        vendorInvoiceMaster.setProjectName(vendorInvoiceDTO.getProjectName());
-//	        vendorInvoiceMaster.setInvoiceDate(vendorInvoiceDTO.getInvoiceDate());
-//	        vendorInvoiceMaster.setInvoiceNo(vendorInvoiceDTO.getInvoiceNo());
-//	        vendorInvoiceMaster.setPoNo(vendorInvoiceDTO.getPoNo());
-//	        vendorInvoiceMaster.setInvoiceDueDate(vendorInvoiceDTO.getInvoiceDueDate());
-//	        vendorInvoiceMaster.setInvoiceDescription(vendorInvoiceDTO.getInvoiceDescription());
-//	        vendorInvoiceMaster.setGstPer(vendorInvoiceDTO.getGstPer());
-//	        vendorInvoiceMaster.setInvoiceAmountExcluGst(vendorInvoiceDTO.getInvoiceAmountExcluGst());
-//	        vendorInvoiceMaster.setInvoiceAmountIncluGst(vendorInvoiceDTO.getInvoiceAmountIncluGst());
-//	        vendorInvoiceMaster.setStatus(vendorInvoiceDTO.getStatus());
-//
-//	        // Setting new fields
-//	        vendorInvoiceMaster.setInvoiceBaseValue(vendorInvoiceDTO.getInvoiceBaseValue());
-//	        vendorInvoiceMaster.setGstBaseValue(vendorInvoiceDTO.getGstBaseValue());
-//	        vendorInvoiceMaster.setInvoiceInclusiveOfGst(vendorInvoiceDTO.getInvoiceInclusiveOfGst());
-//	        vendorInvoiceMaster.setTdsBaseValue(vendorInvoiceDTO.getTdsBaseValue());
-//	        vendorInvoiceMaster.setTdsPer(vendorInvoiceDTO.getTdsPer());
-//	        vendorInvoiceMaster.setTdsOnGstPer(vendorInvoiceDTO.getTdsOnGst());
-//	        vendorInvoiceMaster.setIgstOnTds(vendorInvoiceDTO.getIgstOnTds());
-//	        vendorInvoiceMaster.setCgstOnTds(vendorInvoiceDTO.getCgstOnTds());
-//	        vendorInvoiceMaster.setSgstOnTds(vendorInvoiceDTO.getSgstOnTds());
-//	        vendorInvoiceMaster.setTotalTdsDeducted(vendorInvoiceDTO.getTotalTdsDeducted());
-//	        vendorInvoiceMaster.setBalance(vendorInvoiceDTO.getBalance());
-//	        vendorInvoiceMaster.setPenalty(vendorInvoiceDTO.getPenalty());
-//	        vendorInvoiceMaster.setPenaltyDeductionOnBase(vendorInvoiceDTO.getPenaltyDeductionOnBase());
-//	        vendorInvoiceMaster.setGstOnPenalty(vendorInvoiceDTO.getGstOnPenalty());
-//	        vendorInvoiceMaster.setTotalPenaltyDeduction(vendorInvoiceDTO.getTotalPenaltyDeduction());
-//	        vendorInvoiceMaster.setCreditNote(vendorInvoiceDTO.getCreditNote());
-//	        vendorInvoiceMaster.setTotalPaymentReceived(vendorInvoiceDTO.getTotalPaymentReceived());
-//
-//	        try {
-//	            // Save the invoice to the database
-//	            vendorInvoiceMaster = vendorInvoiceMasterService.save(vendorInvoiceMaster);
-//
-//	            if (vendorInvoiceMaster != null) {
-//	                statusMap.put(Parameters.statusMsg, StatusMessageConstants.VENDOR_INVOICE_GENERATED_SUCCESSFULLY);
-//	                statusMap.put(Parameters.status, Constants.SUCCESS);
-//	                statusMap.put(Parameters.statusCode, "RU_200");
-//	                return new ResponseEntity<>(statusMap, HttpStatus.OK);
-//	            } else {
-//	                statusMap.put(Parameters.statusMsg, StatusMessageConstants.VENDOR_INVOICE_NOT_GENERATED);
-//	                statusMap.put(Parameters.status, Constants.FAIL);
-//	                statusMap.put(Parameters.statusCode, "RU_301");
-//	                return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
-//	            }
-//	        } catch (Exception ex) {
-//	            statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
-//	            statusMap.put(Parameters.statusCode, Constants.SVD_USR);
-//	            statusMap.put(Parameters.status, Constants.FAIL);
-//	            return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//	        }
-//	    } catch (Exception ex) {
-//	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//	    }
-//	}
-
-//	****************************************************************************************************************************
-	
-	
-	
-	
-//	@EncryptResponse
-//	@PostMapping("/addVendorInvoices")
-//	public ResponseEntity<?> addVendorInvoices(@RequestBody VendorInvioceMasterDTO vendorInvoiceDTO, HttpServletRequest request) {
-//
-//	    ResponseEntity<?> responseEntity = null;
-//	    String methodName = request.getRequestURI();
-//	    // logger.logMethodStart(methodName);
-//
-//	    Map<String, Object> statusMap = new HashMap<>();
-//
-//	    try {
-//	        // Validate the fields, including the new ones
-//	        if (UtilValidate.isEmpty(vendorInvoiceDTO.getVendorName()) || 
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getClientName()) || 
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getProjectName()) ||
-//	            vendorInvoiceDTO.getInvoiceDate() == null ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceNo()) || 
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getPoNo()) || 
-//	            vendorInvoiceDTO.getInvoiceDueDate() == null || 
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceDescription()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getGstPer()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceAmountExcluGst()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceAmountIncluGst()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getStatus()) ||
-//	            
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceBaseValue()) ||  // Validation for new fields
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getGstBaseValue()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getInvoiceInclusiveOfGst()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getTdsBaseValue()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getCgstOnTds()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getSgstOnTds()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getTotalTdsDeducted()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getBalance()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getPenaltyDeductionOnBase()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getGstOnPenalty()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getTotalPenaltyDeduction()) ||
-//	            UtilValidate.isEmpty(vendorInvoiceDTO.getTotalPaymentReceived())) { 
-//	            
-//	            return CommonUtils.createResponse(Constants.FAIL, Constants.PARAMETERS_MISSING, HttpStatus.EXPECTATION_FAILED);
-//	        }
-//
-//	        VendorInvoiceMasterEntity vendorInvoiceMaster = new VendorInvoiceMasterEntity();
-//
-//	        // Set the fields from DTO to entity, including new fields
-//	        vendorInvoiceMaster.setVendorName(vendorInvoiceDTO.getVendorName());
-//	        vendorInvoiceMaster.setClientName(vendorInvoiceDTO.getClientName());
-//	        vendorInvoiceMaster.setProjectName(vendorInvoiceDTO.getProjectName());
-//	        vendorInvoiceMaster.setInvoiceDate(vendorInvoiceDTO.getInvoiceDate());
-//	        vendorInvoiceMaster.setInvoiceNo(vendorInvoiceDTO.getInvoiceNo());
-//	        vendorInvoiceMaster.setPoNo(vendorInvoiceDTO.getPoNo());
-//	        vendorInvoiceMaster.setInvoiceDueDate(vendorInvoiceDTO.getInvoiceDueDate());
-//	        vendorInvoiceMaster.setInvoiceDescription(vendorInvoiceDTO.getInvoiceDescription());
-//	        vendorInvoiceMaster.setGstPer(vendorInvoiceDTO.getGstPer());
-//	        vendorInvoiceMaster.setInvoiceAmountExcluGst(vendorInvoiceDTO.getInvoiceAmountExcluGst());
-//	        vendorInvoiceMaster.setInvoiceAmountIncluGst(vendorInvoiceDTO.getInvoiceAmountIncluGst());
-//	        vendorInvoiceMaster.setStatus(vendorInvoiceDTO.getStatus());
-//	        
-//
-//	        // Set the new fields
-//	        vendorInvoiceMaster.setInvoiceBaseValue(vendorInvoiceDTO.getInvoiceBaseValue());
-//	        vendorInvoiceMaster.setGstBaseValue(vendorInvoiceDTO.getGstBaseValue());
-//	        vendorInvoiceMaster.setInvoiceInclusiveOfGst(vendorInvoiceDTO.getInvoiceInclusiveOfGst());
-//	        vendorInvoiceMaster.setTdsBaseValue(vendorInvoiceDTO.getTdsBaseValue());
-//	        vendorInvoiceMaster.setCgstOnTds(vendorInvoiceDTO.getCgstOnTds());
-//	        vendorInvoiceMaster.setSgstOnTds(vendorInvoiceDTO.getSgstOnTds());
-//	        vendorInvoiceMaster.setTotalTdsDeducted(vendorInvoiceDTO.getTotalTdsDeducted());
-//	        vendorInvoiceMaster.setBalance(vendorInvoiceDTO.getBalance());
-//	        vendorInvoiceMaster.setPenaltyDeductionOnBase(vendorInvoiceDTO.getPenaltyDeductionOnBase());
-//	        vendorInvoiceMaster.setGstOnPenalty(vendorInvoiceDTO.getGstOnPenalty());
-//	        vendorInvoiceMaster.setTotalPenaltyDeduction(vendorInvoiceDTO.getTotalPenaltyDeduction());
-//	        vendorInvoiceMaster.setTotalPaymentReceived(vendorInvoiceDTO.getTotalPaymentReceived());
-//	       
-//
-//	        try {
-//	            /* SAVE THE USER TO THE DB ENTITY */
-//	            vendorInvoiceMaster = vendorInvoiceMasterService.save(vendorInvoiceMaster);
-//
-//	            if (vendorInvoiceMaster != null) {
-//	                statusMap.put(Parameters.statusMsg, StatusMessageConstants.VENDOR_INVOICE_GENERATED_SUCCESSFULLY);
-//	                statusMap.put(Parameters.status, Constants.SUCCESS);
-//	                statusMap.put(Parameters.statusCode, "RU_200");
-//	                return new ResponseEntity<>(statusMap, HttpStatus.OK);
-//	            } else {
-//	                statusMap.put(Parameters.statusMsg, StatusMessageConstants.VENDOR_INVOICE_NOT_GENERATED);
-//	                statusMap.put(Parameters.status, Constants.FAIL);
-//	                statusMap.put(Parameters.statusCode, "RU_301");
-//	                return new ResponseEntity<>(statusMap, HttpStatus.EXPECTATION_FAILED);
-//	            }
-//	        } catch (Exception ex) {
-//	            // logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 2. Failed to save user in DB response : " + ex.getMessage());
-//	            statusMap.put(Parameters.statusMsg, env.getProperty("common.api.error"));
-//	            statusMap.put(Parameters.statusCode, Constants.SVD_USR);
-//	            statusMap.put(Parameters.status, Constants.FAIL);
-//	            return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//	        }
-//	    } catch (Exception ex) {
-//	        // if (logger.isErrorLoggingEnabled()) {
-//	        // logger.log(UPPCLLogger.LOGLEVEL_ERROR, methodName, "@@@@ 1. Exception when getConsumerDetails @@@ " + ex.getMessage());
-//	        // }
-//	        return CommonUtils.createResponse(Constants.FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//	    }
-//	}
-
 
 	
 
@@ -725,6 +449,41 @@ public class VendorInvoiceMasterController {
 	                dto.setDateOfSubmissionToFinance(invoice.getDateOfSubmissionToFinance());
 	                dto.setPaymentDate(invoice.getPaymentDate());
 	                dto.setPaymentAdviceNo(invoice.getPaymentAdviceNo());
+	                
+	                List<VendorInvoiceServiceTypeMapping> mappings =
+	                	    vendorInvoiceServiceTypeMappingRepository.findByVendorInvoiceId(invoice.getId());
+
+	                	List<ServiceDTO> serviceDTOs = mappings.stream().map(mapping -> {
+	                	    ServiceDTO dto1 = new ServiceDTO();
+	                	    dto1.setId(mapping.getService().getId());
+	                	    dto1.setServiceName(mapping.getServiceName());
+	                	    dto1.setSrNo(mapping.getSrNo());
+	                	    return dto1;
+	                	}).collect(Collectors.toList());
+
+	                	dto.setTypeOfService(serviceDTOs);
+
+	                
+//	                if (invoice.getTypeOfService() != null && !invoice.getTypeOfService().isEmpty()) {
+//	                    List<ServiceDTO> serviceDTOs = Arrays.stream(invoice.getTypeOfService().split(","))
+//	                        .map(String::trim)
+//	                        .filter(idStr -> !idStr.isEmpty())
+//	                        .map(Long::valueOf)
+//	                        .map(serviceId -> {
+//	                            ServiceDTO serviceDTO = new ServiceDTO();
+//	                            serviceDTO.setId(serviceId);
+//	                            serviceMasterRepository.findById(serviceId).ifPresent(serviceEntity -> {
+//	                                serviceDTO.setServiceName(serviceEntity.getServiceName());
+//	                                serviceDTO.setSrNo(serviceEntity.getSrNo());
+//	                            });
+//	                            return serviceDTO;
+//	                        })
+//	                        .collect(Collectors.toList());
+//
+//	                    dto.setTypeOfService(serviceDTOs);
+//	                }
+
+
 
 	                return dto;
 	            })
@@ -743,7 +502,7 @@ public class VendorInvoiceMasterController {
 //	@EncryptResponse
 //	@GetMapping("/getAllVendorInvoice")
 //	public ResponseEntity<?> getAllVendorInvoices() {
-//	    try {
+//	    try {	
 //	        // Fetch all vendor invoices from the database
 //	        List<VendorInvoiceMasterEntity> vendorInvoices = vendorInvoiceMasterService.findAll();
 //
@@ -1045,6 +804,15 @@ public class VendorInvoiceMasterController {
 	        vendorInvoiceEntity.setPaymentDate(vendorInvoiceMasterDTO.getPaymentDate());
 	        vendorInvoiceEntity.setPaymentAdviceNo(vendorInvoiceMasterDTO.getPaymentAdviceNo());
 	        
+	        // Handle typeOfService as comma-separated string from List<ServiceDTO>
+	        if (vendorInvoiceMasterDTO.getTypeOfService() != null && !vendorInvoiceMasterDTO.getTypeOfService().isEmpty()) {
+	            String typeOfServiceStr = vendorInvoiceMasterDTO.getTypeOfService().stream()
+	                .map(service -> service.getId() != null ? service.getId().toString() : null)
+	                .filter(Objects::nonNull)
+	                .collect(Collectors.joining(","));
+	            vendorInvoiceEntity.setTypeOfService(typeOfServiceStr);
+	        }
+
 	        
 	        // Save the updated vendor invoice
 	        vendorInvoiceMasterService.update(vendorInvoiceEntity);

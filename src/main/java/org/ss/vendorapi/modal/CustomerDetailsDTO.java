@@ -124,6 +124,6 @@ public class CustomerDetailsDTO implements Serializable{
 	private String otherCityName;
 	private String msme;
 
-	private String alternatNumber;
+	private String alternateNumber;
 	
 }

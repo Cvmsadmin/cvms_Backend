@@ -401,46 +401,46 @@ public class ProjectMasterController {
 	public ResponseEntity<?> updateProjectMaster(@RequestBody ProjectRequestDTO projectRequestDTO) {
 	    Map<String, Object> statusMap = new HashMap<>();
 	    try {
-	    	ProjectMasterEntity projectMasterEntity = projectMasterService.findById(Long.parseLong(projectRequestDTO.getProjectId()));
-
-
+	        ProjectMasterEntity projectMasterEntity = projectMasterService.findById(Long.parseLong(projectRequestDTO.getProjectId()));
 	        if (projectMasterEntity == null) {
 	            return CommonUtils.createResponse(Constants.FAIL, "Project not found", HttpStatus.NOT_FOUND);
 	        }
 
-	        // Update fields (only if not null)
-	        projectMasterEntity.setClientId(projectRequestDTO.getClientName() != null ? projectRequestDTO.getClientName() : projectMasterEntity.getClientId());
-	        projectMasterEntity.setProjectName(projectRequestDTO.getProjectName() != null ? projectRequestDTO.getProjectName() : projectMasterEntity.getProjectName());
-	        projectMasterEntity.setAddress(projectRequestDTO.getAddress() != null ? projectRequestDTO.getAddress() : projectMasterEntity.getAddress());
-	        projectMasterEntity.setCity(projectRequestDTO.getCity() != null ? projectRequestDTO.getCity() : projectMasterEntity.getCity());
-	        projectMasterEntity.setState(projectRequestDTO.getState() != null ? projectRequestDTO.getState() : projectMasterEntity.getState());
-	        projectMasterEntity.setPincode(projectRequestDTO.getPincode() != null ? projectRequestDTO.getPincode() : projectMasterEntity.getPincode());
-	        projectMasterEntity.setDistrict(projectRequestDTO.getDistrict() != null ? projectRequestDTO.getDistrict() : projectMasterEntity.getDistrict());
-	        projectMasterEntity.setContactPerson(projectRequestDTO.getContactPerson() != null ? projectRequestDTO.getContactPerson() : projectMasterEntity.getContactPerson());
-	        projectMasterEntity.setContactNo(projectRequestDTO.getContactNo() != null ? projectRequestDTO.getContactNo() : projectMasterEntity.getContactNo());
-	        projectMasterEntity.setEmail(projectRequestDTO.getEmail() != null ? projectRequestDTO.getEmail() : projectMasterEntity.getEmail());
-	        projectMasterEntity.setGstNo(projectRequestDTO.getGstNo() != null ? projectRequestDTO.getGstNo() : projectMasterEntity.getGstNo());
-	        projectMasterEntity.setStartDate(projectRequestDTO.getStartDate() != null ? projectRequestDTO.getStartDate() : projectMasterEntity.getStartDate());
-	        projectMasterEntity.setEndDate(projectRequestDTO.getEndDate() != null ? projectRequestDTO.getEndDate() : projectMasterEntity.getEndDate());
-	        projectMasterEntity.setDuration(projectRequestDTO.getDuration() != null ? projectRequestDTO.getDuration() : projectMasterEntity.getDuration());
-	        projectMasterEntity.setDateOfLoi(projectRequestDTO.getDateOfLoi() != null ? projectRequestDTO.getDateOfLoi() : projectMasterEntity.getDateOfLoi());
-	        projectMasterEntity.setTDate(projectRequestDTO.getTDate() != null ? projectRequestDTO.getTDate() : projectMasterEntity.getTDate());
-	        projectMasterEntity.setLoiNo(projectRequestDTO.getLoiNo() != null ? projectRequestDTO.getLoiNo() : projectMasterEntity.getLoiNo());
-	        projectMasterEntity.setDateOfLoa(projectRequestDTO.getDateOfLoa() != null ? projectRequestDTO.getDateOfLoa() : projectMasterEntity.getDateOfLoa());
-	        projectMasterEntity.setAccountManagerId(projectRequestDTO.getAccountManager() != null ? projectRequestDTO.getAccountManager() : projectMasterEntity.getAccountManagerId());
-	        projectMasterEntity.setProjectManagerId(projectRequestDTO.getProjectManager() != null ? projectRequestDTO.getProjectManager() : projectMasterEntity.getProjectManagerId());
-	        projectMasterEntity.setContractDate(projectRequestDTO.getContractDate() != null ? projectRequestDTO.getContractDate() : projectMasterEntity.getContractDate());
-	        projectMasterEntity.setSingOfDate(projectRequestDTO.getSingOfDate() != null ? projectRequestDTO.getSingOfDate() : projectMasterEntity.getSingOfDate());
-	        projectMasterEntity.setContractPrice(projectRequestDTO.getContractPrice() != null ? projectRequestDTO.getContractPrice() : projectMasterEntity.getContractPrice());
+	        // --- Update Project Fields ---
+	        projectMasterEntity.setClientId(projectRequestDTO.getClientName());
+	        projectMasterEntity.setProjectName(projectRequestDTO.getProjectName());
+	        projectMasterEntity.setAddress(projectRequestDTO.getAddress());
+	        projectMasterEntity.setCity(projectRequestDTO.getCity());
+	        projectMasterEntity.setState(projectRequestDTO.getState());
+	        projectMasterEntity.setPincode(projectRequestDTO.getPincode());
+	        projectMasterEntity.setDistrict(projectRequestDTO.getDistrict());
+	        projectMasterEntity.setContactPerson(projectRequestDTO.getContactPerson());
+	        projectMasterEntity.setContactNo(projectRequestDTO.getContactNo());
+	        projectMasterEntity.setEmail(projectRequestDTO.getEmail());
+	        projectMasterEntity.setGstNo(projectRequestDTO.getGstNo());
+	        projectMasterEntity.setStartDate(projectRequestDTO.getStartDate());
+	        projectMasterEntity.setEndDate(projectRequestDTO.getEndDate());
+	        projectMasterEntity.setDuration(projectRequestDTO.getDuration());
+	        projectMasterEntity.setDateOfLoi(projectRequestDTO.getDateOfLoi());
+	        projectMasterEntity.setTDate(projectRequestDTO.getTDate());
+	        projectMasterEntity.setLoiNo(projectRequestDTO.getLoiNo());
+	        projectMasterEntity.setDateOfLoa(projectRequestDTO.getDateOfLoa());
+	        projectMasterEntity.setAccountManagerId(projectRequestDTO.getAccountManager());
+	        projectMasterEntity.setProjectManagerId(projectRequestDTO.getProjectManager());
+	        projectMasterEntity.setContractDate(projectRequestDTO.getContractDate());
+	        projectMasterEntity.setSingOfDate(projectRequestDTO.getSingOfDate());
+	        projectMasterEntity.setContractPrice(projectRequestDTO.getContractPrice());
 
 	        // Save updated project
 	        projectMasterService.update(projectMasterEntity);
 
-	        // 🧹 Clear old milestones
+	        // --- Delete old milestones and parts ---
 	        milestoneMasterService.deleteByProjectId(projectMasterEntity.getId().toString());
+	        milestoneCategoryService.deleteByProjectId(projectMasterEntity.getId());
 
-	        // 🔁 Insert new milestones
-	        if (projectRequestDTO.getMoe() != null) {
+	        // --- Save new milestones ---
+	        List<MilestoneMasterEntity> savedMilestones = new ArrayList<>();
+	        if (projectRequestDTO.getMoe() != null && !projectRequestDTO.getMoe().isEmpty()) {
 	            for (MilestoneMasterEntity milestoneDto : projectRequestDTO.getMoe()) {
 	                MilestoneMasterEntity milestoneEntity = new MilestoneMasterEntity();
 	                milestoneEntity.setProjectId(projectMasterEntity.getId().toString());
@@ -451,24 +451,22 @@ public class ProjectMasterController {
 	                milestoneEntity.setServiceTypes(milestoneDto.getServiceTypes());
 	                milestoneEntity.setAmountExclGst(milestoneDto.getAmountExclGst());
 	                milestoneEntity.setGstAmount(milestoneDto.getGstAmount());
-	                milestoneEntity.setPaymentPer(milestoneDto.getPaymentPer());
 	                milestoneEntity.setGstRate(milestoneDto.getGstRate());
 	                milestoneEntity.setAmountInclGst(milestoneDto.getAmountInclGst());
 	                milestoneEntity.setStatus(milestoneDto.getStatus());
-
 	                if (milestoneDto.getCompletionDate() != null) {
 	                    milestoneEntity.setCompletionDate(milestoneDto.getCompletionDate());
 	                }
 
+	                milestoneEntity.setPaymentPer(milestoneDto.getPaymentPer());
 	                milestoneMasterService.save(milestoneEntity);
+	                savedMilestones.add(milestoneEntity);
 	            }
 	        }
 
-	        // 🧹 Clear old milestone categories
-	        milestoneCategoryService.deleteByProjectId(projectMasterEntity.getId());
-
-	        // 🔁 Insert new milestone categories
-	        if (projectRequestDTO.getParts() != null) {
+	        // --- Save new parts ---
+	        List<MilestoneCategory> savedParts = new ArrayList<>();
+	        if (projectRequestDTO.getParts() != null && !projectRequestDTO.getParts().isEmpty()) {
 	            for (MilestoneCategory part : projectRequestDTO.getParts()) {
 	                MilestoneCategory category = new MilestoneCategory();
 	                category.setProjectId(projectMasterEntity.getId());
@@ -478,13 +476,17 @@ public class ProjectMasterController {
 	                category.setPartitionPer(part.getPartitionPer());
 
 	                milestoneCategoryService.saveCategory(category);
+	                savedParts.add(category);
 	            }
 	        }
 
+	        // --- Response ---
 	        statusMap.put("status", "SUCCESS");
 	        statusMap.put("statusCode", "RU_200");
 	        statusMap.put("statusMessage", "Project updated successfully");
 	        statusMap.put("projectMasterEntity", projectMasterEntity);
+	        statusMap.put("milestones", savedMilestones);
+	        statusMap.put("parts", savedParts);
 
 	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
 
@@ -493,53 +495,202 @@ public class ProjectMasterController {
 	        return new ResponseEntity<>(Map.of("status", "FAIL", "message", ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
+	
 	
 //	@EncryptResponse
 //	@PutMapping("/updateProjectMaster")
-//	public ResponseEntity<?>updateClientMaster(@RequestBody ProjectRequestDTO projectRequestDTO){
-//		Map<String, Object> statusMap = new HashMap<>();
-//		try {
-//			ProjectMasterEntity projectMasterEntity=projectMasterService.findById(projectRequestDTO.getId());
+//	@Transactional
+//	public ResponseEntity<?> updateProjectMaster(@RequestBody ProjectRequestDTO projectRequestDTO) {
+//	    Map<String, Object> statusMap = new HashMap<>();
+//	    try {
+//	        ProjectMasterEntity projectMasterEntity = projectMasterService.findById(Long.parseLong(projectRequestDTO.getProjectId()));
+//	        if (projectMasterEntity == null) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "Project not found", HttpStatus.NOT_FOUND);
+//	        }
 //
+//	        // Update project fields
+//	        projectMasterEntity.setClientId(projectRequestDTO.getClientName());
+//	        projectMasterEntity.setProjectName(projectRequestDTO.getProjectName());
+//	        projectMasterEntity.setAddress(projectRequestDTO.getAddress());
+//	        projectMasterEntity.setCity(projectRequestDTO.getCity());
+//	        projectMasterEntity.setState(projectRequestDTO.getState());
+//	        projectMasterEntity.setPincode(projectRequestDTO.getPincode());
+//	        projectMasterEntity.setDistrict(projectRequestDTO.getDistrict());
+//	        projectMasterEntity.setContactPerson(projectRequestDTO.getContactPerson());
+//	        projectMasterEntity.setContactNo(projectRequestDTO.getContactNo());
+//	        projectMasterEntity.setEmail(projectRequestDTO.getEmail());
+//	        projectMasterEntity.setGstNo(projectRequestDTO.getGstNo());
+//	        projectMasterEntity.setStartDate(projectRequestDTO.getStartDate());
+//	        projectMasterEntity.setEndDate(projectRequestDTO.getEndDate());
+//	        projectMasterEntity.setDuration(projectRequestDTO.getDuration());
+//	        projectMasterEntity.setDateOfLoi(projectRequestDTO.getDateOfLoi());
+//	        projectMasterEntity.setTDate(projectRequestDTO.getTDate());
+//	        projectMasterEntity.setLoiNo(projectRequestDTO.getLoiNo());
+//	        projectMasterEntity.setDateOfLoa(projectRequestDTO.getDateOfLoa());
+//	        projectMasterEntity.setAccountManagerId(projectRequestDTO.getAccountManager());
+//	        projectMasterEntity.setProjectManagerId(projectRequestDTO.getProjectManager());
+//	        projectMasterEntity.setContractDate(projectRequestDTO.getContractDate());
+//	        projectMasterEntity.setSingOfDate(projectRequestDTO.getSingOfDate());
+//	        projectMasterEntity.setContractPrice(projectRequestDTO.getContractPrice());
 //
-//			projectMasterEntity.setClientId(projectRequestDTO.getClientName()!=null?projectRequestDTO.getClientName():projectMasterEntity.getClientId());
-//			projectMasterEntity.setProjectName(projectRequestDTO.getProjectName()!=null?projectRequestDTO.getProjectName():projectMasterEntity.getProjectName());
-//			projectMasterEntity.setAddress(projectRequestDTO.getAddress()!=null?projectRequestDTO.getAddress():projectMasterEntity.getAddress());
-//			projectMasterEntity.setCity(projectRequestDTO.getCity() != null ? projectRequestDTO.getCity() : projectMasterEntity.getCity());
-//			projectMasterEntity.setState(projectRequestDTO.getState() != null ? projectRequestDTO.getState() : projectMasterEntity.getState());
-//			projectMasterEntity.setPincode(projectRequestDTO.getPincode() != null ? projectRequestDTO.getPincode() : projectMasterEntity.getPincode());
-//			projectMasterEntity.setDistrict(projectRequestDTO.getDistrict() != null ? projectRequestDTO.getDistrict() : projectMasterEntity.getDistrict());
-//			projectMasterEntity.setContactPerson(projectRequestDTO.getContactPerson() != null ? projectRequestDTO.getContactPerson() : projectMasterEntity.getContactPerson());
-//			projectMasterEntity.setContactNo(projectRequestDTO.getContactNo() != null ? projectRequestDTO.getContactNo() : projectMasterEntity.getContactNo());
-//			projectMasterEntity.setEmail(projectRequestDTO.getEmail() != null ? projectRequestDTO.getEmail() : projectMasterEntity.getEmail());
-//			projectMasterEntity.setGstNo(projectRequestDTO.getGstNo() != null ? projectRequestDTO.getGstNo() : projectMasterEntity.getGstNo());
-//			projectMasterEntity.setStartDate(projectRequestDTO.getStartDate() != null ? projectRequestDTO.getStartDate() : projectMasterEntity.getStartDate());
-//			projectMasterEntity.setEndDate(projectRequestDTO.getEndDate() != null ? projectRequestDTO.getEndDate() : projectMasterEntity.getEndDate());
-//			projectMasterEntity.setDuration(projectRequestDTO.getDuration() != null ? projectRequestDTO.getDuration() : projectMasterEntity.getDuration());
-//			projectMasterEntity.setDateOfLoi(projectRequestDTO.getDateOfLoi() != null ? projectRequestDTO.getDateOfLoi() : projectMasterEntity.getDateOfLoi());
-//			projectMasterEntity.setTDate(projectRequestDTO.getTDate() != null ? projectRequestDTO.getTDate() : projectMasterEntity.getTDate());
-//			projectMasterEntity.setLoiNo(projectRequestDTO.getLoiNo() != null ? projectRequestDTO.getLoiNo() : projectMasterEntity.getLoiNo());
-//			projectMasterEntity.setDateOfLoa(projectRequestDTO.getDateOfLoa() != null ? projectRequestDTO.getDateOfLoa() : projectMasterEntity.getDateOfLoa());
-//			projectMasterEntity.setAccountManagerId(projectRequestDTO.getAccountManager() != null ? projectRequestDTO.getAccountManager() : projectMasterEntity.getAccountManagerId());
-//			projectMasterEntity.setProjectManagerId(projectRequestDTO.getProjectManager() != null ? projectRequestDTO.getProjectManager() : projectMasterEntity.getProjectManagerId());
-//			projectMasterEntity.setContractDate(projectRequestDTO.getContractDate() != null ? projectRequestDTO.getContractDate() : projectMasterEntity.getContractDate());
-//			projectMasterEntity.setSingOfDate(projectRequestDTO.getSingOfDate() != null ? projectRequestDTO.getSingOfDate() : projectMasterEntity.getSingOfDate());
-//			projectMasterEntity.setContractPrice(projectRequestDTO.getContractPrice() != null ? projectRequestDTO.getContractPrice() : projectMasterEntity.getContractPrice());
+//	        // Save updated project
+//	        projectMasterService.update(projectMasterEntity);
 //
-//			projectMasterService.update(projectMasterEntity);
+//	        // 🧹 Delete old milestones
+//	        milestoneMasterService.deleteByProjectId(projectMasterEntity.getId().toString());
 //
-//			statusMap.put("projectMasterEntity",projectMasterEntity);
-//			statusMap.put("status", "SUCCESS");
-//			statusMap.put("statusCode", "RU_200");
-//			statusMap.put("statusMessage", "SUCCESSFULLY UPDATED"); 
+//	        // 🔁 Add new milestones
+//	        if (projectRequestDTO.getMoe() != null && !projectRequestDTO.getMoe().isEmpty()) {
+//	            for (MilestoneMasterEntity milestoneDto : projectRequestDTO.getMoe()) {
+//	                MilestoneMasterEntity milestoneEntity = new MilestoneMasterEntity();
+//	                milestoneEntity.setProjectId(projectMasterEntity.getId().toString());
+//	                milestoneEntity.setTDate(milestoneDto.getTDate());
+//	                milestoneEntity.setSerialNumber(milestoneDto.getSerialNumber());
+//	                milestoneEntity.setDays(milestoneDto.getDays());
+//	                milestoneEntity.setDeliverables(milestoneDto.getDeliverables());
+//	                milestoneEntity.setServiceTypes(milestoneDto.getServiceTypes());
+//	                milestoneEntity.setAmountExclGst(milestoneDto.getAmountExclGst());
+//	                milestoneEntity.setGstAmount(milestoneDto.getGstAmount());
+//	                milestoneEntity.setGstRate(milestoneDto.getGstRate());
+//	                milestoneEntity.setAmountInclGst(milestoneDto.getAmountInclGst());
+//	                milestoneEntity.setStatus(milestoneDto.getStatus());
+//	                if (milestoneDto.getCompletionDate() != null) {
+//	                    milestoneEntity.setCompletionDate(milestoneDto.getCompletionDate());
+//	                }
+//	                milestoneMasterService.save(milestoneEntity);
+//	            }
+//	        }
 //
-//			return new ResponseEntity<>(statusMap,HttpStatus.OK);
-//		}catch(Exception ex) {
-//			ex.printStackTrace();
-//			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
+//	        // 🧹 Delete old parts
+//	        milestoneCategoryService.deleteByProjectId(projectMasterEntity.getId());
 //
+//	        // 🔁 Add new parts
+//	        if (projectRequestDTO.getParts() != null && !projectRequestDTO.getParts().isEmpty()) {
+//	            for (MilestoneCategory part : projectRequestDTO.getParts()) {
+//	                MilestoneCategory category = new MilestoneCategory();
+//	                category.setProjectId(projectMasterEntity.getId());
+//	                category.setProjectName(projectMasterEntity.getProjectName());
+//	                category.setPartition(part.getPartition());
+//	                category.setPartitionAmount(part.getPartitionAmount());
+//	                category.setPartitionPer(part.getPartitionPer());
+//	                milestoneCategoryService.saveCategory(category);
+//	            }
+//	        }
+//
+//	        statusMap.put("status", "SUCCESS");
+//	        statusMap.put("statusCode", "RU_200");
+//	        statusMap.put("statusMessage", "Project updated successfully");
+//	        statusMap.put("projectMasterEntity", projectMasterEntity);
+//
+//	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+//
+//	    } catch (Exception ex) {
+//	        ex.printStackTrace();
+//	        return new ResponseEntity<>(Map.of("status", "FAIL", "message", ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
 //	}
+
+	
+	
+//	@EncryptResponse
+//	@PutMapping("/updateProjectMaster")
+//	@Transactional
+//	public ResponseEntity<?> updateProjectMaster(@RequestBody ProjectRequestDTO projectRequestDTO) {
+//	    Map<String, Object> statusMap = new HashMap<>();
+//	    try {
+//	    	ProjectMasterEntity projectMasterEntity = projectMasterService.findById(Long.parseLong(projectRequestDTO.getProjectId()));
+//	        if (projectMasterEntity == null) {
+//	            return CommonUtils.createResponse(Constants.FAIL, "Project not found", HttpStatus.NOT_FOUND);
+//	        }
+//
+//	        // Update fields (only if not null)
+//	        projectMasterEntity.setClientId(projectRequestDTO.getClientName() != null ? projectRequestDTO.getClientName() : projectMasterEntity.getClientId());
+//	        projectMasterEntity.setProjectName(projectRequestDTO.getProjectName() != null ? projectRequestDTO.getProjectName() : projectMasterEntity.getProjectName());
+//	        projectMasterEntity.setAddress(projectRequestDTO.getAddress() != null ? projectRequestDTO.getAddress() : projectMasterEntity.getAddress());
+//	        projectMasterEntity.setCity(projectRequestDTO.getCity() != null ? projectRequestDTO.getCity() : projectMasterEntity.getCity());
+//	        projectMasterEntity.setState(projectRequestDTO.getState() != null ? projectRequestDTO.getState() : projectMasterEntity.getState());
+//	        projectMasterEntity.setPincode(projectRequestDTO.getPincode() != null ? projectRequestDTO.getPincode() : projectMasterEntity.getPincode());
+//	        projectMasterEntity.setDistrict(projectRequestDTO.getDistrict() != null ? projectRequestDTO.getDistrict() : projectMasterEntity.getDistrict());
+//	        projectMasterEntity.setContactPerson(projectRequestDTO.getContactPerson() != null ? projectRequestDTO.getContactPerson() : projectMasterEntity.getContactPerson());
+//	        projectMasterEntity.setContactNo(projectRequestDTO.getContactNo() != null ? projectRequestDTO.getContactNo() : projectMasterEntity.getContactNo());
+//	        projectMasterEntity.setEmail(projectRequestDTO.getEmail() != null ? projectRequestDTO.getEmail() : projectMasterEntity.getEmail());
+//	        projectMasterEntity.setGstNo(projectRequestDTO.getGstNo() != null ? projectRequestDTO.getGstNo() : projectMasterEntity.getGstNo());
+//	        projectMasterEntity.setStartDate(projectRequestDTO.getStartDate() != null ? projectRequestDTO.getStartDate() : projectMasterEntity.getStartDate());
+//	        projectMasterEntity.setEndDate(projectRequestDTO.getEndDate() != null ? projectRequestDTO.getEndDate() : projectMasterEntity.getEndDate());
+//	        projectMasterEntity.setDuration(projectRequestDTO.getDuration() != null ? projectRequestDTO.getDuration() : projectMasterEntity.getDuration());
+//	        projectMasterEntity.setDateOfLoi(projectRequestDTO.getDateOfLoi() != null ? projectRequestDTO.getDateOfLoi() : projectMasterEntity.getDateOfLoi());
+//	        projectMasterEntity.setTDate(projectRequestDTO.getTDate() != null ? projectRequestDTO.getTDate() : projectMasterEntity.getTDate());
+//	        projectMasterEntity.setLoiNo(projectRequestDTO.getLoiNo() != null ? projectRequestDTO.getLoiNo() : projectMasterEntity.getLoiNo());
+//	        projectMasterEntity.setDateOfLoa(projectRequestDTO.getDateOfLoa() != null ? projectRequestDTO.getDateOfLoa() : projectMasterEntity.getDateOfLoa());
+//	        projectMasterEntity.setAccountManagerId(projectRequestDTO.getAccountManager() != null ? projectRequestDTO.getAccountManager() : projectMasterEntity.getAccountManagerId());
+//	        projectMasterEntity.setProjectManagerId(projectRequestDTO.getProjectManager() != null ? projectRequestDTO.getProjectManager() : projectMasterEntity.getProjectManagerId());
+//	        projectMasterEntity.setContractDate(projectRequestDTO.getContractDate() != null ? projectRequestDTO.getContractDate() : projectMasterEntity.getContractDate());
+//	        projectMasterEntity.setSingOfDate(projectRequestDTO.getSingOfDate() != null ? projectRequestDTO.getSingOfDate() : projectMasterEntity.getSingOfDate());
+//	        projectMasterEntity.setContractPrice(projectRequestDTO.getContractPrice() != null ? projectRequestDTO.getContractPrice() : projectMasterEntity.getContractPrice());
+//
+//	        // Save updated project
+//	        projectMasterService.update(projectMasterEntity);
+//
+//	        // 🧹 Clear old milestones
+//	        milestoneMasterService.deleteByProjectId(projectMasterEntity.getId().toString());
+//
+//	        // 🔁 Insert new milestones
+//	        if (projectRequestDTO.getMoe() != null) {
+//	            for (MilestoneMasterEntity milestoneDto : projectRequestDTO.getMoe()) {
+//	                MilestoneMasterEntity milestoneEntity = new MilestoneMasterEntity();
+//	                milestoneEntity.setProjectId(projectMasterEntity.getId().toString());
+//	                milestoneEntity.setTDate(milestoneDto.getTDate());
+//	                milestoneEntity.setSerialNumber(milestoneDto.getSerialNumber());
+//	                milestoneEntity.setDays(milestoneDto.getDays());
+//	                milestoneEntity.setDeliverables(milestoneDto.getDeliverables());
+//	                milestoneEntity.setServiceTypes(milestoneDto.getServiceTypes());
+//	                milestoneEntity.setAmountExclGst(milestoneDto.getAmountExclGst());
+//	                milestoneEntity.setGstAmount(milestoneDto.getGstAmount());
+//	                milestoneEntity.setPaymentPer(milestoneDto.getPaymentPer());
+//	                milestoneEntity.setGstRate(milestoneDto.getGstRate());
+//	                milestoneEntity.setAmountInclGst(milestoneDto.getAmountInclGst());
+//	                milestoneEntity.setStatus(milestoneDto.getStatus());
+//
+//	                if (milestoneDto.getCompletionDate() != null) {
+//	                    milestoneEntity.setCompletionDate(milestoneDto.getCompletionDate());
+//	                }
+//
+//	                milestoneMasterService.save(milestoneEntity);
+//	            }
+//	        }
+//
+//	        // 🧹 Clear old milestone categories
+//	        milestoneCategoryService.deleteByProjectId(projectMasterEntity.getId());
+//
+//	        // 🔁 Insert new milestone categories
+//	        if (projectRequestDTO.getParts() != null) {
+//	            for (MilestoneCategory part : projectRequestDTO.getParts()) {
+//	                MilestoneCategory category = new MilestoneCategory();
+//	                category.setProjectId(projectMasterEntity.getId());
+//	                category.setProjectName(projectMasterEntity.getProjectName());
+//	                category.setPartition(part.getPartition());
+//	                category.setPartitionAmount(part.getPartitionAmount());
+//	                category.setPartitionPer(part.getPartitionPer());
+//
+//	                milestoneCategoryService.saveCategory(category);
+//	            }
+//	        }
+//
+//	        statusMap.put("status", "SUCCESS");
+//	        statusMap.put("statusCode", "RU_200");
+//	        statusMap.put("statusMessage", "Project updated successfully");
+//	        statusMap.put("projectMasterEntity", projectMasterEntity);
+//
+//	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+//
+//	    } catch (Exception ex) {
+//	        ex.printStackTrace();
+//	        return new ResponseEntity<>(Map.of("status", "FAIL", "message", ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
+	
+//	
 	
 	@EncryptResponse
 	@PutMapping("/updateMilestoneMaster")

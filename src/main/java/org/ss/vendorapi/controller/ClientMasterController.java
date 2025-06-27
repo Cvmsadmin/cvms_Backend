@@ -124,6 +124,8 @@ public class ClientMasterController {
 	        clientCreationEntityObj.setPan(addClientMEntity.getPan());
 	        clientCreationEntityObj.setTypeOfService(addClientMEntity.getTypeOfService().get(0));
 	        clientCreationEntityObj.setAccountManagerId(addClientMEntity.getAccountManager()); 
+	        clientCreationEntityObj.setAlternateNumber(addClientMEntity.getAlternateNumber()); 
+
 
 	        // Save the client to the database
 	        clientCreationEntityObj = clientMasterService.save(clientCreationEntityObj);
@@ -379,6 +381,7 @@ public class ClientMasterController {
 			clientEntity.setPan(addClientMEntity.getPan()!=null?addClientMEntity.getPan():clientEntity.getPan());
 			clientEntity.setTypeOfService(addClientMEntity.getTypeOfService().get(0)!=null?addClientMEntity.getTypeOfService().get(0):clientEntity.getTypeOfService());
 			clientEntity.setAccountManagerId(addClientMEntity.getAccountManager()!=null?addClientMEntity.getAccountManager():clientEntity.getAccountManagerId());
+			clientEntity.setAlternateNumber(addClientMEntity.getAlternateNumber()!=null?addClientMEntity.getAlternateNumber():clientEntity.getAlternateNumber());
 //			clientEntity.setClientName(addClientMEntity.getClientName()!=null?addClientMEntity.getClientName():clientEntity.getClientName());
 
 			clientMasterService.update(clientEntity);

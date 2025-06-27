@@ -112,6 +112,7 @@ public class VendorMasterController {
 			vendorCreationEntityObj.setGst(addVendorMEntity.getGst());
 			vendorCreationEntityObj.setPanNo(addVendorMEntity.getPanNo());
 			vendorCreationEntityObj.setMsme(addVendorMEntity.getMsme());
+			vendorCreationEntityObj.setAlternateNumber(addVendorMEntity.getAlternateNumber());
 			try
 			{
 				/* SAVE THE USER TO THE DB ENTITY */
@@ -221,6 +222,7 @@ public class VendorMasterController {
 				vendorEntity.setTypeOfService(addVendorEntity.getTypeOfService() != null ?addVendorEntity.getTypeOfService() : vendorEntity.getTypeOfService());
 				vendorEntity.setGst(addVendorEntity.getGst() != null ?addVendorEntity.getGst() : vendorEntity.getGst());
 				vendorEntity.setPanNo(addVendorEntity.getPanNo() != null ?addVendorEntity.getPanNo() : vendorEntity.getPanNo());
+				vendorEntity.setAlternateNumber(addVendorEntity.getAlternateNumber() != null ?addVendorEntity.getAlternateNumber() : vendorEntity.getAlternateNumber());
 
 				vendorMasterService.update(vendorEntity);
 

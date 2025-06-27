@@ -12,8 +12,7 @@ import org.ss.vendorapi.repository.MilestoneMasterRepository;
 @Service
 public class MilestoneMasterServiceImpl implements MilestoneMasterService{
 
-	
-	
+		
 	@Autowired
 	private MilestoneMasterRepository milestoneMasterRepository;
 	
@@ -46,7 +45,7 @@ public class MilestoneMasterServiceImpl implements MilestoneMasterService{
 	}
 	
 	public List<MilestoneMasterEntity> getMilestonesByProjectId(Long projectId) {
-        return milestoneMasterRepository.findByProjectId(String.valueOf(projectId));
+        return milestoneMasterRepository.findByProjectId(String.valueOf(projectId)); 
     }
 
 	

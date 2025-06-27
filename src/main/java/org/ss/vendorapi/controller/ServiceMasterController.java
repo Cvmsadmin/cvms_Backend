@@ -69,7 +69,6 @@ public class ServiceMasterController {
 	            serviceCreationEntityObj.setSrNo(serviceMasterDTO.getSrNo());
 	            serviceCreationEntityObj.setServiceName(serviceMasterDTO.getServiceName());
 	           
-
 	            try {
 	                serviceCreationEntityObj = serviceMasterService.save(serviceCreationEntityObj);
 	                savedEntities.add(serviceCreationEntityObj);

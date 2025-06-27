@@ -80,8 +80,8 @@ public class VendorMasterEntity extends ParentEntity implements Serializable  {
         this.typeOfService = typeOfService != null ? String.join(",", typeOfService) : "";
     }
     
-    @Column(name = "alternat_number")
-	private String alternatNumber;
+    @Column(name = "alternate_number")
+	private String alternateNumber;
     
 
 }
