@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.ss.vendorapi.entity.PurchaseBOMMasterEntity;
 import org.ss.vendorapi.repository.PurchaseBOMRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class PurchaseBOMServiceImpl implements PurchaseBOMService {
     
@@ -41,4 +43,12 @@ public class PurchaseBOMServiceImpl implements PurchaseBOMService {
     public List<PurchaseBOMMasterEntity> findByPurchaseId(String purchaseId) {
         return purchaseBOMRepository.findByPurchaseId(purchaseId);
     }
+
+
+    @Override
+    @Transactional
+    public void deleteByPurchaseId(String purchaseId) {
+        purchaseBOMRepository.deleteByPurchaseId(purchaseId);
+    }
+
 }

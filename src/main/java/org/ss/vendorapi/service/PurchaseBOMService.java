@@ -11,4 +11,5 @@ public interface PurchaseBOMService {
 	public List<PurchaseBOMMasterEntity> findAll();
 	public PurchaseBOMMasterEntity findById(Long id);
 	public List<PurchaseBOMMasterEntity> findByPurchaseId(String purchaseId);
+	public void deleteByPurchaseId(String string);
 }

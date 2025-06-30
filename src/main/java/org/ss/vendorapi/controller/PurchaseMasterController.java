@@ -747,54 +747,132 @@ public class PurchaseMasterController {
 //	}
 	
 //	************************************************************
+	
 	@EncryptResponse
 	@GetMapping("/getAllPurchase")
-    public ResponseEntity<?> getAllPurchase() {
-        Map<String, Object> statusMap = new HashMap<>();
-        try {
-            // Fetch all records from the view
-            List<PurchaseMasterView> purchaseMasterList = purchaseMasterService.findAll1();
+	public ResponseEntity<?> getAllPurchase() {
+	    Map<String, Object> statusMap = new HashMap<>();
+	    try {
+	        List<PurchaseMasterView> purchaseMasterList = purchaseMasterService.findAll1();
+	        List<Map<String, Object>> responseList = new ArrayList<>();
 
-            // Create a list to hold response data
-            List<Map<String, Object>> responseList = new ArrayList<>();
+	        for (PurchaseMasterView purchaseMaster : purchaseMasterList) {
+	            Map<String, Object> responseMap = new HashMap<>();
 
-            for (PurchaseMasterView purchaseMaster : purchaseMasterList) {
-                Map<String, Object> responseMap = new HashMap<>();
+	            responseMap.put("id", purchaseMaster.getId());
+	            responseMap.put("clientId", purchaseMaster.getClient_id());
+	            responseMap.put("clientName", purchaseMaster.getClient_name());
+	            responseMap.put("projectName", purchaseMaster.getProject_name());
+	            responseMap.put("vendor", purchaseMaster.getVendor());
+	            responseMap.put("vendorId", purchaseMaster.getVendor_id());
+	            responseMap.put("vendorName", purchaseMaster.getVendor_name());
+	            responseMap.put("requestorName", purchaseMaster.getRequestor_name());
+	            responseMap.put("description", purchaseMaster.getDescription());
+	            responseMap.put("prNo", purchaseMaster.getPurchase_register_no());
+	            responseMap.put("prDate", purchaseMaster.getPurchase_register_date());
+	            responseMap.put("prAmount", purchaseMaster.getPurchase_register_amount());
+	            responseMap.put("status", purchaseMaster.getStatus());
+	            responseMap.put("poApproveDate", purchaseMaster.getPo_approve_date());
+	            responseMap.put("approveDate", purchaseMaster.getApprove_date());
+	            responseMap.put("poNo", purchaseMaster.getPurchase_order_no());
+	            responseMap.put("prFor", purchaseMaster.getPr_for());
+	            responseMap.put("rejectionReason", purchaseMaster.getRejection_reason());
+	            responseMap.put("startDate", purchaseMaster.getStart_date());
+	            responseMap.put("endDate", purchaseMaster.getEnd_date());
 
-                responseMap.put("id", purchaseMaster.getId());
-                responseMap.put("clientId", purchaseMaster.getClient_id());
-                responseMap.put("clientName", purchaseMaster.getClient_name());
-                responseMap.put("projectName", purchaseMaster.getProject_name());
-                responseMap.put("vendor", purchaseMaster.getVendor());
-                responseMap.put("vendorId", purchaseMaster.getVendor_id());
-                responseMap.put("vendorName", purchaseMaster.getVendor_name());
-                responseMap.put("requestorName", purchaseMaster.getRequestor_name());
-                responseMap.put("description", purchaseMaster.getDescription());
-                responseMap.put("prNo", purchaseMaster.getPurchase_register_no());
-                responseMap.put("prDate", purchaseMaster.getPurchase_register_date());
-                responseMap.put("prAmount", purchaseMaster.getPurchase_register_amount());
-                responseMap.put("status", purchaseMaster.getStatus());
-                responseMap.put("poApproveDate", purchaseMaster.getPo_approve_date());
-                responseMap.put("approveDate", purchaseMaster.getApprove_date());
-                responseMap.put("poNo", purchaseMaster.getPurchase_order_no());
-                responseMap.put("prFor", purchaseMaster.getPr_for());
-                responseMap.put("rejectionReason", purchaseMaster.getRejection_reason());
-                responseMap.put("startDate", purchaseMaster.getStart_date());
-                responseMap.put("endDate", purchaseMaster.getEnd_date());
+	            // Fetch BOM entries for this purchase
+	            List<PurchaseBOMMasterEntity> bomList = purchaseBOMService.findByPurchaseId(purchaseMaster.getId().toString());
 
-                responseList.add(responseMap);
-            }
+	            // Convert BOM entries to a list of maps
+	            List<Map<String, Object>> bomResponseList = new ArrayList<>();
+	            for (PurchaseBOMMasterEntity bom : bomList) {
+	                Map<String, Object> bomMap = new HashMap<>();
+	                bomMap.put("bomDescription", bom.getBomDescription());
+	                bomMap.put("service", bom.getService());
+	                bomMap.put("startDate", bom.getStartDate());
+	                bomMap.put("endDate", bom.getEndDate());
+	                bomMap.put("renewable", bom.getRenewable());
+	                bomMap.put("rateUnit", bom.getRateUnit());
+	                bomMap.put("quantity", bom.getQuantity());
+	                bomMap.put("gstRate", bom.getGstRate());
+	                bomMap.put("amountExclGst", bom.getAmountExclGst());
+	                bomMap.put("amountInclGst", bom.getAmountInclGst());
+	                bomMap.put("uom", bom.getUom());
 
-            statusMap.put("PurchaseMasterEntity", responseList);
-            statusMap.put("Status", "Success");
-            statusMap.put("Status_Code", "RU_200");
+	                bomResponseList.add(bomMap);
+	            }
 
-            return new ResponseEntity<>(statusMap, HttpStatus.OK);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+	            // Attach BOM list to response map
+	            responseMap.put("bom", bomResponseList);
+
+	            responseList.add(responseMap);
+	        }
+
+	        statusMap.put("PurchaseMasterEntity", responseList);
+	        statusMap.put("Status", "Success");
+	        statusMap.put("Status_Code", "RU_200");
+
+	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+	    } catch (Exception ex) {
+	        ex.printStackTrace();
+	        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
+	
+	
+	
+	
+//	@EncryptResponse
+//	@GetMapping("/getAllPurchase")
+//    public ResponseEntity<?> getAllPurchase() {
+//        Map<String, Object> statusMap = new HashMap<>();
+//        try {
+//            // Fetch all records from the view
+//            List<PurchaseMasterView> purchaseMasterList = purchaseMasterService.findAll1();
+//
+//            // Create a list to hold response data
+//            List<Map<String, Object>> responseList = new ArrayList<>();
+//
+//            for (PurchaseMasterView purchaseMaster : purchaseMasterList) {
+//                Map<String, Object> responseMap = new HashMap<>();
+//
+//                responseMap.put("id", purchaseMaster.getId());
+//                responseMap.put("clientId", purchaseMaster.getClient_id());
+//                responseMap.put("clientName", purchaseMaster.getClient_name());
+//                responseMap.put("projectName", purchaseMaster.getProject_name());
+//                responseMap.put("vendor", purchaseMaster.getVendor());
+//                responseMap.put("vendorId", purchaseMaster.getVendor_id());
+//                responseMap.put("vendorName", purchaseMaster.getVendor_name());
+//                responseMap.put("requestorName", purchaseMaster.getRequestor_name());
+//                responseMap.put("description", purchaseMaster.getDescription());
+//                responseMap.put("prNo", purchaseMaster.getPurchase_register_no());
+//                responseMap.put("prDate", purchaseMaster.getPurchase_register_date());
+//                responseMap.put("prAmount", purchaseMaster.getPurchase_register_amount());
+//                responseMap.put("status", purchaseMaster.getStatus());
+//                responseMap.put("poApproveDate", purchaseMaster.getPo_approve_date());
+//                responseMap.put("approveDate", purchaseMaster.getApprove_date());
+//                responseMap.put("poNo", purchaseMaster.getPurchase_order_no());
+//                responseMap.put("prFor", purchaseMaster.getPr_for());
+//                responseMap.put("rejectionReason", purchaseMaster.getRejection_reason());
+//                responseMap.put("startDate", purchaseMaster.getStart_date());
+//                responseMap.put("endDate", purchaseMaster.getEnd_date());
+//
+//                responseList.add(responseMap);
+//            }
+//
+//            statusMap.put("PurchaseMasterEntity", responseList);
+//            statusMap.put("Status", "Success");
+//            statusMap.put("Status_Code", "RU_200");
+//
+//            return new ResponseEntity<>(statusMap, HttpStatus.OK);
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+	
+	
 //	@EncryptResponse
 //	@GetMapping("/getAllPurchase")
 //	public ResponseEntity<?> getAllPurchase() {
@@ -893,50 +971,142 @@ public class PurchaseMasterController {
 
 
 
-
 	@EncryptResponse
 	@PutMapping("/updatePurchase")
-	public ResponseEntity<?>updatePurchase(@RequestBody PurchaseRequestDTO purchaseRequestDTO ){
-		Map<String,Object> statusMap=new HashMap<String,Object>();
+	public ResponseEntity<?> updatePurchase(@RequestBody PurchaseRequestDTO purchaseRequestDTO) {
+	    Map<String, Object> statusMap = new HashMap<>();
 
-		try{
-			PurchaseMasterEntity purchaseMaster=purchaseMasterService.findById(purchaseRequestDTO.getId());
+	    try {
+	        // 🔐 Validate ID
+	        if (purchaseRequestDTO.getId() == null) {
+	            return new ResponseEntity<>("Purchase ID must not be null", HttpStatus.BAD_REQUEST);
+	        }
 
-			purchaseMaster.setClientName(purchaseRequestDTO.getClientName()!=null?purchaseRequestDTO.getClientName():purchaseMaster.getClientName());
-			purchaseMaster.setProjectName(purchaseRequestDTO.getProjectName()!=null?purchaseRequestDTO.getProjectName():purchaseMaster.getProjectName());
-			purchaseMaster.setVendor(purchaseRequestDTO.getVendor()!=null?purchaseRequestDTO.getClientName():purchaseMaster.getVendor());
-			purchaseMaster.setRequestorName(purchaseRequestDTO.getRequestorName()!=null?purchaseRequestDTO.getRequestorName():purchaseMaster.getRequestorName());
-			purchaseMaster.setDescription(purchaseRequestDTO.getDescription()!=null?purchaseRequestDTO.getDescription():purchaseMaster.getDescription());
-			purchaseMaster.setPrNo(purchaseRequestDTO.getPrNo()!=null?purchaseRequestDTO.getPrNo():purchaseMaster.getPrNo());
-			purchaseMaster.setPrDate(purchaseRequestDTO.getPrDate()!=null?purchaseRequestDTO.getPrDate():purchaseMaster.getPrDate());
-			purchaseMaster.setPrAmount(purchaseRequestDTO.getPrAmount()!=null?purchaseRequestDTO.getPrAmount():purchaseMaster.getPrAmount());
-			purchaseMaster.setStatus(purchaseRequestDTO.getStatus()!=null?purchaseRequestDTO.getStatus():purchaseMaster.getStatus());
-			purchaseMaster.setApproveDate(purchaseRequestDTO.getApproveDate()!=null?purchaseRequestDTO.getApproveDate():purchaseMaster.getApproveDate());
-			purchaseMaster.setPoNo(purchaseRequestDTO.getPoNo()!=null?purchaseRequestDTO.getPoNo():purchaseMaster.getPoNo());
+	        PurchaseMasterEntity purchaseMaster = purchaseMasterService.findById(purchaseRequestDTO.getId());
 
-			 purchaseMaster.setPrFor(purchaseRequestDTO.getPrFor() != null ? purchaseRequestDTO.getPrFor() : purchaseMaster.getPrFor());
-		     purchaseMaster.setRejectionReason(purchaseRequestDTO.getRejectionReason() != null ? purchaseRequestDTO.getRejectionReason() : purchaseMaster.getRejectionReason());
-		     purchaseMaster.setPoApproveDate(purchaseRequestDTO.getPoApproveDate() != null ? purchaseRequestDTO.getPoApproveDate() : purchaseMaster.getPoApproveDate());
-		     
-		     purchaseMaster.setStartDate(purchaseRequestDTO.getStartDate() != null ? purchaseRequestDTO.getStartDate() : purchaseMaster.getStartDate());
-		     purchaseMaster.setEndDate(purchaseRequestDTO.getEndDate() != null ? purchaseRequestDTO.getEndDate() : purchaseMaster.getEndDate());
+	        if (purchaseMaster == null) {
+	            return new ResponseEntity<>("Purchase not found for the given ID", HttpStatus.NOT_FOUND);
+	        }
 
-		     
-			purchaseMasterService.update(purchaseMaster);
+	        // ✅ Update fields
+	        purchaseMaster.setClientName(purchaseRequestDTO.getClientName() != null ? purchaseRequestDTO.getClientName() : purchaseMaster.getClientName());
+	        purchaseMaster.setProjectName(purchaseRequestDTO.getProjectName() != null ? purchaseRequestDTO.getProjectName() : purchaseMaster.getProjectName());
+	        purchaseMaster.setVendor(purchaseRequestDTO.getVendor() != null ? purchaseRequestDTO.getVendor() : purchaseMaster.getVendor());
+	        purchaseMaster.setRequestorName(purchaseRequestDTO.getRequestorName() != null ? purchaseRequestDTO.getRequestorName() : purchaseMaster.getRequestorName());
+	        purchaseMaster.setDescription(purchaseRequestDTO.getDescription() != null ? purchaseRequestDTO.getDescription() : purchaseMaster.getDescription());
+	        purchaseMaster.setPrNo(purchaseRequestDTO.getPrNo() != null ? purchaseRequestDTO.getPrNo() : purchaseMaster.getPrNo());
+	        purchaseMaster.setPrDate(purchaseRequestDTO.getPrDate() != null ? purchaseRequestDTO.getPrDate() : purchaseMaster.getPrDate());
+	        purchaseMaster.setPrAmount(purchaseRequestDTO.getPrAmount() != null ? purchaseRequestDTO.getPrAmount() : purchaseMaster.getPrAmount());
+	        purchaseMaster.setStatus(purchaseRequestDTO.getStatus() != null ? purchaseRequestDTO.getStatus() : purchaseMaster.getStatus());
+	        purchaseMaster.setApproveDate(purchaseRequestDTO.getApproveDate() != null ? purchaseRequestDTO.getApproveDate() : purchaseMaster.getApproveDate());
+	        purchaseMaster.setPoNo(purchaseRequestDTO.getPoNo() != null ? purchaseRequestDTO.getPoNo() : purchaseMaster.getPoNo());
+	        purchaseMaster.setPrFor(purchaseRequestDTO.getPrFor() != null ? purchaseRequestDTO.getPrFor() : purchaseMaster.getPrFor());
+	        purchaseMaster.setRejectionReason(purchaseRequestDTO.getRejectionReason() != null ? purchaseRequestDTO.getRejectionReason() : purchaseMaster.getRejectionReason());
+	        purchaseMaster.setPoApproveDate(purchaseRequestDTO.getPoApproveDate() != null ? purchaseRequestDTO.getPoApproveDate() : purchaseMaster.getPoApproveDate());
+	        purchaseMaster.setStartDate(purchaseRequestDTO.getStartDate() != null ? purchaseRequestDTO.getStartDate() : purchaseMaster.getStartDate());
+	        purchaseMaster.setEndDate(purchaseRequestDTO.getEndDate() != null ? purchaseRequestDTO.getEndDate() : purchaseMaster.getEndDate());
 
+	        // 💾 Save updated master
+	        purchaseMasterService.update(purchaseMaster);
 
-			statusMap.put("purchaseMasterEntity",purchaseMaster);
-			statusMap.put("status", "SUCCESS");
-			statusMap.put("statusCode", "RU_200");
-			statusMap.put("statusMessage", "SUCCESSFULLY UPDATED"); 
+	        // 🗑️ Delete old BOM entries
+	        purchaseBOMService.deleteByPurchaseId(purchaseMaster.getId().toString());
 
-			return new ResponseEntity<>(statusMap,HttpStatus.OK);
+	        // 💾 Insert new BOM entries
+	        List<Map<String, Object>> bomList = new ArrayList<>();
+	        for (PurchaseBOMMasterEntity bomDTO : purchaseRequestDTO.getBom()) {
+	            PurchaseBOMMasterEntity bom = new PurchaseBOMMasterEntity();
+	            bom.setPurchaseId(purchaseMaster.getId().toString());
+	            bom.setBomDescription(bomDTO.getBomDescription());
+	            bom.setService(bomDTO.getService());
+	            bom.setStartDate(bomDTO.getStartDate());
+	            bom.setEndDate(bomDTO.getEndDate());
+	            bom.setRenewable(bomDTO.getRenewable());
+	            bom.setRateUnit(bomDTO.getRateUnit());
+	            bom.setQuantity(bomDTO.getQuantity());
+	            bom.setGstRate(bomDTO.getGstRate());
+	            bom.setAmountExclGst(bomDTO.getAmountExclGst());
+	            bom.setAmountInclGst(bomDTO.getAmountInclGst());
+	            bom.setUom(bomDTO.getUom());
 
-		}catch(Exception e){
-			e.printStackTrace();
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	            purchaseBOMService.save(bom);
+
+	            Map<String, Object> bomMap = new HashMap<>();
+	            bomMap.put("bomDescription", bom.getBomDescription());
+	            bomMap.put("service", bom.getService());
+	            bomMap.put("startDate", bom.getStartDate());
+	            bomMap.put("endDate", bom.getEndDate());
+	            bomMap.put("renewable", bom.getRenewable());
+	            bomMap.put("rateUnit", bom.getRateUnit());
+	            bomMap.put("quantity", bom.getQuantity());
+	            bomMap.put("gstRate", bom.getGstRate());
+	            bomMap.put("amountExclGst", bom.getAmountExclGst());
+	            bomMap.put("amountInclGst", bom.getAmountInclGst());
+	            bomMap.put("uom", bom.getUom());
+
+	            bomList.add(bomMap);
+	        }
+
+	        // 📦 Build final response
+	        statusMap.put("purchaseMasterEntity", purchaseMaster);
+	        statusMap.put("bom", bomList);
+	        statusMap.put("status", "SUCCESS");
+	        statusMap.put("statusCode", "RU_200");
+	        statusMap.put("statusMessage", "SUCCESSFULLY UPDATED");
+
+	        return new ResponseEntity<>(statusMap, HttpStatus.OK);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return new ResponseEntity<>("Internal Server Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
+
+
+
+//	@EncryptResponse
+//	@PutMapping("/updatePurchase")
+//	public ResponseEntity<?>updatePurchase(@RequestBody PurchaseRequestDTO purchaseRequestDTO ){
+//		Map<String,Object> statusMap=new HashMap<String,Object>();
+//
+//		try{
+//			PurchaseMasterEntity purchaseMaster=purchaseMasterService.findById(purchaseRequestDTO.getId());
+//
+//			purchaseMaster.setClientName(purchaseRequestDTO.getClientName()!=null?purchaseRequestDTO.getClientName():purchaseMaster.getClientName());
+//			purchaseMaster.setProjectName(purchaseRequestDTO.getProjectName()!=null?purchaseRequestDTO.getProjectName():purchaseMaster.getProjectName());
+//			purchaseMaster.setVendor(purchaseRequestDTO.getVendor()!=null?purchaseRequestDTO.getClientName():purchaseMaster.getVendor());
+//			purchaseMaster.setRequestorName(purchaseRequestDTO.getRequestorName()!=null?purchaseRequestDTO.getRequestorName():purchaseMaster.getRequestorName());
+//			purchaseMaster.setDescription(purchaseRequestDTO.getDescription()!=null?purchaseRequestDTO.getDescription():purchaseMaster.getDescription());
+//			purchaseMaster.setPrNo(purchaseRequestDTO.getPrNo()!=null?purchaseRequestDTO.getPrNo():purchaseMaster.getPrNo());
+//			purchaseMaster.setPrDate(purchaseRequestDTO.getPrDate()!=null?purchaseRequestDTO.getPrDate():purchaseMaster.getPrDate());
+//			purchaseMaster.setPrAmount(purchaseRequestDTO.getPrAmount()!=null?purchaseRequestDTO.getPrAmount():purchaseMaster.getPrAmount());
+//			purchaseMaster.setStatus(purchaseRequestDTO.getStatus()!=null?purchaseRequestDTO.getStatus():purchaseMaster.getStatus());
+//			purchaseMaster.setApproveDate(purchaseRequestDTO.getApproveDate()!=null?purchaseRequestDTO.getApproveDate():purchaseMaster.getApproveDate());
+//			purchaseMaster.setPoNo(purchaseRequestDTO.getPoNo()!=null?purchaseRequestDTO.getPoNo():purchaseMaster.getPoNo());
+//
+//			 purchaseMaster.setPrFor(purchaseRequestDTO.getPrFor() != null ? purchaseRequestDTO.getPrFor() : purchaseMaster.getPrFor());
+//		     purchaseMaster.setRejectionReason(purchaseRequestDTO.getRejectionReason() != null ? purchaseRequestDTO.getRejectionReason() : purchaseMaster.getRejectionReason());
+//		     purchaseMaster.setPoApproveDate(purchaseRequestDTO.getPoApproveDate() != null ? purchaseRequestDTO.getPoApproveDate() : purchaseMaster.getPoApproveDate());
+//		     
+//		     purchaseMaster.setStartDate(purchaseRequestDTO.getStartDate() != null ? purchaseRequestDTO.getStartDate() : purchaseMaster.getStartDate());
+//		     purchaseMaster.setEndDate(purchaseRequestDTO.getEndDate() != null ? purchaseRequestDTO.getEndDate() : purchaseMaster.getEndDate());
+//
+//		     
+//			purchaseMasterService.update(purchaseMaster);
+//
+//
+//			statusMap.put("purchaseMasterEntity",purchaseMaster);
+//			statusMap.put("status", "SUCCESS");
+//			statusMap.put("statusCode", "RU_200");
+//			statusMap.put("statusMessage", "SUCCESSFULLY UPDATED"); 
+//
+//			return new ResponseEntity<>(statusMap,HttpStatus.OK);
+//
+//		}catch(Exception e){
+//			e.printStackTrace();
+//			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
+//	}
 
 	
 	@EncryptResponse

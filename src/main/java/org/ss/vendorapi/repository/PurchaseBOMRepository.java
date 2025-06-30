@@ -10,4 +10,6 @@ import org.ss.vendorapi.entity.PurchaseBOMMasterEntity;
 public interface PurchaseBOMRepository extends JpaRepository<PurchaseBOMMasterEntity, Long>{
 
 	public List<PurchaseBOMMasterEntity> findByPurchaseId(String purchaseId);
+
+	public void deleteByPurchaseId(String purchaseId);
 }
