@@ -8,6 +8,7 @@ import org.ss.vendorapi.entity.InvoiceDescriptionValue;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Data
@@ -20,10 +21,9 @@ public class VendorInvioceMasterDTO {
     private String projectName;  
     
 //    private List<Long> typeOfService;
-    
+    @Transient
     private List<ServiceDTO> typeOfService;
 
- 
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date invoiceDate;
     private String invoiceNo;

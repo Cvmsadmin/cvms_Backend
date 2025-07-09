@@ -177,19 +177,8 @@ public class VendorInvoiceMasterEntity extends ParentEntity implements Serializa
 //	    @Column(name = "type_of_service")
 //	    private Long typeOfService;
 
-	    @Column(name = "type_of_service")
+	    @Transient
 	    private String typeOfService;
-
-
-//	    @Transient
-//	    public List<Long> getTypeOfServiceList() {
-//	        if (this.typeOfService == null || this.typeOfService.isEmpty()) {
-//	            return new ArrayList<>();
-//	        }
-//	        return Arrays.stream(this.typeOfService.split(","))
-//	                     .map(Long::parseLong)
-//	                     .collect(Collectors.toList());
-//	    }
 
 
 	    @Transient

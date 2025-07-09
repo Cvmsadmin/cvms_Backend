@@ -463,28 +463,6 @@ public class VendorInvoiceMasterController {
 
 	                	dto.setTypeOfService(serviceDTOs);
 
-	                
-//	                if (invoice.getTypeOfService() != null && !invoice.getTypeOfService().isEmpty()) {
-//	                    List<ServiceDTO> serviceDTOs = Arrays.stream(invoice.getTypeOfService().split(","))
-//	                        .map(String::trim)
-//	                        .filter(idStr -> !idStr.isEmpty())
-//	                        .map(Long::valueOf)
-//	                        .map(serviceId -> {
-//	                            ServiceDTO serviceDTO = new ServiceDTO();
-//	                            serviceDTO.setId(serviceId);
-//	                            serviceMasterRepository.findById(serviceId).ifPresent(serviceEntity -> {
-//	                                serviceDTO.setServiceName(serviceEntity.getServiceName());
-//	                                serviceDTO.setSrNo(serviceEntity.getSrNo());
-//	                            });
-//	                            return serviceDTO;
-//	                        })
-//	                        .collect(Collectors.toList());
-//
-//	                    dto.setTypeOfService(serviceDTOs);
-//	                }
-
-
-
 	                return dto;
 	            })
 	            .collect(Collectors.toList());
